@@ -46,9 +46,32 @@ export function buildFestival(scene, map) {
   banner(26, 48, 7, 'Every plant has a story');
   bunting(39, 9, 11, 4.8);
   bunting(39, 35, 13, 6.2);
+  // Confetti stays around the festival plazas. Flat pieces follow the actual
+  // paving height; a few drifting pieces give the celebrations some movement.
+  const confetti = [];
+  const confettiGeo = new THREE.PlaneGeometry(0.1,0.055);
+  for (const [cx,cz] of [[68,30],[44,31],[26,49],[46,40]]) {
+    for (let i=0;i<65;i++) {
+      const x=cx+((i*37)%101)/101*9-4.5;
+      const z=cz+((i*53)%97)/97*4-2;
+      const tile=map.tileAt(Math.floor(x),Math.floor(z));
+      if (!tile || tile.solid || !['path','plaza','court'].includes(tile.type)) continue;
+      const piece=new THREE.Mesh(confettiGeo,materials[i%materials.length]);
+      const airborne=i%5===0;
+      piece.position.set(x,tile.elev+(airborne?1+(i%4)*0.4:0.025),z);
+      piece.rotation.set(-Math.PI/2,0,i*1.7);
+      group.add(piece);
+      if(airborne)confetti.push({piece,x,z,elev:tile.elev,phase:i*0.7});
+    }
+  }
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   return { update(time) {
     if (reducedMotion.matches) return;
     flags.forEach((flag, i) => { flag.rotation.x = Math.sin(time * 1.3 + i * 0.6) * 0.12; });
+    for (const {piece,x,z,elev,phase} of confetti) {
+      piece.position.set(x+Math.sin(time*0.7+phase)*0.3,elev+2.7-((time*0.35+phase)%2.6),z);
+      piece.rotation.x=time+phase;
+      piece.rotation.z=time*0.6+phase;
+    }
   } };
 }

@@ -61,6 +61,30 @@ try {
  assert.equal(await page.evaluate(()=>window.__game.player.tryStep('left')),false);
  assert.ok(await page.evaluate(()=>Number(document.querySelector('#boundary-haze').style.opacity)>0.4));
  await page.screenshot({path:'shots/mobile-07-fog.png'});
+ // Reproduce the reported southern-library view. It must not receive the
+ // full-screen boundary haze that previously hid the player and the campus.
+ await page.evaluate(()=>window.__game.teleportTo(25,49,'up'));
+ await page.waitForTimeout(500);
+ assert.ok(await page.evaluate(()=>Number(document.querySelector('#boundary-haze').style.opacity)<0.05));
+ await page.screenshot({path:'shots/mobile-10-library-clear.png'});
+ // Mission characters and specimens are solid, but wandering visitors are not.
+ assert.equal(await page.evaluate(()=>window.__game.map.canStep(67,31,67,30)),false);
+ assert.equal(await page.evaluate(()=>window.__game.map.tileAt(31,28).solid),true);
+ const beforeVisitors=await page.evaluate(()=>[...window.__game.visitors.entries.values()].map(e=>[e.actor.tileX,e.actor.tileY]));
+ await page.waitForTimeout(3200);
+ const afterVisitors=await page.evaluate(()=>[...window.__game.visitors.entries.values()].map(e=>[e.actor.tileX,e.actor.tileY]));
+ assert.notDeepEqual(afterVisitors,beforeVisitors,'Visitors wander while the game runs');
+ await page.evaluate(()=>{
+   const g=window.__game, entry=g.visitors.entries.values().next().value;
+   entry.actor.locked=true;entry.actor.moving=false;entry.actor.tileX=25;entry.actor.tileY=49;entry.actor.syncWorldPosition();
+   g.teleportTo(25,50,'up');
+ });
+ assert.equal(await page.evaluate(()=>window.__game.map.canStep(25,50,25,49)),true,'Visitor tiles remain passable');
+ await page.tap('#touch-a');
+ assert.ok(await page.evaluate(()=>window.__game.dialogUI.isOpen),'Visitors have short dialogue');
+ await page.waitForTimeout(900);
+ await page.screenshot({path:'shots/mobile-11-visitor-dialogue.png'});
+ await page.evaluate(()=>window.__game.dialogUI.close());
  await page.setViewportSize({width:844,height:390});
  await page.waitForTimeout(300);
  await page.screenshot({path:'shots/mobile-08-landscape.png'});

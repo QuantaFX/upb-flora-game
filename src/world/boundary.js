@@ -23,7 +23,17 @@ export function buildBoundaryMist(scene, map) {
     }
   }
   for (let x = b.minX - 5; x <= b.maxX + 5; x += 5) {
-    cloud(x, b.minY - 3); cloud(x, b.maxY + 4);
+    cloud(x, b.minY - 3);
+    // The camera looks north from the south. Tall southern sprites sat directly
+    // in front of it, whitening the whole campus. Keep this bank below ground
+    // and beyond the map instead of putting a billboard in the camera's way.
+    const bank = new THREE.Mesh(new THREE.PlaneGeometry(14, 9), new THREE.MeshBasicMaterial({
+      map: texture, transparent: true, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    }));
+    bank.name = 'Low southern fog';
+    bank.rotation.x = -Math.PI / 2;
+    bank.position.set(x, -0.7, b.maxY + 9);
+    group.add(bank);
   }
   for (let y = b.minY; y <= b.maxY; y += 5) {
     cloud(b.minX - 4, y); cloud(b.maxX + 4, y);
@@ -33,10 +43,14 @@ export function buildBoundaryMist(scene, map) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   return { update(time, player) {
     const x = player.group.position.x, z = player.group.position.z;
-    const distance = Math.min(x - b.minX, b.maxX + 1 - x, z - b.minY, b.maxY + 1 - z);
+    const distance = Math.min(x - b.minX, b.maxX + 1 - x, z - b.minY);
     const proximity = THREE.MathUtils.clamp(1 - distance / 5, 0, 1);
     scene.fog.density = 0.014 + proximity * 0.055;
-    haze.style.opacity = String(proximity * 0.65);
+    const southProximity = THREE.MathUtils.clamp(1 - (b.maxY + 1 - z) / 3, 0, 1);
+    haze.style.background = proximity > 0
+      ? 'radial-gradient(ellipse, transparent 20%, #dceae3 100%)'
+      : 'linear-gradient(to top, #dceae3, transparent 22%)';
+    haze.style.opacity = String(Math.max(proximity * 0.65, southProximity * 0.18));
     group.position.y = reducedMotion.matches ? 0 : Math.sin(time * 0.25) * 0.25;
   } };
 }

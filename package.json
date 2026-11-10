@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node scripts/map-check.mjs && node scripts/story-check.mjs"
+    "test": "node scripts/map-check.mjs && node scripts/story-check.mjs && node scripts/campus-life-check.mjs"
   },
   "dependencies": {
     "three": "^0.169.0"

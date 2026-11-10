@@ -8,6 +8,7 @@ import { createCampusMap, NPCS, PLANT_NODES, SIGNS } from './world/map.js';
 import { buildEnvironment } from './world/environment.js';
 import { buildBoundaryMist } from './world/boundary.js';
 import { buildFestival } from './world/festival.js';
+import { buildVisitors } from './world/visitors.js';
 import { setupTouchControls } from './game/touch-controls.js';
 import { buildTerrain } from './world/terrain.js';
 import { buildPropsAndBuildings } from './world/props.js';
@@ -31,6 +32,9 @@ const CHARACTER_LIST = [
   'Woman',
   'Samurai',
   'Village6',
+  'Villager2',
+  'Villager6',
+  'Villager',
 ];
 
 function showToast(message) {
@@ -150,6 +154,7 @@ async function boot() {
   const dialogUI = createDialogUI(audio);
   const encounterUI = createEncounterUI(state, assets, audio, showToast);
   const journalUI = createJournalUI(state, assets, audio);
+  const visitors = buildVisitors(scene, map, assets, () => refreshHudAndEmotes());
 
   // HUD Elements
   const titleScreen = document.getElementById('title-screen');
@@ -261,6 +266,12 @@ async function boot() {
         };
       }
     }
+    // Fixed mission targets have priority. A visitor can also be addressed while
+    // sharing a tile, since walking through the wandering crowd is allowed.
+    for (const c of [...candidates, {x:player.tileX,y:player.tileY}]) {
+      const entry = [...visitors.entries.values()].find(e => !e.actor.moving && e.actor.tileX===c.x && e.actor.tileY===c.y);
+      if (entry) return {type:'visitor',entry,label:`Talk to ${entry.def.name}`};
+    }
     return null;
   }
 
@@ -277,7 +288,19 @@ async function boot() {
     const target = getInteractTarget();
     if (!target) return;
 
-    if (target.type === 'npc') {
+    if (target.type === 'visitor') {
+      const entry = target.entry;
+      entry.actor.locked = true;
+      player.faceToward(entry.actor.tileX, entry.actor.tileY);
+      entry.actor.faceToward(player.tileX, player.tileY);
+      const line = entry.def.lines[entry.line++ % entry.def.lines.length];
+      dialogUI.open([{speaker:entry.def.name,text:line}], assets.characters[entry.def.sprite].faceUrl, () => {
+        entry.actor.locked = false;
+        audio.stopVoice();
+        refreshHudAndEmotes();
+      });
+      audio.speak(line);
+    } else if (target.type === 'npc') {
       player.faceToward(target.actor.tileX, target.actor.tileY);
       target.actor.faceToward(player.tileX, player.tileY);
       const faceUrl = assets.characters[target.npc.sprite]?.faceUrl;
@@ -511,6 +534,7 @@ async function boot() {
     for (const entry of npcActors.values()) {
       entry.actor.update(dt, elapsed);
     }
+    visitors.update(dt, elapsed, uiBlocked, player);
     propsCtrl.update(elapsed, player);
 
     for (const m of mistGroup.children) {
@@ -533,6 +557,7 @@ async function boot() {
     map,
     player,
     npcActors,
+    visitors,
     dialogUI,
     encounterUI,
     journalUI,

@@ -5,7 +5,7 @@ for (const row of m.tiles) for (const t of row) {
   if (m.canStep(Math.max(m.bounds.minX, Math.min(t.x, m.bounds.maxX)), Math.max(m.bounds.minY, Math.min(t.y, m.bounds.maxY)), t.x,t.y)) errors.push(`Boundary is passable: ${t.x},${t.y}`);
  }
 }
-for(const p of [...m.plantNodes,...m.props.filter(p=>p.kind!=='bench')]) if(!['grass','tall_grass'].includes(m.tileAt(p.x,p.y).type)) errors.push(`Plant on ${m.tileAt(p.x,p.y).type}: ${p.id||p.kind} (${p.x},${p.y})`);
+for(const p of [...m.plantNodes,...m.props.filter(p=>['pine','understory','sunflower_deco'].includes(p.kind))]) if(!['grass','tall_grass'].includes(m.tileAt(p.x,p.y).type)) errors.push(`Plant on ${m.tileAt(p.x,p.y).type}: ${p.id||p.kind} (${p.x},${p.y})`);
 const vectors={north:[0,-1],south:[0,1],east:[1,0],west:[-1,0]};
 for(const row of m.tiles) for(const t of row) if(t.type==='stair') {
  const [dx,dy]=vectors[t.stairDir];

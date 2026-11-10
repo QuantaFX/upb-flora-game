@@ -245,6 +245,40 @@ export function buildPropsAndBuildings(scene, map, assets) {
       mesh.position.set(p.x + 0.5, p.elev + 0.5, p.y + 0.5);
       mesh.rotation.x = -0.32;
       group.add(mesh);
+    } else if (p.kind === 'bin') {
+      const bin = new THREE.Group();
+      bin.position.set(p.x + 0.5, p.elev, p.y + 0.5);
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.55), new THREE.MeshLambertMaterial({color:'#315f4c'}));
+      body.position.y = 0.35;
+      bin.add(body);
+      const lid = new THREE.Mesh(new THREE.BoxGeometry(0.63, 0.12, 0.63), new THREE.MeshLambertMaterial({color:'#d5b34d'}));
+      lid.position.y = 0.75;
+      bin.add(lid);
+      const slot = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.1), new THREE.MeshBasicMaterial({color:'#172e26'}));
+      slot.position.set(0,0.58,0.281);
+      bin.add(slot);
+      const label = new THREE.Mesh(new THREE.PlaneGeometry(0.23,0.22), new THREE.MeshBasicMaterial({color:'#eee6bc'}));
+      label.position.set(0,0.3,0.281);
+      bin.add(label);
+      group.add(bin);
+    } else if (p.kind === 'noticeboard') {
+      const board = new THREE.Group();
+      board.position.set(p.x+0.5,p.elev,p.y+0.5);
+      const wood = new THREE.MeshLambertMaterial({color:'#795336'});
+      for (const x of [-0.38,0.38]) {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1,1.3,0.1),wood);
+        leg.position.set(x,0.65,0); board.add(leg);
+      }
+      const c = document.createElement('canvas'); c.width=160; c.height=128;
+      const ctx=c.getContext('2d');
+      ctx.fillStyle='#795336';ctx.fillRect(0,0,160,128);
+      ctx.fillStyle='#efe7cb';ctx.fillRect(7,7,146,114);
+      ctx.textAlign='center';ctx.fillStyle='#7b1113';ctx.font='bold 17px Trebuchet MS';
+      ctx.fillText('Native Plants',80,32);ctx.fillText('Week',80,53);
+      ctx.fillStyle='#2f6239';ctx.font='12px Trebuchet MS';
+      ctx.fillText('Campus walks',80,78);ctx.fillText('Photo fieldwork',80,96);
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.15,0.92),new THREE.MeshBasicMaterial({map:canvasToTexture(c),side:THREE.DoubleSide}));
+      panel.position.set(0,1.1,0.08);board.add(panel);group.add(board);
     } else if (p.kind === 'bench') {
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(1.4, 0.8),

@@ -53,6 +53,7 @@ export function createAudioManager() {
 
   function toggleMute() {
     muted = !muted;
+    if (muted) stopVoice();
     if (muted && currentBgm) {
       currentBgm.pause();
     } else if (!muted && currentBgm) {
@@ -61,10 +62,31 @@ export function createAudioManager() {
     return muted;
   }
 
+  function stopVoice() {
+    window.speechSynthesis?.cancel();
+  }
+
+  function speak(line) {
+    if (muted || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    stopVoice();
+    const utterance = new SpeechSynthesisUtterance(line);
+    utterance.lang = 'en-PH';
+    utterance.rate = 0.95;
+    utterance.volume = 0.75;
+    // Prefer an installed voice; text dialogue remains available on every device.
+    const voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices.find(v => v.lang === 'en-PH' && v.localService)
+      || voices.find(v => v.lang.startsWith('en') && v.localService) || null;
+    window.speechSynthesis.speak(utterance);
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopVoice(); });
+
   return {
     playBgm,
     playSfx,
     toggleMute,
+    speak,
+    stopVoice,
     get muted() {
       return muted;
     },

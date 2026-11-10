@@ -729,7 +729,7 @@ export function createCampusMap() {
   const props = [];
   const addProp = (kind, x, y) => {
     const t = tiles[y]?.[x];
-    if (t && !t.solid && (kind === 'bench' || ['grass', 'tall_grass'].includes(t.type))
+    if (t && !t.solid && (['bench', 'bin', 'noticeboard'].includes(kind) || ['grass', 'tall_grass'].includes(t.type))
       && ![...PLANT_NODES, ...NPCS, ...SIGNS].some(p => Math.abs(p.x-x) <= 1 && Math.abs(p.y-y) <= 1)) {
       if (kind === 'pine' || kind === 'bench') {
         t.solid = true;
@@ -758,6 +758,11 @@ export function createCampusMap() {
   ];
   for (const [x, y] of benchCoords) addProp('bench', x, y);
 
+  // Seating and waste stations sit at the edges of the broad plazas.
+  for (const [x,y] of [[39,31],[51,31],[18,47],[32,48],[44,43],[51,43],[40,9]]) addProp('bench',x,y);
+  for (const [x,y] of [[69,31],[39,30],[51,30],[18,48],[32,49],[43,43],[52,43],[41,9]]) addProp('bin',x,y);
+  for (const [x,y] of [[42,31],[24,50],[70,29]]) addProp('noticeboard',x,y);
+
   // Deterministic woodland planting, with a full tile of clearance around paths and landmarks.
   for (let y = 4; y < MAP_H - 3; y += 2) {
     for (let x = 4; x < MAP_W - 3; x += 2) {
@@ -771,6 +776,15 @@ export function createCampusMap() {
       if (clear) addProp(hash < 2 ? 'pine' : 'understory', x, y);
     }
   }
+
+  // Stationary people and modeled plants occupy a tile; only visitors wander
+  // through paths without reserving tiles. Ground grass remains walkable.
+  for (const entity of [...NPCS, ...PLANT_NODES, ...SIGNS, ...props]) {
+    setTile(entity.x, entity.y, { solid: true });
+  }
+  // Four Pillars monument on the west CAC promenade leaves both side lanes open.
+  setTile(7, 50, { solid: true });
+  setTile(8, 50, { solid: true });
 
   return {
     w: MAP_W,
