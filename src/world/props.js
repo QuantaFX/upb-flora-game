@@ -35,7 +35,7 @@ function createBuildingFacadeTexture(b) {
     g.fillRect(wx + 10, 20, 6, 16);
 
     // Door or lower window
-    const isDoor = b.x + i === b.doorX;
+    const isDoor = !b.noSign && b.x + i === b.doorX;
     if (isDoor) {
       g.fillStyle = '#4a2a14';
       g.fillRect(wx, 52, 18, 36);
@@ -50,19 +50,21 @@ function createBuildingFacadeTexture(b) {
   }
 
   // UP Maroon signage banner across the front
-  const signW = Math.min(c.width - 12, Math.max(110, b.name.length * 7 + 16));
-  const signX = (c.width - signW) / 2;
-  g.fillStyle = '#7b1113';
-  g.fillRect(signX, 38, signW, 13);
-  g.strokeStyle = '#f5b935';
-  g.lineWidth = 1;
-  g.strokeRect(signX + 0.5, 38.5, signW - 1, 12);
+  if (!b.noSign) {
+    const signW = Math.min(c.width - 12, Math.max(110, b.name.length * 7 + 16));
+    const signX = (c.width - signW) / 2;
+    g.fillStyle = '#7b1113';
+    g.fillRect(signX, 38, signW, 13);
+    g.strokeStyle = '#f5b935';
+    g.lineWidth = 1;
+    g.strokeRect(signX + 0.5, 38.5, signW - 1, 12);
 
-  g.fillStyle = '#fff8e6';
-  g.font = 'bold 8px "Trebuchet MS", sans-serif';
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText(b.name, c.width / 2, 44.5);
+    g.fillStyle = '#fff8e6';
+    g.font = 'bold 8px "Trebuchet MS", sans-serif';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillText(b.name, c.width / 2, 44.5);
+  }
 
   return canvasToTexture(c);
 }
@@ -138,11 +140,11 @@ export function buildPropsAndBuildings(scene, map, assets) {
     bodyMesh.position.y = b.h / 2;
     bGroup.add(bodyMesh);
 
-    // Pitched hip roof overhang
-    const roofGeo = new THREE.ConeGeometry(Math.max(b.w, b.d) * 0.68, 1.15, 4);
+    // Pitched hip roof overhang (unit 4-sided pyramid has base side 0.74 * sqrt(2) = 1.05, scaled by b.w x b.d)
+    const roofGeo = new THREE.ConeGeometry(0.74, 1.1, 4);
     roofGeo.rotateY(Math.PI / 4);
     const roofMesh = new THREE.Mesh(roofGeo, roofMat);
-    roofMesh.scale.set(1, 1, (b.d / b.w) * 1.05);
+    roofMesh.scale.set(b.w, 1, b.d);
     roofMesh.position.y = b.h + 0.55;
     bGroup.add(roofMesh);
 
@@ -155,10 +157,11 @@ export function buildPropsAndBuildings(scene, map, assets) {
     });
   }
 
-  // 2. Iconic UP Oblation Monument in the Oblation Ground (East Entrance, x=67..68, y=33)
+  // 2. Iconic UP Oblation Monument right in the middle between the two East Driveway stairs (x=67..68, y=28)
   {
+    const obElev = map.tileAt(68, 28)?.elev ?? 1;
     const obGroup = new THREE.Group();
-    obGroup.position.set(68, 0, 33.5);
+    obGroup.position.set(68, obElev, 28.5);
 
     const pedMat = new THREE.MeshLambertMaterial({ color: '#d8d2c5' });
     const ped1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.45, 1.5), pedMat);
@@ -190,10 +193,11 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(obGroup);
   }
 
-  // 2b. Four Pillars Monument near CAC Dap-ay (#6, SW Promenade at x=15, y=47)
+  // 2b. Four Pillars Monument near CAC Dap-ay (#6, West CAC Promenade at x=8, y=50.5)
   {
+    const fpElev = map.tileAt(8, 50)?.elev ?? 0;
     const fpGroup = new THREE.Group();
-    fpGroup.position.set(15.5, 0, 47.5);
+    fpGroup.position.set(8, fpElev, 50.5);
     const pillarMat = new THREE.MeshLambertMaterial({ color: '#e4ddd0' });
     for (let i = 0; i < 4; i += 1) {
       const p = new THREE.Mesh(

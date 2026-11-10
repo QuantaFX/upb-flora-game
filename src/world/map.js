@@ -1,47 +1,64 @@
-// Strict Orthogonal Grid UP Baguio Campus Map (80x64 tiles, 4 elevation terraces: 0..3)
-// Faithfully follows the user's strict grid blueprint (relative building rectangles, white walkways,
-// staircase connectors, Open Court A with stage/bleachers, and nested green elevation terraces),
-// cross-referenced with the UP Baguio Emergency Evacuation Plan & 21 Democratic Spaces labels.
+// Authentic UP Baguio Campus Map — Strict Orthogonal Grid Edition (80 x 60 tiles)
+//
+// Directly modeled on the user's strict grid layout + UP Baguio Emergency Evacuation Plan
+// and the 21 Democratic Spaces map:
+//   - 4 nested rectangular elevation terraces (Elev 0 outer light-green -> Elev 1 -> Elev 2 -> Elev 3 Summit Quad)
+//   - North Row (Elev 0): Himnasyo Amianan & HK (left) + Innovation & Biodiversity Research Center (right),
+//     connected by a white horizontal walkway and central stairs climbing south into the Summit Quad.
+//   - NW Cluster: Student Alumni Center (#2, Elev 1) with grey courtyard & long west staircase down to CSS (#4),
+//     plus east stairs up to Balay Panganan / Cafeteria (#13, Elev 2).
+//   - Summit Crown Quad (Elev 3): Institute of Management (#10), Balay Salun-at (UHS), Kolehiyo ng Agham (#12),
+//     College of Science, Iskolar ng Bayan Building (#11 & #18), and Museo Kordilyera (#9) around the white central quad.
+//   - Open Court A (#21, Elev 0) & North Bleachers/Stage (#20, Elev 1): Lowered by 1 level so the dark-grey
+//     basketball court is flush with the South Promenade (Elev 0), flanked by the West Staircase & East Zigzag Staircase.
+//   - East Parallel Driveway Corridors: Two horizontal white driveway/stair corridors (y=25..26 and y=32..33)
+//     stepping down from Elev 2 -> Elev 1 -> Elev 0, with the UP Oblation Statue right in the middle between the two stairs!
+//   - West & South Perimeter (Elev 0): Bulwagang Juan Luna (Elev 1), UPB Library (#7, Elev 0), tall vertical CSS (#4, Elev 0),
+//     L-shaped CAC (#6, Elev 0), and Teatro Amianan (Elev 0) connected by the exact stepped white path from the grid diagram.
 
 export const MAP_W = 80;
-export const MAP_H = 64;
+export const MAP_H = 60;
+
+// Player starts on the Lower East Driveway Landing (Elev 1), looking straight north at Prof. Dulay
+// and the UP Oblation Statue right in the middle between the two East Driveway staircases!
+export const PLAYER_SPAWN = { x: 67, y: 32, dir: 'up' };
 
 export const BUILDINGS = [
-  // --- NORTH ROW (Elevation 0 — Human Kinetics / Himnasyo Amianan & Biodiversity Research Center) ---
+  // --- NORTH LOWLAND ROW (Elevation 0 — Sunshine Park / Harrison Rd Edge) ---
   {
     id: 'b_himnasyo',
     name: 'HIMNASYO AMIANAN & HK',
-    sub: 'Human Kinetics Program',
+    sub: 'Human Kinetics Program (North Lower Campus)',
     elev: 0,
     x: 38,
     y: 3,
     w: 12,
     d: 5,
-    h: 2.7,
-    wallColor: '#dcd299',
-    roofColor: '#5c6632',
+    h: 2.8,
+    wallColor: '#e2d6b5',
+    roofColor: '#8c6d2c',
     doorX: 44,
   },
   {
     id: 'b_biodiv',
     name: 'BIODIVERSITY RESEARCH CTR',
-    sub: 'Innovation & Biodiversity',
+    sub: 'Innovation & Biodiversity Research Center',
     elev: 0,
     x: 52,
     y: 3,
     w: 13,
     d: 7,
-    h: 2.7,
-    wallColor: '#c8ccd0',
-    roofColor: '#4a555e',
+    h: 2.8,
+    wallColor: '#cfd6dc',
+    roofColor: '#4a5866',
     doorX: 58,
   },
 
-  // --- NORTHWEST CLUSTER (Elevation 1 & 2 — Student Alumni Center & Balay Panganan) ---
+  // --- NORTHWEST CLUSTER (Student Alumni Center @ Elev 1, Balay Panganan @ Elev 2) ---
   {
     id: 'b_alumni',
     name: 'STUDENT ALUMNI CENTER',
-    sub: 'Alum Lobby & CL Office (#1–2)',
+    sub: 'CL Office (#1) & Alum Lobby (#2)',
     elev: 1,
     x: 16,
     y: 15,
@@ -127,28 +144,28 @@ export const BUILDINGS = [
   {
     id: 'b_ib_north',
     name: 'ISKOLAR NG BAYAN BLDG',
-    sub: 'IB North Wing & Parking',
+    sub: 'Main Academic Wing (#11)',
     elev: 3,
     x: 36,
     y: 23,
     w: 15,
     d: 3,
-    h: 2.9,
-    wallColor: '#e4eaf0',
+    h: 3.1,
+    wallColor: '#f3ead8',
     roofColor: '#7b1113',
     doorX: 43,
   },
   {
     id: 'b_ib_west',
     name: 'IB LOBBY & INANG LAYA',
-    sub: 'Iskolar ng Bayan Hall (#11, #18)',
+    sub: 'Southwest Wing (#11 & #18)',
     elev: 3,
     x: 33,
     y: 26,
     w: 5,
     d: 4,
     h: 2.9,
-    wallColor: '#e4eaf0',
+    wallColor: '#efe5d2',
     roofColor: '#7b1113',
     doorX: 35,
   },
@@ -161,70 +178,83 @@ export const BUILDINGS = [
     y: 26,
     w: 4,
     d: 5,
-    h: 3.0,
-    wallColor: '#d9c5a9',
-    roofColor: '#3e2515',
+    h: 2.9,
+    wallColor: '#e6ded2',
+    roofColor: '#593a28',
     doorX: 27,
   },
 
-  // --- MIDDLE / WEST TERRACE (Elevation 1 — Cultural Hub, Library, CSS) ---
+  // --- WEST & SOUTH PERIMETER BUILDINGS ---
   {
     id: 'b_juanluna',
     name: 'BULWAGANG JUAN LUNA',
-    sub: 'Cultural Hub & Auditorium',
+    sub: 'Cultural Hub & Auditorium (#8)',
     elev: 1,
     x: 20,
     y: 33,
     w: 16,
     d: 5,
-    h: 2.7,
-    wallColor: '#bdbdbd',
-    roofColor: '#525252',
+    h: 2.8,
+    wallColor: '#d4d8dc',
+    roofColor: '#596068',
     doorX: 28,
   },
   {
     id: 'b_library',
     name: 'UP BAGUIO LIBRARY',
-    sub: 'University Library & Archives (#7)',
-    elev: 1,
+    sub: 'Main University Library (#7)',
+    elev: 0,
     x: 20,
-    y: 43,
+    y: 42,
     w: 14,
     d: 6,
-    h: 2.9,
-    wallColor: '#d8a58e',
-    roofColor: '#7b1113',
+    h: 3.0,
+    wallColor: '#e5b89b',
+    roofColor: '#8c3b2b',
     doorX: 27,
   },
-
-  // --- OUTER / LOWER PERIMETER (Elevation 0 — CSS, CAC, Teatro Amianan, Kiosk, Guardhouse, Dorms) ---
   {
     id: 'b_css',
     name: 'COLLEGE OF SOCIAL SCIENCES',
-    sub: 'CSS Courtyard & CSC (#4)',
+    sub: 'CSS & Cordillera Studies Center (#4)',
     elev: 0,
     x: 6,
     y: 29,
-    w: 7,
-    d: 16,
-    h: 2.8,
-    wallColor: '#b6bed8',
-    roofColor: '#465170',
-    doorX: 9,
+    w: 8,
+    d: 17,
+    h: 2.9,
+    wallColor: '#c5cde0',
+    roofColor: '#485470',
+    doorX: 10,
   },
   {
     id: 'b_cac',
     name: 'ARTS & COMMUNICATION (CAC)',
-    sub: 'CAC Dap-ay & Four Pillars (#6)',
+    sub: 'CAC & Dap-ay (#6)',
+    elev: 0,
+    x: 10,
+    y: 51,
+    w: 15,
+    d: 4,
+    h: 2.8,
+    wallColor: '#c5cde0',
+    roofColor: '#485470',
+    doorX: 18,
+  },
+  {
+    id: 'b_cac_wing',
+    name: 'CAC WEST WING',
+    sub: 'Fine Arts Studio',
     elev: 0,
     x: 10,
     y: 49,
-    w: 14,
-    d: 5,
-    h: 2.7,
-    wallColor: '#b9c0d8',
-    roofColor: '#4c5778',
-    doorX: 17,
+    w: 5,
+    d: 2,
+    h: 2.8,
+    wallColor: '#c5cde0',
+    roofColor: '#485470',
+    doorX: 12,
+    noSign: true,
   },
   {
     id: 'b_teatro',
@@ -232,7 +262,7 @@ export const BUILDINGS = [
     sub: 'Performing Arts Hall',
     elev: 0,
     x: 27,
-    y: 50,
+    y: 51,
     w: 11,
     d: 4,
     h: 2.7,
@@ -246,7 +276,7 @@ export const BUILDINGS = [
     sub: 'Driveway Kiosk (#16)',
     elev: 1,
     x: 66,
-    y: 22,
+    y: 20,
     w: 3,
     d: 3,
     h: 2.1,
@@ -260,41 +290,13 @@ export const BUILDINGS = [
     sub: 'Main Driveway Entrance',
     elev: 0,
     x: 74,
-    y: 22,
+    y: 20,
     w: 4,
     d: 3,
     h: 2.1,
     wallColor: '#eadbc2',
     roofColor: '#7b1113',
     doorX: 76,
-  },
-  {
-    id: 'b_dorm',
-    name: 'LADIES DORMITORY (BREHA)',
-    sub: 'South Annex Residence Hall',
-    elev: 0,
-    x: 46,
-    y: 55,
-    w: 11,
-    d: 4,
-    h: 2.6,
-    wallColor: '#e9d696',
-    roofColor: '#8d5b28',
-    doorX: 51,
-  },
-  {
-    id: 'b_walkup',
-    name: 'WALK-UP APARTMENT',
-    sub: 'South Annex Housing',
-    elev: 0,
-    x: 61,
-    y: 55,
-    w: 9,
-    d: 4,
-    h: 2.6,
-    wallColor: '#e9d696',
-    roofColor: '#8d5b28',
-    doorX: 65,
   },
 ];
 
@@ -305,7 +307,7 @@ export const NPCS = [
     role: 'Department of Biology · Project Saleng Lead',
     sprite: 'Princess',
     x: 67,
-    y: 35,
+    y: 30,
     dir: 'down',
   },
   {
@@ -322,17 +324,17 @@ export const NPCS = [
     name: 'Manong Ben',
     role: 'Oblation Driveway Guard',
     sprite: 'Inspector',
-    x: 75,
-    y: 26,
+    x: 76,
+    y: 24,
     dir: 'down',
   },
   {
     id: 'paolo',
     name: 'Paolo',
-    role: 'Dormitory Resident Student',
+    role: 'BA Communication Student · CAC Courtyard',
     sprite: 'Villager5',
-    x: 51,
-    y: 53,
+    x: 22,
+    y: 49,
     dir: 'up',
   },
   {
@@ -341,7 +343,7 @@ export const NPCS = [
     role: 'Court A Varsity Basketball Player',
     sprite: 'Boy',
     x: 46,
-    y: 41,
+    y: 40,
     dir: 'up',
   },
   {
@@ -403,10 +405,10 @@ export const PLANT_NODES = [
   {
     id: 'node_lagundi_dorm',
     plantId: 'lagundi',
-    x: 43,
-    y: 52,
+    x: 16,
+    y: 44,
     scale: 1.5,
-    questHint: 'Aromatic 5-leaflet Lagundi shrub in the South Dormitory Open Area',
+    questHint: 'Aromatic 5-leaflet Lagundi shrub on the CSS & Library Courtyard slope (#6 / #7)',
   },
   {
     id: 'node_sambong_cs',
@@ -430,7 +432,7 @@ export const PLANT_NODES = [
     x: 54,
     y: 40,
     scale: 1.3,
-    questHint: 'Low fan-leaved Takip-kuhol along the east drain of Open Court A (#21)',
+    questHint: 'Low fan-leaved Takip-kuhol along the east edge of Open Court A (#21)',
   },
   {
     id: 'node_benguet_lily_hill',
@@ -460,7 +462,7 @@ export const PLANT_NODES = [
     id: 'node_sapinit_hill',
     plantId: 'sapinit',
     x: 17,
-    y: 46,
+    y: 49,
     scale: 1.45,
     questHint: 'Wild Sapinit raspberry bramble near CAC Dap-ay (#6) & Library',
   },
@@ -469,15 +471,15 @@ export const PLANT_NODES = [
 export const SIGNS = [
   {
     x: 69,
-    y: 33,
-    title: 'Oblation Ground & Driveway Corridor (Elev 1)',
-    text: 'East Campus Entrance: Follow the Upper or Lower Driveway corridors west to climb into the Summit Quad (Elev 3), Open Court A (Elev 1), or head south to the Dormitory & Library.',
+    y: 28,
+    title: 'Oblation Ground (Between East Driveway Stairs · Elev 1)',
+    text: 'East Campus Entrance: The UP Oblation stands between the Upper and Lower Driveway stairs. Follow either corridor west to climb into the Summit Quad (Elev 3) or Open Court A (Elev 0).',
   },
   {
     x: 42,
     y: 42,
-    title: 'Open Court A (#21) & Summit Stairs (#20)',
-    text: 'North ↑ : Climb the west or east stairs up to the Iskolar ng Bayan & College of Science Summit Quad (Elev 3).\nWest ← : UPB Library (#7), Bulwagang Juan Luna & CSS.',
+    title: 'Open Court A (#21 · Elev 0) & Summit Stairs (#20)',
+    text: 'North ↑ : Climb the west or east stairs up to the Iskolar ng Bayan & College of Science Summit Quad (Elev 3).\nWest ← : UPB Library (#7), CAC (#6), Teatro Amianan, and CSS (#4).',
   },
   {
     x: 41,
@@ -492,25 +494,29 @@ export const SIGNS = [
     text: 'West ← : Step down the west stairs to the College of Social Sciences (CSS #4) and Woods behind CSS (#3).\nEast → : Climb up to Balay Panganan (#13) and the Summit Quad.',
   },
   {
-    x: 48,
-    y: 50,
-    title: 'South Dormitory Annex & CAC Promenade',
-    text: 'South ↓ : Ladies Dormitory (Breha) & Walk-up Apartment.\nWest ← : UP Baguio Library (#7), CAC (#6), and Teatro Amianan.',
+    x: 26,
+    y: 49,
+    title: 'UPB Library (#7), CAC Dap-ay (#6) & Teatro Promenade',
+    text: 'North ↑ : UP Baguio Main Library (#7).\nSouth ↓ : College of Arts & Communication (CAC #6) and Teatro Amianan.\nWest ← : College of Social Sciences (CSS #4).',
   },
 ];
 
 export function createCampusMap() {
   const tiles = [];
 
-  // Strict Orthogonal Nested Rectangular Terraces (matching the shades of green in the user's grid map):
-  //   - Elevation 0 (Outer light green): x=0..79, y=0..63
-  //   - Elevation 1 (Medium green rectangle): x=15..68, y=10..44 (except the SE white plaza/courtyard below y=43)
-  //   - Elevation 2 (Darker green rectangle): x=25..62, y=13..37 (wrapping Balay Panganan, Summit & Court A stage)
+  // Strict Orthogonal Nested Rectangular Terraces:
+  //   - Elevation 0 (Outer light green): North row, CSS, Library (lowered to Elev 0), CAC, Teatro, Open Court A floor (lowered to Elev 0), South Promenade
+  //   - Elevation 1 (Medium green): Student Alumni Center, Bulwagang Juan Luna, Open Court A North Bleachers, UPB Woods (#15/#17), Oblation Island (x=66..69)
+  //   - Elevation 2 (Darker green): Balay Panganan, North KA Rim, Upper Walkway above Court A Bleachers (y=33..35), East CS Spine
   //   - Elevation 3 (Darkest green Summit Crown): x=25..59, y=17..32 (Main Summit Academic Quad)
   function computeGridElevation(x, y) {
-    // Open Court A (x=39..52, y=38..42) sits in the lower basin at Elevation 1,
-    // with its north stage/bleachers (y=36..37) at Elevation 2!
+    // Open Court A floor (x=39..52, y=38..42) is lowered by 1 level to Elevation 0!
     if (x >= 39 && x <= 52 && y >= 38 && y <= 42) {
+      return 0;
+    }
+
+    // Open Court A north bleachers/stage (x=39..52, y=36..37) is lowered by 1 level to Elevation 1!
+    if (x >= 39 && x <= 52 && y >= 36 && y <= 37) {
       return 1;
     }
 
@@ -519,12 +525,17 @@ export function createCampusMap() {
       return 3;
     }
 
-    // Level 2: Upper-Middle Rectangular Terrace (Balay Panganan, North KA Rim, Court A Bleachers, East CS Walk)
-    if (x >= 25 && x <= 62 && y >= 13 && y <= 37) {
+    // Level 2: Upper-Middle Rectangular Terrace (Balay Panganan, North KA Rim, Upper Walkway y=33..35, East CS Spine)
+    if (x >= 25 && x <= 61 && y >= 13 && y <= 35) {
       return 2;
     }
 
-    // Level 1: Outer-Middle Rectangular Terrace (Alumni Center, Bulwagang Juan Luna, Library, East Woods)
+    // Library (x=20..33, y=42..47) and its east/south walkways are lowered by 1 level to Elevation 0!
+    if (x >= 19 && x <= 38 && y >= 41) {
+      return 0;
+    }
+
+    // Level 1: Outer-Middle Rectangular Terrace (Alumni Center, Bulwagang Juan Luna, UPB Woods #15/#17, Oblation Island)
     if (x >= 15 && x <= 69 && y >= 10 && y <= 42) {
       return 1;
     }
@@ -549,121 +560,118 @@ export function createCampusMap() {
     tiles.push(row);
   }
 
-  const setTile = (x, y, patch) => {
-    if (x >= 0 && x < MAP_W && y >= 0 && y < MAP_H) {
-      Object.assign(tiles[y][x], patch);
-      tiles[y][x].zone = getZoneName(x, y, tiles[y][x].elev);
+  const setTile = (x, y, props) => {
+    if (y >= 0 && y < MAP_H && x >= 0 && x < MAP_W) {
+      Object.assign(tiles[y][x], props);
     }
   };
 
-  const fillRect = (x0, y0, x1, y1, patch) => {
+  const fillRect = (x0, y0, x1, y1, props) => {
     for (let y = y0; y <= y1; y += 1) {
       for (let x = x0; x <= x1; x += 1) {
-        setTile(x, y, patch);
+        setTile(x, y, props);
       }
     }
   };
 
-  // Helper to build a multi-tile staircase ramp between any two elevations
-  // dir = 'north' (climbs toward -y), 'south' (climbs toward +y), 'west' (climbs toward -x), 'east' (climbs toward +x)
-  function buildStairRamp(x0, y0, x1, y1, fromElev, toElev, dir) {
-    const steps =
-      dir === 'north' || dir === 'south' ? Math.abs(y1 - y0) + 1 : Math.abs(x1 - x0) + 1;
+  // Helper to create a smooth multi-tile staircase ramp between `lowElev` and `highElev`
+  // `dir` is the direction pointing toward `highElev`: 'north' | 'south' | 'east' | 'west'
+  const buildStairRamp = (x0, y0, x1, y1, lowElev, highElev, dir) => {
+    const spanX = x1 - x0 + 1;
+    const spanY = y1 - y0 + 1;
+    const steps = dir === 'north' || dir === 'south' ? spanY : spanX;
     for (let y = y0; y <= y1; y += 1) {
       for (let x = x0; x <= x1; x += 1) {
-        let idx = 0;
-        if (dir === 'north') idx = y1 - y;
-        else if (dir === 'south') idx = y - y0;
-        else if (dir === 'west') idx = x1 - x;
-        else if (dir === 'east') idx = x - x0;
-        const frac = (idx + 0.5) / steps;
-        const elev = fromElev + (toElev - fromElev) * frac;
+        let t = 0.5;
+        if (dir === 'north') {
+          t = (y1 - y + 0.5) / steps;
+        } else if (dir === 'south') {
+          t = (y - y0 + 0.5) / steps;
+        } else if (dir === 'west') {
+          t = (x1 - x + 0.5) / steps;
+        } else if (dir === 'east') {
+          t = (x - x0 + 0.5) / steps;
+        }
+        const elev = lowElev + (highElev - lowElev) * t;
+        const stepH = (highElev - lowElev) / steps;
         setTile(x, y, {
           type: 'stair',
           elev,
-          stairStepH: Math.abs(toElev - fromElev) / steps,
+          stairStepH: stepH,
           stairDir: dir,
           solid: false,
         });
       }
     }
-  }
+  };
 
-  // Outer Map Border Solid
-  for (let y = 0; y < MAP_H; y += 1) {
-    setTile(0, y, { solid: true });
-    setTile(MAP_W - 1, y, { solid: true });
-  }
-  for (let x = 0; x < MAP_W; x += 1) {
-    setTile(x, 0, { solid: true });
-    setTile(x, MAP_H - 1, { solid: true });
-  }
-
-  // =========================================================================
-  // WHITE ORTHOGONAL WALKWAYS & PLAZAS (Directly matching the user's grid map)
-  // =========================================================================
-
-  // 1. NORTH WALKWAY (under Himnasyo Amianan & Biodiversity Research Center, Elev 0)
+  // 1. NORTH ROW WALKWAYS & CENTRAL NORTH STAIRCASE (Himnasyo Amianan & Biodiversity Research Center)
   fillRect(38, 8, 51, 9, { type: 'path', elev: 0, solid: false });
-  // Vertical path on East edge from Biodiversity Research Center down into East Spine
-  fillRect(60, 10, 61, 16, { type: 'path', elev: 1, solid: false });
-  buildStairRamp(60, 10, 61, 10, 0, 1, 'south'); // Step up from Biodiversity (Elev 0) to Elev 1
+  // Central North Staircase climbing South from North Row (y=8..9, Elev 0) up to North KA Rim (y=16, Elev 2)
+  buildStairRamp(46, 10, 47, 12, 0, 1, 'south');
+  buildStairRamp(46, 13, 47, 15, 1, 2, 'south');
+  // Long horizontal white walkway along North Rim of Kolehiyo ng Agham (x=36..61, y=16, Elev 2)
+  fillRect(36, 16, 61, 16, { type: 'path', elev: 2, solid: false });
+  // North-East connector walkway from Biodiversity South Door (x=60..61, y=10..15) climbing south
+  fillRect(60, 10, 61, 13, { type: 'path', elev: 1, solid: false });
+  buildStairRamp(60, 10, 61, 11, 0, 1, 'south');
+  buildStairRamp(60, 14, 61, 15, 1, 2, 'south');
 
-  // Staircase going SOUTH from Himnasyo Walkway (x=46..47, y=10..15) climbing Elev 0 -> 1 -> 2 -> 3!
-  buildStairRamp(46, 10, 47, 15, 0, 3, 'south');
+  // 2. SUMMIT CROWN QUAD (Elevation 3 — Main White Academic Courtyard x=25..59, y=18..32)
+  fillRect(25, 18, 35, 19, { type: 'path', elev: 3, solid: false });
+  fillRect(25, 18, 59, 32, { type: 'plaza', elev: 3, solid: false });
+  // Staircase connecting North KA Rim (x=36..37, y=16, Elev 2) up into Summit Quad (y=17..20, Elev 3)
+  buildStairRamp(36, 17, 37, 19, 2, 3, 'south');
+  fillRect(33, 18, 35, 19, { type: 'path', elev: 3, solid: false });
 
-  // 2. SUMMIT CROWN WHITE COURTYARD & PROMENADES (Elevation 3)
-  // Main white summit courtyard rectangle: x=25..58, y=19..32
-  fillRect(25, 19, 58, 32, { type: 'plaza', elev: 3, solid: false });
-  // Narrow white walkway along the North side of KA (x=35..61, y=16)
-  fillRect(35, 16, 59, 16, { type: 'path', elev: 3, solid: false });
-  // Staircase between Balay Panganan (Elev 2) and Summit Quad (Elev 3) at x=35..36, y=17..19
-  fillRect(25, 18, 34, 19, { type: 'path', elev: 2, solid: false }); // Balay Panganan south apron
-  buildStairRamp(35, 18, 35, 19, 2, 3, 'east');
+  // 3. NORTHWEST TERRACE: STUDENT ALUMNI CENTER, GREY COURTYARD, & WEST STAIRS TO CSS
+  // Short stairs east of Student Alumni Center (x=23..24, y=18..19) climbing from Elev 1 -> Elev 2/3
+  buildStairRamp(23, 18, 24, 19, 1, 2, 'east');
+  buildStairRamp(25, 18, 26, 19, 2, 3, 'east');
+  // Grey Courtyard south of Student Alumni Center (x=19..21, y=20..25, Elev 1)
+  fillRect(19, 20, 21, 25, { type: 'road', elev: 1, solid: false });
+  // Long West Staircase descending from Alumni Grey Courtyard (x=18, Elev 1) to CSS North Landing (x=13, Elev 0)
+  buildStairRamp(13, 24, 18, 25, 0, 1, 'east');
+  // White square landing pad north of CSS (x=9..12, y=24..28, Elev 0)
+  fillRect(9, 24, 12, 28, { type: 'path', elev: 0, solid: false });
 
-  // 3. NORTHWEST ALUMNI CENTER & CSS STAIRS
-  // Staircase between Alumni Center (Elev 1) and Summit Quad (Elev 3) at x=23..24, y=19..20
-  buildStairRamp(23, 19, 24, 20, 1, 3, 'east');
-  // Grey/white courtyard south of Student Alumni Center (x=19..21, y=20..25, Elev 1)
-  fillRect(19, 20, 21, 25, { type: 'plaza', elev: 1, solid: false });
-  // Long horizontal staircase going WEST from Alumni Courtyard down to CSS north landing (x=12..18, y=24..25)
-  buildStairRamp(12, 24, 18, 25, 0, 1, 'east');
-  // White landing north of CSS (x=9..11, y=24..28, Elev 0)
-  fillRect(9, 24, 11, 28, { type: 'path', elev: 0, solid: false });
-
-  // 4. EAST VERTICAL SPINE & TWO PARALLEL DRIVEWAY STAIR CORRIDORS
-  // Vertical spine east of College of Science (x=60..61, y=16..34)
+  // 4. EAST VERTICAL SPINE, TWO PARALLEL DRIVEWAY STAIR CORRIDORS, & OBLATION STATUE IN THE MIDDLE
+  // Vertical spine east of College of Science (x=60..61, y=17..33)
   buildStairRamp(60, 17, 61, 18, 1, 2, 'south');
-  fillRect(60, 19, 61, 26, { type: 'path', elev: 2, solid: false });
-  // Bridge from Summit Quad (x=59, y=26..27) to East Spine (x=60..61)
-  buildStairRamp(59, 26, 59, 27, 2, 3, 'west');
-  fillRect(60, 27, 61, 32, { type: 'path', elev: 2, solid: false });
+  fillRect(60, 19, 61, 33, { type: 'path', elev: 2, solid: false });
+  // Bridges from Summit Quad (x=59) to East Spine (x=60..61) aligned with the two driveway corridors
+  buildStairRamp(59, 25, 59, 26, 2, 3, 'west');
+  buildStairRamp(59, 31, 59, 32, 2, 3, 'west');
 
-  // Upper East Horizontal Driveway Corridor (y=26..27, x=62..79) descending Eastward from Elev 2 -> 1 -> 0
-  buildStairRamp(62, 26, 65, 27, 1, 2, 'west');
-  fillRect(66, 26, 69, 27, { type: 'path', elev: 1, solid: false });
-  buildStairRamp(70, 26, 73, 27, 0, 1, 'west');
-  fillRect(74, 26, 78, 27, { type: 'path', elev: 0, solid: false });
+  // Upper East Horizontal Driveway Corridor (y=25..26, x=62..78) descending Eastward from Elev 2 -> 1 -> 0
+  buildStairRamp(62, 25, 65, 26, 1, 2, 'west');
+  fillRect(66, 25, 69, 26, { type: 'path', elev: 1, solid: false });
+  buildStairRamp(70, 25, 73, 26, 0, 1, 'west');
+  fillRect(74, 25, 78, 26, { type: 'path', elev: 0, solid: false });
 
-  // Lower East Horizontal Driveway Corridor (y=31..32, x=62..79) descending Eastward from Elev 2 -> 1 -> 0
-  buildStairRamp(62, 31, 65, 32, 1, 2, 'west');
-  fillRect(66, 31, 69, 32, { type: 'path', elev: 1, solid: false });
-  buildStairRamp(70, 31, 73, 32, 0, 1, 'west');
-  fillRect(74, 31, 78, 32, { type: 'path', elev: 0, solid: false });
+  // Lower East Horizontal Driveway Corridor (y=32..33, x=62..78) descending Eastward from Elev 2 -> 1 -> 0
+  buildStairRamp(62, 32, 65, 33, 1, 2, 'west');
+  fillRect(66, 32, 69, 33, { type: 'path', elev: 1, solid: false });
+  buildStairRamp(70, 32, 73, 33, 0, 1, 'west');
+  fillRect(74, 32, 78, 33, { type: 'path', elev: 0, solid: false });
 
-  // Vertical white walkway connecting Lower East Driveway down to the Main South Promenade (x=74..75, y=33..44, Elev 0)
-  fillRect(74, 33, 75, 44, { type: 'path', elev: 0, solid: false });
+  // UP OBLATION PLAZA & STATUE RIGHT IN THE MIDDLE BETWEEN THE TWO DRIVEWAY STAIRS (x=66..69, y=27..31, Elev 1)!
+  fillRect(66, 27, 69, 31, { type: 'plaza', elev: 1, solid: false });
+  fillRect(67, 28, 68, 28, { type: 'plaza', elev: 1, solid: true }); // Oblation Pedestal in the middle of the two stairs
 
-  // Zigzag Eastern Staircase descending from East Spine (x=60..61, y=33..37) to (x=62..63, y=37..42) down to South Promenade (y=43, Elev 0)
-  buildStairRamp(60, 33, 61, 36, 1, 2, 'north');
+  // Vertical white walkway connecting Lower East Driveway down to the Main South Promenade (x=74..75, y=34..44, Elev 0)
+  fillRect(74, 34, 75, 44, { type: 'path', elev: 0, solid: false });
+
+  // Zigzag Eastern Staircase descending from East Spine (x=60..61, y=34..37) to (x=62..63, y=37..42) down to South Promenade (y=43, Elev 0)
+  buildStairRamp(60, 34, 61, 36, 1, 2, 'north');
   fillRect(60, 37, 63, 38, { type: 'path', elev: 1, solid: false });
   buildStairRamp(62, 39, 63, 42, 0, 1, 'north');
 
-  // 5. OPEN COURT A (Dark Grey Court + Blue-Grey North Bleachers/Stage) & FLANKING STAIRS
-  // Blue-grey bleachers/stage at north edge of Open Court A (x=39..52, y=36..37, Elev 2)
-  fillRect(39, 36, 52, 37, { type: 'court_stage', elev: 2, solid: false });
-  // Dark grey Open Court A floor (x=39..52, y=38..42, Elev 1)
-  fillRect(39, 38, 52, 42, { type: 'court', elev: 1, solid: false });
+  // 5. OPEN COURT A (LOWERED BY 1 LEVEL: Floor @ Elev 0, North Bleachers/Stage @ Elev 1) & FLANKING STAIRS
+  // Blue-grey bleachers/stage at north edge of Open Court A (x=39..52, y=36..37, Elev 1)
+  fillRect(39, 36, 52, 37, { type: 'court_stage', elev: 1, solid: false });
+  // Dark grey Open Court A basketball floor (x=39..52, y=38..42, Elev 0 — flush with South Promenade!)
+  fillRect(39, 38, 52, 42, { type: 'court', elev: 0, solid: false });
 
   // White walkway above the bleachers (x=39..57, y=35, Elev 2) with short stairs up to Summit Quad (x=56..57, y=33..34)
   fillRect(39, 35, 57, 35, { type: 'path', elev: 2, solid: false });
@@ -672,41 +680,29 @@ export function createCampusMap() {
   // Long West Staircase alongside Open Court A (x=37..38, y=33..42) connecting Summit Quad (y=32, Elev 3) down to South Promenade (y=43, Elev 0)!
   buildStairRamp(37, 33, 38, 34, 2, 3, 'north');
   fillRect(37, 35, 38, 35, { type: 'path', elev: 2, solid: false });
-  buildStairRamp(37, 36, 38, 38, 1, 2, 'north');
-  fillRect(37, 39, 38, 40, { type: 'path', elev: 1, solid: false });
-  buildStairRamp(37, 41, 38, 42, 0, 1, 'north');
+  buildStairRamp(37, 36, 38, 37, 1, 2, 'north');
+  fillRect(37, 38, 38, 38, { type: 'path', elev: 1, solid: false });
+  buildStairRamp(37, 39, 38, 41, 0, 1, 'north');
+  fillRect(37, 42, 38, 42, { type: 'path', elev: 0, solid: false });
 
-  // Connect Open Court A (Elev 1) into the West Stair landing at (37..38, 39..40)
-  fillRect(39, 39, 39, 40, { type: 'court', elev: 1, solid: false });
-
-  // 6. SOUTH PROMENADE, LIBRARY / CAC / TEATRO COURTYARDS, & OBLATION / DORMITORY PLAZA (Elevation 0 & 1)
+  // 6. SOUTH PROMENADE & STEPPED WHITE PATH AROUND CSS, LIBRARY (Elev 0), CAC, & TEATRO AMIANAN
   // Long horizontal South Promenade below Open Court A (x=34..75, y=43..44, Elev 0)
   fillRect(34, 43, 75, 44, { type: 'path', elev: 0, solid: false });
 
-  // Step up from South Promenade (x=34..36, y=43, Elev 0) to Library East Apron (Elev 1)
-  buildStairRamp(34, 42, 35, 42, 0, 1, 'north');
-  fillRect(19, 39, 35, 41, { type: 'path', elev: 1, solid: false }); // Walkway between Bulwagang Juan Luna & Library
-
-  // Southwest White Walkways wrapping CSS, Library, CAC, and Teatro Amianan (Elev 0)
-  fillRect(6, 45, 18, 48, { type: 'path', elev: 0, solid: false }); // South of CSS, North of CAC
-  fillRect(6, 49, 9, 54, { type: 'path', elev: 0, solid: false }); // West of CAC
-  fillRect(18, 47, 37, 49, { type: 'path', elev: 0, solid: false }); // Corridor between Library (N) and CAC/Teatro (S)
-  fillRect(34, 44, 37, 49, { type: 'path', elev: 0, solid: false }); // East of Library connecting to South Promenade
-
-  // Large White Oblation & South Annex Plaza in the Southeast (x=40..77, y=46..61, Elev 0)
-  fillRect(40, 46, 76, 61, { type: 'plaza', elev: 0, solid: false });
-  // Connector between South Promenade (y=44) and SE Plaza (y=46)
-  fillRect(48, 44, 54, 46, { type: 'path', elev: 0, solid: false });
-  fillRect(72, 44, 75, 46, { type: 'path', elev: 0, solid: false });
-
-  // Iconic UP Oblation Monument Pedestal at (67..68, 33) on the Elev 1 Driveway Plaza!
-  fillRect(65, 33, 69, 37, { type: 'plaza', elev: 1, solid: false });
-  fillRect(67, 33, 68, 33, { type: 'plaza', elev: 1, solid: true });
+  // Exact stepped white path inside the green circle (all at Elev 0, flush with Library, CSS, CAC, and Teatro):
+  // - Wide vertical white path along East side of Library (x=34..37, y=42..50, Elev 0)
+  fillRect(34, 42, 37, 50, { type: 'path', elev: 0, solid: false });
+  // - Horizontal white corridor between Library (y=42..47) and CAC / Teatro (y=51..54): x=15..37, y=48..50 (Elev 0)
+  fillRect(15, 48, 37, 50, { type: 'path', elev: 0, solid: false });
+  // - Upper-left white plaza directly under CSS (x=6..13, y=29..45) and above CAC's NW wing (x=10..14, y=49..50): x=6..17, y=46..48 (Elev 0)
+  fillRect(6, 46, 17, 48, { type: 'path', elev: 0, solid: false });
+  // - Left vertical white path along the west edge of CAC (x=6..9, y=46..54, Elev 0)
+  fillRect(6, 46, 9, 54, { type: 'path', elev: 0, solid: false });
 
   // 7. Tall Grass Patches (Wild Flora Encounters in the green terrace pockets)
   fillRect(10, 18, 13, 22, { type: 'tall_grass', elev: 0 }); // Woods behind CSS (#3)
   fillRect(54, 36, 58, 39, { type: 'tall_grass', elev: 1 }); // UPB Woods beside Court A (#15 / #17)
-  fillRect(41, 51, 44, 55, { type: 'tall_grass', elev: 0 }); // South Dormitory Open Area
+  fillRect(15, 42, 18, 45, { type: 'tall_grass', elev: 0 }); // CSS & Library herbal slope (Lagundi)
   fillRect(63, 12, 66, 16, { type: 'tall_grass', elev: 1 }); // Lower KA / Biodiversity slope (#14)
 
   // 8. Stamp Building Footprints AND a 1-tile foundation apron around each building to its exact `b.elev`
@@ -741,69 +737,60 @@ export function createCampusMap() {
 
   const pineCoords = [
     [9, 14], [12, 15], [8, 20], // Woods behind CSS (#3)
-    [55, 38], [58, 40], [65, 38], // UPB Woods (#15 / #17)
+    [55, 38], [58, 40], [65, 36], // UPB Woods (#15 / #17)
     [34, 5], [67, 6], [66, 14], // North HK / Biodiversity woods
-    [16, 40], [42, 49], [74, 50],
+    [16, 39], [45, 48], [60, 48],
   ];
   for (const [x, y] of pineCoords) addProp('pine', x, y);
 
   const sunflowerCoords = [
-    [40, 21], [49, 21], [31, 29], [53, 39], [65, 35], [16, 45], [44, 54],
+    [40, 21], [49, 21], [31, 29], [53, 39], [64, 29], [16, 43],
   ];
   for (const [x, y] of sunflowerCoords) addProp('sunflower_deco', x, y);
 
   const benchCoords = [
-    [65, 34], [69, 34], // Oblation Plaza benches
+    [66, 29], [69, 29], // Oblation Plaza benches (between the two East Driveway stairs)
     [41, 30], [48, 30], // Summit IB Quad benches
-    [25, 41], [31, 41], // Library Courtyard benches
+    [20, 49], [30, 49], // Library & CAC Promenade benches
   ];
   for (const [x, y] of benchCoords) addProp('bench', x, y);
-
-  // Mark Signs, Plant Nodes, and NPCs solid
-  for (const s of SIGNS) setTile(s.x, s.y, { solid: true });
-  for (const p of PLANT_NODES) setTile(p.x, p.y, { solid: true });
-  for (const n of NPCS) setTile(n.x, n.y, { solid: true });
-
-  function tileAt(x, y) {
-    if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return null;
-    return tiles[y][x];
-  }
-
-  function canStep(fromX, fromY, toX, toY) {
-    const a = tileAt(fromX, fromY);
-    const b = tileAt(toX, toY);
-    if (!a || !b || b.solid) return false;
-    if (a.type === 'stair' || b.type === 'stair') {
-      return Math.abs(a.elev - b.elev) <= 1.05;
-    }
-    return Math.abs(a.elev - b.elev) < 0.15;
-  }
 
   return {
     w: MAP_W,
     h: MAP_H,
+    spawn: PLAYER_SPAWN,
     tiles,
+    buildings: BUILDINGS,
+    npcs: NPCS,
+    plantNodes: PLANT_NODES,
+    signs: SIGNS,
     props,
-    spawn: { x: 67, y: 37, dir: 'up' },
-    tileAt,
-    canStep,
+    tileAt(x, y) {
+      if (y < 0 || y >= MAP_H || x < 0 || x >= MAP_W) return null;
+      return tiles[y][x];
+    },
+    canStep(fromX, fromY, toX, toY) {
+      const a = this.tileAt(fromX, fromY);
+      const b = this.tileAt(toX, toY);
+      if (!a || !b || b.solid) return false;
+      if (a.type === 'stair' || b.type === 'stair') {
+        return Math.abs(a.elev - b.elev) <= 1.05;
+      }
+      return Math.abs(a.elev - b.elev) <= 0.45;
+    },
   };
 }
 
 function getZoneName(x, y, elev) {
-  const e = Math.round(elev);
-  if (y <= 11 && x >= 36) return 'North Campus · Himnasyo Amianan & Biodiversity Ctr (Elev 0)';
-  if (y >= 46 && x >= 40) return 'Southeast Plaza & Dormitory Annex (Elev 0)';
-  if (x >= 62 && y >= 21 && y <= 38) return 'East Driveway Corridors & Oblation Ground (Elev 0–1)';
-  if (x >= 37 && x <= 55 && y >= 35 && y <= 43) return 'Open Court A (#21) & Bleachers (Elev 1–2)';
-  if (e === 3) {
-    if (x <= 31) return 'Summit West · Museo Kordilyera & IM (Elev 3)';
-    if (y <= 22) return 'Summit North · KA, Balay Salun-at & CS (Elev 3)';
-    return 'Summit Quad · Iskolar ng Bayan & Inang Laya (Elev 3)';
-  }
-  if (x <= 32 && y <= 25) return 'NW Terrace · Student Alumni Ctr & Balay Panganan (Elev 1–2)';
-  if (x <= 15 && y >= 25) return 'West Perimeter · College of Social Sciences (CSS · Elev 0)';
-  if (y >= 45 && x <= 39) return 'SW Promenade · CAC Dap-ay & Teatro Amianan (Elev 0)';
-  if (x >= 18 && x <= 37 && y >= 32) return 'Middle Terrace · Bulwagang Juan Luna & Library (Elev 1)';
-  return 'UP Baguio Terraced Grounds';
+  if (y <= 11 && x >= 36 && x <= 66) return 'North Campus · Himnasyo Amianan & Biodiversity Research Ctr (Elev 0)';
+  if (x >= 60 && y >= 20 && y <= 35) return 'East Driveway Stairs & Oblation Ground (Elev 0–2)';
+  if (x >= 37 && x <= 55 && y >= 35 && y <= 44) return 'Open Court A (#21 · Elev 0) & North Bleachers (Elev 1)';
+  if (x >= 53 && x <= 68 && y >= 35 && y <= 43) return 'UPB Woods (#15 / #17 · Elev 1)';
+  if (x <= 15 && y >= 24 && y <= 46) return 'College of Social Sciences (CSS #4) & Woods (#3) (Elev 0)';
+  if (x >= 6 && x <= 38 && y >= 41) return 'UPB Library (#7), CAC Dap-ay (#6) & Teatro Amianan (Elev 0)';
+  if (x >= 15 && x <= 31 && y >= 12 && y <= 25) return 'NW Terrace · Student Alumni Ctr & Balay Panganan (Elev 1–2)';
+  if (elev >= 3) return 'Summit Quad · Iskolar ng Bayan, KA & CS (Elev 3)';
+  if (elev === 2) return 'Upper Terrace · Balay Panganan & KA North Rim (Elev 2)';
+  if (elev === 1) return 'Middle Terrace · Bulwagang Juan Luna & Alumni Ctr (Elev 1)';
+  return 'UP Baguio Campus Grounds (Elev 0)';
 }

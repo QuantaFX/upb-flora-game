@@ -20,23 +20,29 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: 1280, height: 760 } });
 
 const errors = [];
-page.on('pageerror', (e) => errors.push(String(e)));
+page.on('pageerror', (e) => {
+  console.error('PAGEERROR:', e);
+  errors.push(String(e));
+});
 page.on('console', (m) => {
-  if (m.type() === 'error') errors.push(m.text());
+  if (m.type() === 'error') {
+    console.error('CONSOLE ERROR:', m.text());
+    errors.push(m.text());
+  }
 });
 
 await page.goto(url, { waitUntil: 'networkidle' });
 await page.waitForFunction(() => Boolean(window.__game));
 await page.waitForTimeout(400);
 
-// 1. Start Fieldwork -> Oblation Ground & East Driveway Corridors (x=67, y=37)
+// 1. Start Fieldwork -> Oblation Ground between the two East Driveway stairs (x=67, y=32)
 await page.fill('#player-name-input', 'Isko');
 await page.click('#btn-start-game');
 await page.waitForTimeout(450);
 await page.screenshot({ path: 'shots/grid-01-oblation-driveway.png' });
 
-// 2. Talk to Prof. Dulay at (67, 35) -> player at (67, 36)
-await page.evaluate(() => window.__game.teleportTo(67, 36, 'up'));
+// 2. Talk to Prof. Dulay at (67, 30) -> player at (67, 31)
+await page.evaluate(() => window.__game.teleportTo(67, 31, 'up'));
 await page.waitForTimeout(250);
 await page.click('#btn-interact');
 for (let i = 0; i < 8; i += 1) {
@@ -46,27 +52,27 @@ for (let i = 0; i < 8; i += 1) {
   await page.waitForTimeout(100);
 }
 
-// 3. View Open Court A (dark grey court + blue-grey north bleachers + flanking stairs)
+// 3. View Open Court A lowered by 1 level (court @ Elev 0 flush with South Promenade, north bleachers @ Elev 1)
 await page.evaluate(() => window.__game.teleportTo(45, 41, 'up'));
 await page.waitForTimeout(350);
 await page.screenshot({ path: 'shots/grid-02-open-court-a-and-stairs.png' });
 
-// 4. View Summit Crown Quad (Elev 3: KA, IB, CS, IM, UHS, Museo Kordilyera)
-await page.evaluate(() => window.__game.teleportTo(43, 29, 'up'));
+// 4. View fixed CSS, Library (Elev 0), L-shaped CAC, Teatro, and stepped white path
+await page.evaluate(() => window.__game.teleportTo(18, 49, 'up'));
 await page.waitForTimeout(350);
-await page.screenshot({ path: 'shots/grid-03-summit-quad.png' });
+await page.screenshot({ path: 'shots/grid-03-css-library-cac-path.png' });
 
-// 5. View NW Cluster (Student Alumni Center, Balay Panganan, and stairs down to CSS)
-await page.evaluate(() => window.__game.teleportTo(21, 22, 'up'));
+// 5. View CSS building & CAC L-corner white path
+await page.evaluate(() => window.__game.teleportTo(12, 47, 'up'));
 await page.waitForTimeout(350);
-await page.screenshot({ path: 'shots/grid-04-alumni-balay-panganan.png' });
+await page.screenshot({ path: 'shots/grid-04-css-and-cac-corner.png' });
 
-// 6. Verify BFS path reachability from Oblation Spawn (67, 37) to all 10 NPCs and all 9 Plant Nodes!
+// 6. Verify BFS path reachability from Oblation Spawn (67, 32) to all 10 NPCs and all 9 Plant Nodes!
 const check = await page.evaluate(() => {
   const map = window.__game.map;
   const visited = new Set();
-  const queue = [[67, 37]];
-  visited.add('67,37');
+  const queue = [[67, 32]];
+  visited.add('67,32');
 
   while (queue.length > 0) {
     const [x, y] = queue.shift();
@@ -89,9 +95,15 @@ const check = await page.evaluate(() => {
     reachable: isAdjacentVisited(e.actor.tileX, e.actor.tileY),
   }));
 
+  const plants = map.plantNodes.map((p) => ({
+    id: p.id,
+    reachable: isAdjacentVisited(p.x, p.y),
+  }));
+
   return {
     tilesVisited: visited.size,
     unreachableNpcs: npcs.filter((n) => !n.reachable),
+    unreachablePlants: plants.filter((p) => !p.reachable),
   };
 });
 console.log('Strict Grid Map Reachability:', JSON.stringify(check));
@@ -99,8 +111,12 @@ console.log('Strict Grid Map Reachability:', JSON.stringify(check));
 await browser.close();
 await server.close();
 
-if (errors.length > 0 || check.unreachableNpcs.length > 0) {
-  console.error('Errors or unreachable NPCs:', errors, check.unreachableNpcs);
+if (
+  errors.length > 0 ||
+  check.unreachableNpcs.length > 0 ||
+  check.unreachablePlants.length > 0
+) {
+  console.error('Errors:', errors, check);
   process.exit(1);
 }
 console.log('Strict grid map smoke test passed with 0 errors!');

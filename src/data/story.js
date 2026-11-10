@@ -144,7 +144,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           },
           {
             speaker: npc.name,
-            text: `• Ladies Dormitory (South Annex, Elev 0): Your friend Paolo has a stubborn cough.\n• Oblation Driveway Gate (SE, Elev 0): Guard Manong Ben needs a diuretic herb from the Summit KA/CS Quad (Elev 3).\n• Open Court A (Middle Terrace, Elev 2): Varsity player Kiko scraped his knee.\n• Balay Panganan / Cafeteria (Summit Crown, Elev 3): Ate Lorna’s son Jun-jun has stomach cramps.`,
+            text: `• Library & CAC Courtyard (#6 / #7, Elev 0): Your classmate Paolo has a stubborn cough.\n• Oblation Driveway Gate (East, Elev 0): Guard Manong Ben needs a diuretic herb from the Summit KA/CS Quad (Elev 3).\n• Open Court A (#21, Elev 0): Varsity player Kiko scraped his knee.\n• Balay Panganan / Cafeteria (#13, Elev 2–3): Ate Lorna’s son Jun-jun has stomach cramps.`,
             onFinish: () => {
               state.setQuestStatus('m1_saleng', 'completed');
               callbacks.toast('🌟 Mission 1 Complete! Campus Herbal Missions M2–M6 Unlocked!');
@@ -222,18 +222,18 @@ export function getNpcDialogPages(npc, state, callbacks) {
         return [
           {
             speaker: npc.name,
-            text: `*Cough, cough!* Hey roomie ${player}... this chilly Baguio evening air got my throat acting up. No high fever, just an annoying dry cough before our Bio exam.`,
+            text: `*Cough, cough!* Hey classmate ${player}... studying late at the UPB Library in this chilly Baguio fog got my throat acting up. No high fever, just an annoying dry cough before our Bio exam.`,
           },
           {
             speaker: npc.name,
-            text: `Nurse Ruth said the Department of Health (DOH) recommends a leaf decoction from a native 5-leaflet shrub with lavender flowers growing right here in our Dormitory Herbal Plot!`,
+            text: `Nurse Ruth said the Department of Health (DOH) recommends a leaf decoction from a native 5-leaflet shrub with lavender flowers growing right here on the CSS & Library Courtyard slope!`,
           },
           {
             speaker: npc.name,
-            text: `Could you examine the shrub just west of the dorm (look for the 5 palmate leaflets), identify it, and collect fresh leaves for a warm tea?`,
+            text: `Could you examine the shrub just west of the Library (look for the 5 palmate leaflets), identify it, and collect fresh leaves for a warm tea?`,
             onFinish: () => {
               state.setQuestStatus('m2_lagundi', 'active');
-              callbacks.toast('📋 Mission 2 Started: Ubo sa Dorm (Find Lagundi)');
+              callbacks.toast('📋 Mission 2 Started: Ubo sa Library Courtyard (Find Lagundi)');
             },
           },
         ];
@@ -243,7 +243,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           return [
             {
               speaker: npc.name,
-              text: `*Cough!* The shrub is right beside our Breha Dormitory garden (west side). Look for leaves divided into 5 narrow leaflets like fingers on a hand!`,
+              text: `*Cough!* The shrub is right between the Library (#7) and CSS (#4) on the west garden slope. Look for leaves divided into 5 narrow leaflets like fingers on a hand!`,
             },
           ];
         }

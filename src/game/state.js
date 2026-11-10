@@ -16,12 +16,12 @@ export const QUEST_DEFS = [
   {
     id: 'm2_lagundi',
     code: 'M2',
-    title: 'Ubo sa Dorm (Dormitory Cough)',
-    giver: 'Paolo (Dorm Roommate)',
+    title: 'Ubo sa Library Courtyard (Campus Cough)',
+    giver: 'Paolo (CAC / Library Student)',
     plantId: 'lagundi',
-    locationHint: 'Ladies Dormitory & Walk-up Compound (South Annex · Elev 0)',
+    locationHint: 'UPB Library (#7) & CAC Dap-ay Courtyard (#6 · Elev 0)',
     summary:
-      'Your friend Paolo at the South Dormitory Compound has a dry cough from studying in the Baguio mist. Identify & harvest five-leaflet Lagundi (Dangla) in the Open Area beside the Dormitory.',
+      'Your classmate Paolo outside the UPB Library & CAC Courtyard has a dry cough from studying in the Baguio mist. Identify & harvest five-leaflet Lagundi (Dangla) on the slope between CSS and the Library.',
   },
   {
     id: 'm3_sambong',
@@ -49,9 +49,9 @@ export const QUEST_DEFS = [
     title: 'Gasgas sa Court A (Varsity Scrape)',
     giver: 'Kiko & Nurse Ruth',
     plantId: 'takip_kuhol',
-    locationHint: 'Open Court A (#21, Middle Terrace · Elev 2)',
+    locationHint: 'Open Court A (#21 · Elev 0) & UPB Woods (#17 · Elev 1)',
     summary:
-      'Kiko scraped his knee during practice at Open Court A (Middle Terrace, Elev 2). After washing the wound with soap and water, find fan-leaved Takip-kuhol near the Court A steps.',
+      'Kiko scraped his knee during practice at Open Court A (Elev 0). After washing the wound with soap and water, find fan-leaved Takip-kuhol along the east bank of Court A.',
   },
   {
     id: 'm6_benguet_lily',
@@ -243,7 +243,7 @@ export class GameState {
 
     // Check active medicinal quests first
     const activeOrder = [
-      ['m2_lagundi', 'lagundi', 'M2: Harvest Lagundi in South Dormitory Open Area for Paolo', 'M2: Deliver Lagundi leaves to Paolo at South Dormitory'],
+      ['m2_lagundi', 'lagundi', 'M2: Harvest Lagundi on the CSS & Library slope for Paolo', 'M2: Deliver Lagundi leaves to Paolo at Library/CAC Courtyard'],
       ['m3_sambong', 'sambong', 'M3: Climb to Summit KA/CS Quad (Elev 3) to find Sambong', 'M3: Bring Sambong back to Manong Ben at Oblation Gate'],
       ['m4_tsaang_gubat', 'tsaang_gubat', 'M4: Gather Tsaang Gubat beside Balay Panganan (Elev 3)', 'M4: Give Tsaang Gubat to Ate Lorna at Balay Panganan'],
       ['m5_takip_kuhol', 'takip_kuhol', 'M5: Find Takip-kuhol by Open Court A drain (Elev 2)', 'M5: Bring Takip-kuhol poultice leaves to Kiko at Court A'],
