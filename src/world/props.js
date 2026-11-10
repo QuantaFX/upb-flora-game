@@ -121,10 +121,10 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(bGroup);
   }
 
-  // 2. Iconic UP Oblation Monument in the Entrance Plaza (x=21..22, y=27)
+  // 2. Iconic UP Oblation Monument in the Oblation Ground (SE Entrance, x=42..43, y=21)
   {
     const obGroup = new THREE.Group();
-    obGroup.position.set(22, 0, 27.5);
+    obGroup.position.set(43, 0, 21.5);
 
     const pedMat = new THREE.MeshLambertMaterial({ color: '#d8d2c5' });
     const ped1 = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.45, 1.4), pedMat);
@@ -141,7 +141,6 @@ export function buildPropsAndBuildings(scene, map, assets) {
     sc.height = 48;
     const sg = sc.getContext('2d');
     sg.fillStyle = '#f7f5f0';
-    // Outstretched arms & upright figure
     sg.fillRect(13, 6, 6, 6); // head
     sg.fillRect(2, 13, 28, 4); // arms outstretched
     sg.fillRect(12, 13, 8, 16); // torso
@@ -156,6 +155,19 @@ export function buildPropsAndBuildings(scene, map, assets) {
     obGroup.add(statueMesh);
 
     group.add(obGroup);
+  }
+
+  // 2b. Four Pillars Monument near CAC Dap-ay (#6, SW Level 1 Terrace at x=13, y=28)
+  {
+    const fpGroup = new THREE.Group();
+    fpGroup.position.set(13.5, 1, 28.5);
+    const pillarMat = new THREE.MeshLambertMaterial({ color: '#e4ddd0' });
+    for (let i = 0; i < 4; i += 1) {
+      const p = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.8 + (i % 2) * 0.25, 0.28), pillarMat);
+      p.position.set((i - 1.5) * 0.45, 0.9, (i % 2) * 0.25);
+      fpGroup.add(p);
+    }
+    group.add(fpGroup);
   }
 
   // 3. Decorative Trees, Sunflowers, Benches from Ninja Adventure Tilesets

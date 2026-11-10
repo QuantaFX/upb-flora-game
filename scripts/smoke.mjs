@@ -1,6 +1,4 @@
-// End-to-end Playwright smoke & visual verification test for UP Baguio Flora Quest.
-// Starts Vite dev server, captures screenshots across the title screen, Oblation Plaza,
-// Prof. Dulay dialog, Pokemon-style plant encounter, Herbarium journal, and medicinal quests.
+// End-to-end Playwright smoke & visual verification test for the 4-level concentric UP Baguio map.
 
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
@@ -31,114 +29,113 @@ await page.goto(url, { waitUntil: 'networkidle' });
 await page.waitForFunction(() => Boolean(window.__game));
 await page.waitForTimeout(400);
 
-// 1. Title screen screenshot
+// 1. Title screen
 await page.screenshot({ path: 'shots/demo-01-title.png' });
 
-// 2. Click Start Fieldwork -> Oblation Plaza
+// 2. Click Start Fieldwork -> Oblation Ground (SE Driveway Entrance, Elev 0)
 await page.fill('#player-name-input', 'Isko');
 await page.click('#btn-start-game');
 await page.waitForTimeout(500);
-await page.screenshot({ path: 'shots/demo-02-oblation-plaza.png' });
+await page.screenshot({ path: 'shots/demo-02-oblation-ground.png' });
 
-// 3. Walk up to Prof. Dulay (19, 27) and start Mission 1
-await page.evaluate(() => window.__game.teleportTo(19, 28, 'up'));
-await page.waitForTimeout(300);
+// 3. Talk to Prof. Dulay at (42, 22) -> player stands at (42, 23)
+await page.evaluate(() => window.__game.teleportTo(42, 23, 'up'));
+await page.waitForTimeout(250);
 await page.click('#btn-interact');
-await page.waitForTimeout(350);
+await page.waitForTimeout(300);
 await page.screenshot({ path: 'shots/demo-03-prof-dulay-dialog.png' });
 
-// Advance through all pages of Prof. Dulay's intro
 for (let i = 0; i < 8; i += 1) {
   const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
   if (!open) break;
   await page.keyboard.press('Space');
-  await page.waitForTimeout(120);
+  await page.waitForTimeout(100);
 }
 
-// 4. Examine the heritage Benguet Pine (Saleng) at (16, 25)
-await page.evaluate(() => window.__game.teleportTo(16, 26, 'up'));
-await page.waitForTimeout(300);
+// 4. Examine Heritage Benguet Pine (Saleng) at (39, 18) -> player stands at (39, 19)
+await page.evaluate(() => window.__game.teleportTo(39, 19, 'up'));
+await page.waitForTimeout(250);
 await page.click('#btn-interact');
-await page.waitForTimeout(400);
-
-// Observe leaves clue
+await page.waitForTimeout(300);
 await page.click('[data-cmd="observe"]');
-await page.waitForTimeout(150);
+await page.waitForTimeout(120);
 await page.click('.encounter-submenu button:first-child');
-await page.waitForTimeout(200);
+await page.waitForTimeout(150);
 await page.screenshot({ path: 'shots/demo-04-saleng-encounter.png' });
 
-// Identify Benguet Pine & Collect voucher
 await page.click('[data-cmd="identify"]');
-await page.waitForTimeout(150);
+await page.waitForTimeout(120);
 await page.locator('.encounter-submenu button', { hasText: 'Benguet Pine' }).click();
-await page.waitForTimeout(200);
-await page.click('[data-cmd="collect"]');
-await page.waitForTimeout(200);
-await page.click('[data-cmd="leave"]');
-await page.waitForTimeout(300);
-
-// 5. Talk to Apo Sabado (15, 26) & complete M1 with Prof. Dulay
-await page.evaluate(() => window.__game.teleportTo(15, 27, 'up'));
-await page.waitForTimeout(200);
-await page.click('#btn-interact');
-for (let i = 0; i < 8; i += 1) {
-  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
-  if (!open) break;
-  await page.keyboard.press('Space');
-  await page.waitForTimeout(100);
-}
-
-await page.evaluate(() => window.__game.teleportTo(19, 28, 'up'));
-await page.waitForTimeout(200);
-await page.click('#btn-interact');
-for (let i = 0; i < 8; i += 1) {
-  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
-  if (!open) break;
-  await page.keyboard.press('Space');
-  await page.waitForTimeout(100);
-}
-
-// 6. Visit Breha Dormitory & examine Lagundi (4, 21) for Paolo's cough (Mission 2)
-await page.evaluate(() => window.__game.teleportTo(8, 21, 'up'));
-await page.waitForTimeout(250);
-await page.click('#btn-interact'); // Talk to Paolo
-for (let i = 0; i < 8; i += 1) {
-  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
-  if (!open) break;
-  await page.keyboard.press('Space');
-  await page.waitForTimeout(100);
-}
-
-await page.evaluate(() => window.__game.teleportTo(4, 22, 'up'));
-await page.waitForTimeout(250);
-await page.click('#btn-interact'); // Examine Lagundi
-await page.waitForTimeout(300);
-await page.click('[data-cmd="identify"]');
 await page.waitForTimeout(150);
-await page.locator('.encounter-submenu button', { hasText: 'Lagundi' }).click();
-await page.waitForTimeout(200);
 await page.click('[data-cmd="collect"]');
-await page.waitForTimeout(200);
-await page.screenshot({ path: 'shots/demo-05-lagundi-encounter.png' });
+await page.waitForTimeout(150);
 await page.click('[data-cmd="leave"]');
 await page.waitForTimeout(250);
 
-// 7. Teleport to College of Science Terrace (Level 1) & open Digital Herbarium Journal
-await page.evaluate(() => window.__game.teleportTo(19, 15, 'up'));
+// 5. Talk to Apo Sabado at (40, 19) & report back to Prof. Dulay at (42, 22)
+await page.evaluate(() => window.__game.teleportTo(40, 20, 'up'));
+await page.waitForTimeout(200);
+await page.click('#btn-interact');
+for (let i = 0; i < 8; i += 1) {
+  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
+  if (!open) break;
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(100);
+}
+
+await page.evaluate(() => window.__game.teleportTo(42, 23, 'up'));
+await page.waitForTimeout(200);
+await page.click('#btn-interact');
+for (let i = 0; i < 8; i += 1) {
+  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
+  if (!open) break;
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(100);
+}
+
+// 6. Check Middle Terrace (Elev 2): Open Court A, UPB Library & Bulwagang Juan Luna
+await page.evaluate(() => window.__game.teleportTo(31, 21, 'up'));
 await page.waitForTimeout(350);
-await page.screenshot({ path: 'shots/demo-06-science-terrace.png' });
+await page.screenshot({ path: 'shots/demo-05-middle-terrace-court-a.png' });
 
-await page.click('#btn-journal');
-await page.waitForTimeout(300);
-await page.screenshot({ path: 'shots/demo-07-herbarium-journal.png' });
+// 7. Check Summit Crown Plateau (Elev 3): IB Building, KA, CS, Balay Panganan, Balay Salun-at
+await page.evaluate(() => window.__game.teleportTo(30, 13, 'up'));
+await page.waitForTimeout(350);
+await page.screenshot({ path: 'shots/demo-06-summit-crown-ib-ka.png' });
 
-const summary = await page.evaluate(() => ({
-  identified: window.__game.state.data.identifiedPlants,
-  collected: window.__game.state.data.collectedPlants,
-  quests: window.__game.state.data.quests,
-}));
-console.log('Verification state:', JSON.stringify(summary));
+// 8. Check West Summit: Museo Kordilyera & Student Alumni Center (Elev 3)
+await page.evaluate(() => window.__game.teleportTo(18, 14, 'up'));
+await page.waitForTimeout(350);
+await page.screenshot({ path: 'shots/demo-07-museo-kordilyera-summit.png' });
+
+// 9. Verify BFS path reachability from Oblation Spawn (42, 24) to all 4 elevation levels!
+const reachability = await page.evaluate(() => {
+  const map = window.__game.map;
+  const visited = new Set();
+  const queue = [[42, 24]];
+  visited.add('42,24');
+  const elevReached = new Set();
+
+  while (queue.length > 0) {
+    const [x, y] = queue.shift();
+    const t = map.tileAt(x, y);
+    elevReached.add(t.elev);
+    for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
+      const nx = x + dx;
+      const ny = y + dy;
+      const key = `${nx},${ny}`;
+      if (!visited.has(key) && map.canStep(x, y, nx, ny)) {
+        visited.add(key);
+        queue.push([nx, ny]);
+      }
+    }
+  }
+  return {
+    tilesVisited: visited.size,
+    elevations: Array.from(elevReached).sort((a, b) => a - b),
+  };
+});
+console.log('Walkable BFS Reachability:', JSON.stringify(reachability));
 
 await browser.close();
 await server.close();

@@ -99,7 +99,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           },
           {
             speaker: npc.name,
-            text: `For your first field task (Mission 1): walk up to the tall Benguet Pine just northwest of the Oblation statue, press [E] to Observe & Identify it, and record a voucher in your Herbarium!`,
+            text: `For your first field task (Mission 1): walk up to the tall Benguet Pine in the UPB Woods (#15) just northwest of the Oblation Ground, press [E] to Observe & Identify it, and record a voucher in your Herbarium!`,
           },
           {
             speaker: npc.name,
@@ -144,7 +144,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           },
           {
             speaker: npc.name,
-            text: `• Breha Dorm (West): Your roommate Paolo has a stubborn cough.\n• Main Gate (South): Guard Manong Ben needs a diuretic herb.\n• Canteen (Southwest): Ate Lorna’s son Jun-jun has stomach cramps.\n• Basketball Court (East): Varsity player Kiko scraped his knee.`,
+            text: `• Ladies Dormitory (South Annex, Elev 0): Your friend Paolo has a stubborn cough.\n• Oblation Driveway Gate (SE, Elev 0): Guard Manong Ben needs a diuretic herb from the Summit KA/CS Quad (Elev 3).\n• Open Court A (Middle Terrace, Elev 2): Varsity player Kiko scraped his knee.\n• Balay Panganan / Cafeteria (Summit Crown, Elev 3): Ate Lorna’s son Jun-jun has stomach cramps.`,
             onFinish: () => {
               state.setQuestStatus('m1_saleng', 'completed');
               callbacks.toast('🌟 Mission 1 Complete! Campus Herbal Missions M2–M6 Unlocked!');
@@ -291,7 +291,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           },
           {
             speaker: npc.name,
-            text: `There’s a healthy patch growing on the sunny middle terrace right east of the College of Science. Could you climb the central steps, identify it, and bring me some leaves?`,
+            text: `There’s a healthy patch growing on the Summit Plateau (Elevation 3) right on the KA / College of Science Quad (#12). Could you climb up past Open Court A and the Inang Laya steps, identify it, and bring me some leaves?`,
             onFinish: () => {
               state.setQuestStatus('m3_sambong', 'active');
               callbacks.toast('📋 Mission 3 Started: Manong Ben’s Burden (Find Sambong)');
@@ -304,7 +304,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           return [
             {
               speaker: npc.name,
-              text: `Head north up the central stone stairs to the College of Science terrace (Level 1). Look on the east lawn for silvery, fuzzy leaves with a cool menthol-camphor aroma!`,
+              text: `Climb up the Driveway stairs to Open Court A (Elev 2), then up the Court A steps (#20) to the Summit Crown (Elev 3). Look on the KA / College of Science Quad for silvery, camphor-scented leaves!`,
             },
           ];
         }
@@ -508,7 +508,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           },
           {
             speaker: npc.name,
-            text: `A wild specimen is blooming on the northwestern slope of Upper Pine Hill (Level 2). Because wild lilies are threatened by poaching, you must NEVER pick or uproot it — identify it and capture a geotagged PHOTOGRAPH for our archive!`,
+            text: `A wild specimen is blooming in the Woods behind CSS (#3, Middle Terrace · Elevation 2), just down the west steps from our museum. Because wild lilies are threatened by poaching, you must NEVER pick or uproot it — identify it and capture a geotagged PHOTOGRAPH for our archive!`,
             onFinish: () => {
               state.setQuestStatus('m6_benguet_lily', 'active');
               callbacks.toast('📋 Mission 6 Started: Liryo ng Kabundukan (Photograph Benguet Lily)');
@@ -521,7 +521,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
           return [
             {
               speaker: npc.name,
-              text: `Walk west past the College of Science and climb the northern stairs to Upper Pine Hill (Level 2). Look on the misty western ridge for tall white trumpet blossoms!`,
+              text: `Head down the west museum steps into the Woods behind the College of Social Sciences (CSS #3, Elevation 2). Look among the pines for tall white trumpet blossoms!`,
             },
           ];
         }

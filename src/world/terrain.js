@@ -47,27 +47,33 @@ export function buildTerrain(scene, map, assets) {
       } else if (t.type === 'court') {
         // Blue-grey patterned basketball court tiles
         drawTile(floor, 4 + (x % 2), 22 + (y % 2), x, y);
-        // Court boundary lines
-        if (x === 34 || x === 40 || y === 18 || y === 23) {
+        // Court boundary lines (Open Court A at x=29..34, y=18..23)
+        if (x === 29 || x === 34 || y === 18 || y === 23) {
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 1;
           ctx.strokeRect(x * 16 + 1, y * 16 + 1, 14, 14);
         }
       } else if (t.type === 'road') {
-        // Governor Pack Road asphalt + yellow center dashed line
+        // Governor Pack Road & Government Center Road asphalt + yellow center dashed line
         ctx.fillStyle = '#3b3f46';
         ctx.fillRect(x * 16, y * 16, 16, 16);
-        if (y === 34 && x % 2 === 0) {
+        if ((y === 40 && x % 2 === 0) || (x === 1 && y % 2 === 0)) {
           ctx.fillStyle = '#f2c144';
-          ctx.fillRect(x * 16 + 2, y * 16 + 14, 12, 2);
+          ctx.fillRect(x * 16 + 4, y * 16 + 4, 8, 3);
         }
       } else if (t.type === 'stair') {
-        // Stone steps
+        // Stone steps oriented according to stairDir ('north' vs 'west')
         ctx.fillStyle = '#c8bfa8';
         ctx.fillRect(x * 16, y * 16, 16, 16);
         ctx.fillStyle = '#7e7664';
-        for (let s = 2; s < 16; s += 4) {
-          ctx.fillRect(x * 16, y * 16 + s, 16, 2);
+        if (t.stairDir === 'west') {
+          for (let s = 2; s < 16; s += 4) {
+            ctx.fillRect(x * 16 + s, y * 16, 2, 16);
+          }
+        } else {
+          for (let s = 2; s < 16; s += 4) {
+            ctx.fillRect(x * 16, y * 16 + s, 16, 2);
+          }
         }
       } else if (t.type === 'tall_grass') {
         // Stamp tall grass icon on ground too
@@ -102,16 +108,36 @@ export function buildTerrain(scene, map, assets) {
       const v1 = 1 - y / map.h;
       const v0 = 1 - (y + 1) / map.h;
 
-      // For stair tiles, slope from south (elev - 0.5) to north (elev + 0.5)
-      const yNorth = t.type === 'stair' ? t.elev + 0.5 : t.elev;
-      const ySouth = t.type === 'stair' ? t.elev - 0.5 : t.elev;
+      // Corner heights for flat tiles vs north-sloping stairs vs west-sloping stairs
+      let yNW = t.elev;
+      let yNE = t.elev;
+      let ySW = t.elev;
+      let ySE = t.elev;
+      if (t.type === 'stair') {
+        if (t.stairDir === 'west') {
+          yNW = t.elev + 0.5;
+          ySW = t.elev + 0.5;
+          yNE = t.elev - 0.5;
+          ySE = t.elev - 0.5;
+        } else if (t.stairDir === 'south') {
+          yNW = t.elev - 0.5;
+          yNE = t.elev - 0.5;
+          ySW = t.elev + 0.5;
+          ySE = t.elev + 0.5;
+        } else {
+          yNW = t.elev + 0.5;
+          yNE = t.elev + 0.5;
+          ySW = t.elev - 0.5;
+          ySE = t.elev - 0.5;
+        }
+      }
 
       // 4 corners: NW(x, y), NE(x+1, y), SW(x, y+1), SE(x+1, y+1)
       positions.push(
-        x, yNorth, y,
-        x + 1, yNorth, y,
-        x, ySouth, y + 1,
-        x + 1, ySouth, y + 1,
+        x, yNW, y,
+        x + 1, yNE, y,
+        x, ySW, y + 1,
+        x + 1, ySE, y + 1,
       );
       normals.push(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0);
       uvs.push(u0, v1, u1, v1, u0, v0, u1, v0);
@@ -133,8 +159,8 @@ export function buildTerrain(scene, map, assets) {
   const groundMesh = new THREE.Mesh(mergedGeo, groundMat);
   group.add(groundMesh);
 
-  // 2. Build Cliff Retaining Walls wherever a tile is higher than its South, West, or East neighbor
-  const wallGeo = new THREE.BoxGeometry(1, 1, 0.12);
+  // 2. Build Cliff Retaining Walls wherever a tile is higher than its South, North, West, or East neighbor
+  const wallGeo = new THREE.BoxGeometry(1, 1, 0.14);
   for (let y = 0; y < map.h; y += 1) {
     for (let x = 0; x < map.w; x += 1) {
       const t = map.tileAt(x, y);
@@ -147,17 +173,25 @@ export function buildTerrain(scene, map, assets) {
         wall.position.set(x + 0.5, south.elev + diff / 2, y + 1);
         group.add(wall);
       }
+      const north = map.tileAt(x, y - 1);
+      if (north && north.type !== 'stair' && t.elev > north.elev) {
+        const diff = t.elev - north.elev;
+        const wall = new THREE.Mesh(wallGeo, cliffMat);
+        wall.scale.set(1, diff, 1);
+        wall.position.set(x + 0.5, north.elev + diff / 2, y);
+        group.add(wall);
+      }
       const west = map.tileAt(x - 1, y);
       if (west && west.type !== 'stair' && t.elev > west.elev) {
         const diff = t.elev - west.elev;
-        const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, diff, 1), cliffMat);
+        const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, diff, 1), cliffMat);
         sideWall.position.set(x, west.elev + diff / 2, y + 0.5);
         group.add(sideWall);
       }
       const east = map.tileAt(x + 1, y);
       if (east && east.type !== 'stair' && t.elev > east.elev) {
         const diff = t.elev - east.elev;
-        const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, diff, 1), cliffMat);
+        const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, diff, 1), cliffMat);
         sideWall.position.set(x + 1, east.elev + diff / 2, y + 0.5);
         group.add(sideWall);
       }

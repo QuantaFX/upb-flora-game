@@ -276,11 +276,12 @@ async function boot() {
     const t = map.tileAt(tx, ty);
     if (t?.type === 'tall_grass' && Math.random() < 0.14) {
       // Pick a wild species appropriate for this terrace elevation
-      const poolByElev = {
-        0: ['lagundi', 'tsaang_gubat', 'takip_kuhol', 'mexican_sunflower'],
-        1: ['sambong', 'mexican_sunflower', 'benguet_pine'],
-        2: ['sapinit', 'tree_fern', 'benguet_lily', 'benguet_pine'],
-      };
+    const poolByElev = {
+      0: ['lagundi', 'mexican_sunflower'],
+      1: ['sapinit', 'tree_fern', 'benguet_pine'],
+      2: ['benguet_lily', 'takip_kuhol', 'benguet_pine'],
+      3: ['sambong', 'tsaang_gubat', 'mexican_sunflower'],
+    };
       const pool = poolByElev[Math.round(elev)] || ALL_PLANT_IDS;
       const wildId = pool[Math.floor(Math.random() * pool.length)];
       audio.playBgm('encounter');
