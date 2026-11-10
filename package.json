@@ -1,0 +1,19 @@
+{
+  "name": "upb-flora-game",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "UP Baguio native plant discovery — 2.5D orthographic Three.js game",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0",
+    "vite": "^5.4.10"
+  }
+}

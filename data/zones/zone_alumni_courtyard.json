@@ -1,0 +1,403 @@
+{
+  "$schema": "../flora-node.schema.json",
+  "id": "zone_alumni_courtyard",
+  "name": "Alumni Courtyard",
+  "description": "Three terraced beds behind the alumni hall. One path up from the south gate, a loop around the middle bench, and one detour behind the upper bench to a rain-fed pocket nobody walks to.",
+  "width": 26,
+  "height": 18,
+  "tileset": {
+    "id": "campus_dry_stone",
+    "tilePx": 16,
+    "elevationStepPx": 8
+  },
+  "terrain": [
+    "hhh(((hhhhgggggggggggggggg",
+    "hhh(((h(hh(ggggggggggggggg",
+    "hhh(((hhhhpggggggggggggggg",
+    "hhhhhhpppppppppppppppppppg",
+    "hhhWWpppppppgggggggggggpgg",
+    "hhhWWppppppggggggggggggpgg",
+    "hhhWWpppppgggggggggggggpgg",
+    "hhhWWppppgg111gggggggggggg",
+    "hphWWpppg11111111111111ggg",
+    "pppppppp(ggggggggggggggggg",
+    "hhhWWppppggggggggggggggggg",
+    "hhhWWpppppgggggggggggggggg",
+    "hhhhhhhhhhphhhhhhhhhhhhhhh",
+    "hhhh2222pppphhhhhhhhhhhhhh",
+    "hhhhhhppppAApppppppppppppg",
+    "hhhhhhpppppppppppppppppppg",
+    "hhhhhhpppppppppppppppppppg",
+    "hhhhhhpppppppppppppppppppg"
+  ],
+  "tileLegend": {
+    "1": {
+      "tile": "stairs_up",
+      "elevation": 0
+    },
+    "2": {
+      "tile": "stairs_down",
+      "elevation": 1
+    },
+    "g": {
+      "tile": "grass",
+      "elevation": 1
+    },
+    "p": {
+      "tile": "path_stone",
+      "elevation": 1
+    },
+    "A": {
+      "tile": "path_stone",
+      "elevation": 1
+    },
+    "W": {
+      "tile": "wall_stone",
+      "elevation": 1
+    },
+    "h": {
+      "tile": "grass",
+      "elevation": 2
+    },
+    "(": {
+      "tile": "stairs_up",
+      "elevation": 1
+    },
+    "m": {
+      "tile": "moss",
+      "elevation": 2
+    }
+  },
+  "props": [
+    "....................T.....",
+    "....................T.....",
+    "....................T.....",
+    "......T.............H.....",
+    "..........................",
+    "......................T...",
+    "...............T..........",
+    "..T..........T............",
+    "..........................",
+    "T.........................",
+    ".........T................",
+    "............H.............",
+    "..........T.....T.........",
+    "......G...................",
+    "..........................",
+    "..........................",
+    "..........................",
+    ".........................."
+  ],
+  "propLegend": {
+    "T": {
+      "prop": "bench",
+      "solid": true
+    },
+    "H": {
+      "prop": "pc",
+      "solid": true
+    },
+    "G": {
+      "prop": "gate",
+      "solid": true
+    }
+  },
+  "collision": {
+    "walkableRule": "A tile is walkable when no permanent prop occupies it and terrain is path_stone, stairs_up, stairs_down, grass or moss. The player's elevation equals the walkable tile's elevation; a stairs tile is the transition and may differ from the tile behind it.",
+    "forbiddenTiles": [
+      "wall_stone"
+    ],
+    "blockedFurniture": [
+      "bench",
+      "pc",
+      "gate"
+    ]
+  },
+  "entries": [
+    {
+      "tile": {
+        "x": 14,
+        "y": 17
+      },
+      "elevation": 1,
+      "facing": "up"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_courtyard_lily_wall",
+      "speciesId": "sp_benguet_lily",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 7,
+        "y": 9
+      },
+      "elevation": 1,
+      "spriteSeed": 101,
+      "spriteVariant": "mature",
+      "tags": [
+        "sun",
+        "pathside"
+      ],
+      "discoveryPrompt": "White trumpets all facing up one stem, above a skirt of narrow leaves. Sun is full on this edge; nothing else flowers here. What lily is it?",
+      "answerKey": {
+        "accepted": [
+          "benguet lily",
+          "lilium philippinense",
+          "sabong ti bantay"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/benguet_lily.md"
+      }
+    },
+    {
+      "id": "node_courtyard_saleng_gate",
+      "speciesId": "sp_benguet_pine",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 17,
+        "y": 15
+      },
+      "elevation": 1,
+      "spriteSeed": 13,
+      "spriteVariant": "mature",
+      "tags": [
+        "canopy"
+      ],
+      "discoveryPrompt": "Needles longer than a hand, tied three to a sheath; small cones sit sideways on the twig, not at the tip. What tree is it?",
+      "answerKey": {
+        "accepted": [
+          "saleng",
+          "benguet pine",
+          "pinus kesiya"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/benguet_pine.md"
+      }
+    },
+    {
+      "id": "node_courtyard_lily",
+      "speciesId": "sp_benguet_lily",
+      "zone": "zone_al<|place_holder_mm_span_0442|>_courtyard",
+      "tile": {
+        "x": 10,
+        "y": 10
+      },
+      "elevation": 1,
+      "spriteSeed": 7,
+      "spriteVariant": "mature",
+      "tags": [
+        "sun",
+        "pathside"
+      ],
+      "discoveryPrompt": "The same upward white trumpet, one stalk, feet in thin grass at the path edge. What lily is it?",
+      "answerKey": {
+        "accepted": [
+          "benguet lily",
+          "lilium philippinense",
+          "sabong ti bantay"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/benguet_lily.md"
+      }
+    },
+    {
+      "id": "node_courtyard_pakpako",
+      "speciesId": "sp_pakpako",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 1,
+        "y": 9
+      },
+      "elevation": 1,
+      "spriteSeed": 42,
+      "spriteVariant": "mature",
+      "tags": [
+        "shade",
+        "stonewall"
+      ],
+      "discoveryPrompt": "One fibrous trunk and no flowers; the new fronds are still rolled in tight coils. It holds the damp wall. What fern is it?",
+      "answerKey": {
+        "accepted": [
+          "pakpako",
+          "tree fern",
+          "cyathea"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/pakpako.md"
+      }
+    },
+    {
+      "id": "node_courtyard_medinilla_graft",
+      "speciesId": "sp_medinilla",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 14,
+        "y": 11
+      },
+      "elevation": 1,
+      "spriteSeed": 5,
+      "spriteVariant": "mature",
+      "tags": [
+        "shade",
+        "canopy"
+      ],
+      "discoveryPrompt": "Leaves in a stiff whorl, berry clusters hanging under it, and the whole plant fixed to bark above the ground. What is it?",
+      "answerKey": {
+        "accepted": [
+          "malakadios",
+          "medinilla",
+          "medinilla spp."
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/medinilla.md"
+      }
+    },
+    {
+      "id": "node_courtyard_medinilla_deadend",
+      "speciesId": "sp_medinilla",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 5,
+        "y": 7
+      },
+      "elevation": 1,
+      "spriteSeed": 6,
+      "spriteVariant": "flowering",
+      "tags": [
+        "shade",
+        "canopy"
+      ],
+      "discoveryPrompt": "Behind the bench, in shade: whorled leaves and hanging berry clusters tied to bark. What epiphyte is it?",
+      "answerKey": {
+        "accepted": [
+          "malakadios",
+          "medinilla",
+          "medinilla spp."
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/medinilla.md"
+      }
+    },
+    {
+      "id": "node_courtyard_pakpako_wall",
+      "speciesId": "sp_pakpako",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 10,
+        "y": 6
+      },
+      "elevation": 2,
+      "spriteSeed": 31,
+      "spriteVariant": "mature",
+      "tags": [
+        "shade",
+        "stonewall"
+      ],
+      "discoveryPrompt": "A second coiled fern on the upper wall, single trunk again, no seed but spores. What is it?",
+      "answerKey": {
+        "accepted": [
+          "pakpako",
+          "tree fern",
+          "cyathea"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/pakpako.md"
+      }
+    },
+    {
+      "id": "node_courtyard_saleng_ridge",
+      "speciesId": "sp_benguet_pine",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 3,
+        "y": 3
+      },
+      "elevation": 2,
+      "spriteSeed": 14,
+      "spriteVariant": "mature",
+      "tags": [
+        "slope",
+        "canopy"
+      ],
+      "discoveryPrompt": "The long three-bundled needles and sideways cones again, this one on the ridge lip. What tree is it?",
+      "answerKey": {
+        "accepted": [
+          "saleng",
+          "benguet pine",
+          "pinus kesiya"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/benguet_pine.md"
+      }
+    },
+    {
+      "id": "node_courtyard_nepenthes_west",
+      "speciesId": "sp_nepenthes",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 13,
+        "y": 4
+      },
+      "elevation": 2,
+      "spriteSeed": 77,
+      "spriteVariant": "mature",
+      "tags": [
+        "waterside",
+        "shade"
+      ],
+      "discoveryPrompt": "A soft cup hangs off a long tendril, hard ribs along its rim and a lid over the mouth. Water beads on it. What plant is it?",
+      "answerKey": {
+        "accepted": [
+          "bagkong",
+          "nepenthes",
+          "pitcher plant"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/nepenthes.md"
+      },
+      "spawnCondition": {
+        "afterFlag": "flag_met_guide"
+      }
+    },
+    {
+      "id": "node_courtyard_nepenthes_east",
+      "speciesId": "sp_nepenthes",
+      "zone": "zone_alumni_courtyard",
+      "tile": {
+        "x": 14,
+        "y": 5
+      },
+      "elevation": 2,
+      "spriteSeed": 78,
+      "spriteVariant": "mature",
+      "tags": [
+        "waterside",
+        "shade"
+      ],
+      "discoveryPrompt": "The second cup in the wet pocket: same hanging tendril, same lid and ribbed rim. What is it?",
+      "answerKey": {
+        "accepted": [
+          "bagkong",
+          "nepenthes",
+          "pitcher plant"
+        ]
+      },
+      "unlocks": {
+        "codexEntry": "codex/nepenthes.md"
+      },
+      "spawnCondition": {
+        "afterFlag": "flag_met_guide"
+      }
+    }
+  ]
+}

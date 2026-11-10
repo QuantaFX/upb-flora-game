@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://upb-flora-game.local/schema/flora-node.schema.json",
+  "title": "FloraNode",
+  "description": "One discoverable plant spawn node. Authored in data/zones/*.json; validated at build time. Sprites and 'found' state are derived, never stored here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "speciesId", "zone", "tile", "elevation", "spriteSeed", "discoveryPrompt"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^node_[a-z0-9_]+$", "description": "Stable node id, unique across the world." },
+    "speciesId": { "type": "string", "pattern": "^sp_[a-z_]+$", "description": "FK into data/flora.json." },
+    "zone": { "type": "string", "pattern": "^zone_[a-z0-9_]+$", "description": "FK into data/zones/*.json." },
+    "tile": {
+      "type": "object",
+      "description": "Anchor tile (top-left foot tile) on the zone grid.",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": { "x": { "type": "integer", "minimum": 0 }, "y": { "type": "integer", "minimum": 0 } }
+    },
+    "elevation": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Terrace level 0..3. Node is only interactable from a player standing on the same level."
+    },
+    "spriteSeed": { "type": "integer", "minimum": 0, "maximum": 4294967295, "description": "Deterministic PRNG seed for variant generation (leaf angle, tilt, hue jitter). Same seed => same sprite bytes." },
+    "spriteVariant": { "type": "string", "enum": ["seedling", "juvenile", "mature", "flowering"], "default": "mature" },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["shade", "sun", "slope", "waterside", "pathside", "stonewall", "canopy"] }
+    },
+    "discoveryPrompt": { "type": "string", "minLength": 12, "maxLength": 140, "description": "In-world field-note question shown on interact, before the plant is named. Ends with '?'." },
+    "answerKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accepted"],
+      "properties": {
+        "accepted": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 2 }, "description": "Lowercased accepted spellings: scientific binomen and local name(s)." },
+        "freeText": { "type": "boolean", "default": false, "description": "When false, player picks from a visible 3-choice chip list instead of typing." }
+      }
+    },
+    "state": { "type": "string", "enum": ["hidden", "spawned", "found", "wilted"], "default": "hidden", "description": "Runtime hint only; truth lives in the save file." },
+    "unlocks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "codexEntry": { "type": "string", "description": "codex/<slug>.md unlocked on successful identification." },
+        "questFlag": { "type": "string", "pattern": "^flag_[a-z0-9_]+$" }
+      }
+    },
+    "spawnCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "afterFlag": { "type": "string", "pattern": "^flag_[a-z0-9_]+$" },
+        "weather": { "type": "array", "items": { "type": "string", "enum": ["clear", "fog", "rain"] } },
+        "hourRange": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "integer", "minimum": 0, "maximum": 23 } }
+      }
+    }
+  }
+}

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UP Baguio Flora Quest — Project Saleng</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="game-canvas"></div>
+
+    <!-- Top HUD -->
+    <header id="hud-top" class="hud-top hidden">
+      <div class="hud-brand">
+        <span class="hud-badge-icon">🌲</span>
+        <div>
+          <div class="hud-title">UP Baguio · Project Saleng</div>
+          <div id="hud-location" class="hud-sub">Main Gate &amp; Oblation Plaza</div>
+        </div>
+      </div>
+      <div class="hud-quest-box" id="hud-quest-box">
+        <div class="hud-quest-label">ACTIVE MISSION</div>
+        <div id="hud-quest-text" class="hud-quest-text">Talk to Prof. Dulay near the Oblation</div>
+      </div>
+      <div class="hud-actions">
+        <button id="btn-interact" class="pixel-btn pixel-btn--accent hidden" type="button">
+          Examine <kbd>E</kbd>
+        </button>
+        <button id="btn-bag" class="pixel-btn" type="button">
+          🎒 Satchel <span id="hud-bag-count" class="badge-pill">0</span>
+        </button>
+        <button id="btn-journal" class="pixel-btn" type="button">
+          📖 Herbarium <span id="hud-flora-count" class="badge-pill">0/9</span> <kbd>J</kbd>
+        </button>
+        <button id="btn-mute" class="pixel-btn pixel-btn--icon" type="button" title="Toggle Audio (M)">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom Controls Hint -->
+    <div id="hud-bottom" class="hud-bottom hidden">
+      <span><kbd>WASD</kbd>/<kbd>Arrows</kbd> Move</span>
+      <span><kbd>Shift</kbd> Run</span>
+      <span><kbd>E</kbd>/<kbd>Space</kbd> Talk / Examine</span>
+      <span><kbd>J</kbd> Herbarium Journal</span>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Title Screen Overlay -->
+    <section id="title-screen" class="title-screen">
+      <div class="title-card pixel-panel">
+        <div class="title-eyebrow">UNIVERSITY OF THE PHILIPPINES BAGUIO · CORDILLERA HERBARIUM</div>
+        <h1 class="title-main">PROJECT SALENG</h1>
+        <p class="title-subtitle">A 2.5D Ethnobotanical Field Adventure in the City of Pines</p>
+        <div class="title-story-blurb">
+          Explore the misty terraces of UP Baguio, discover native Cordillera flora &amp; DOH-approved
+          herbal medicines, and help students and staff with traditional plant remedies!
+        </div>
+        <div class="title-form">
+          <label for="player-name-input">Field Researcher Name:</label>
+          <input id="player-name-input" type="text" maxlength="16" value="Isko" spellcheck="false" />
+        </div>
+        <div class="title-buttons">
+          <button id="btn-start-game" class="pixel-btn pixel-btn--primary pixel-btn--lg" type="button">
+            🌿 Start Fieldwork
+          </button>
+          <button id="btn-reset-save" class="pixel-btn pixel-btn--sm" type="button">
+            Reset Save Data
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dialog Box Overlay -->
+    <section id="dialog-overlay" class="dialog-overlay hidden">
+      <div class="dialog-box pixel-panel">
+        <div class="dialog-speaker-tab" id="dialog-speaker">Prof. Mila Dulay</div>
+        <div class="dialog-body">
+          <div class="dialog-portrait-frame">
+            <img id="dialog-portrait" src="" alt="Speaker" />
+          </div>
+          <div class="dialog-content">
+            <div id="dialog-text" class="dialog-text"></div>
+            <div id="dialog-choices" class="dialog-choices hidden"></div>
+          </div>
+        </div>
+        <div id="dialog-next-hint" class="dialog-next-hint">Press <kbd>E</kbd> or <kbd>Space</kbd> ▾</div>
+      </div>
+    </section>
+
+    <!-- Pokemon-Style Plant Encounter Overlay -->
+    <section id="encounter-overlay" class="encounter-overlay hidden">
+      <div class="encounter-stage pixel-panel">
+        <div class="encounter-backdrop">
+          <!-- Opponent / Plant Platform (top right) -->
+          <div class="encounter-status encounter-status--plant pixel-panel-inner">
+            <div class="encounter-plant-header">
+              <span id="enc-plant-name" class="enc-name">Unidentified Specimen</span>
+              <span id="enc-plant-tag" class="enc-badge">WILD FLORA</span>
+            </div>
+            <div id="enc-plant-sub" class="enc-sub">Observe morphological clues before identifying!</div>
+          </div>
+
+          <div class="encounter-platform encounter-platform--far">
+            <div class="platform-disc"></div>
+            <img id="enc-plant-sprite" class="enc-plant-sprite" src="" alt="Plant specimen" />
+          </div>
+
+          <!-- Researcher Platform (bottom left) -->
+          <div class="encounter-platform encounter-platform--near">
+            <div class="platform-disc platform-disc--near"></div>
+            <canvas id="enc-player-canvas" width="64" height="64" class="enc-player-sprite"></canvas>
+          </div>
+
+          <div class="encounter-status encounter-status--player pixel-panel-inner">
+            <div class="encounter-plant-header">
+              <span id="enc-player-name" class="enc-name">Researcher Isko</span>
+              <span class="enc-badge enc-badge--green">BS BIOLOGY</span>
+            </div>
+            <div class="enc-focus-row">
+              <span>Field Focus:</span>
+              <span id="enc-focus-hearts" class="enc-hearts">❤️❤️❤️</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clues Notebook Strip -->
+        <div id="enc-clues-bar" class="enc-clues-bar">
+          <div class="enc-clue-chip" data-clue="leaves">🍃 Leaves: <span>?</span></div>
+          <div class="enc-clue-chip" data-clue="flowers">🌸 Flowers/Fruit: <span>?</span></div>
+          <div class="enc-clue-chip" data-clue="smell">👃 Aroma/Touch: <span>?</span></div>
+          <div class="enc-clue-chip" data-clue="habitat">⛰️ Habitat: <span>?</span></div>
+        </div>
+
+        <!-- Bottom Battle Command Box -->
+        <div class="encounter-bottom">
+          <div id="enc-message" class="encounter-message pixel-panel-inner">
+            A wild specimen appeared! What will you do?
+          </div>
+          <div id="enc-main-menu" class="encounter-menu">
+            <button class="pixel-btn enc-cmd-btn" data-cmd="observe" type="button">🔍 OBSERVE</button>
+            <button class="pixel-btn enc-cmd-btn" data-cmd="identify" type="button">🏷️ IDENTIFY</button>
+            <button class="pixel-btn enc-cmd-btn" data-cmd="collect" type="button" id="btn-enc-collect">🌿 COLLECT</button>
+            <button class="pixel-btn enc-cmd-btn" data-cmd="leave" type="button">👟 LEAVE</button>
+          </div>
+          <div id="enc-sub-menu" class="encounter-submenu hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Field Journal (Floradex) + Satchel Modal -->
+    <section id="journal-overlay" class="modal-overlay hidden">
+      <div class="journal-modal pixel-panel">
+        <div class="journal-header">
+          <div>
+            <h2 class="journal-title">📖 UP Baguio Digital Herbarium &amp; Field Guide</h2>
+            <p class="journal-subtitle" id="journal-progress-sub">0 of 9 Cordillera &amp; Campus Species Documented</p>
+          </div>
+          <div class="journal-tabs">
+            <button class="pixel-btn journal-tab is-active" data-tab="plants" type="button">🌿 Flora Codex</button>
+            <button class="pixel-btn journal-tab" data-tab="quests" type="button">📋 Campus Missions</button>
+            <button class="pixel-btn journal-tab" data-tab="satchel" type="button">🎒 Herbal Satchel</button>
+            <button id="btn-close-journal" class="pixel-btn pixel-btn--accent" type="button">✕ Close <kbd>Esc</kbd></button>
+          </div>
+        </div>
+        <div class="journal-content" id="journal-tab-plants">
+          <div id="journal-grid" class="journal-grid"></div>
+          <div id="journal-detail" class="journal-detail pixel-panel-inner"></div>
+        </div>
+        <div class="journal-content hidden" id="journal-tab-quests">
+          <div id="journal-quests-list" class="journal-quests-list"></div>
+        </div>
+        <div class="journal-content hidden" id="journal-tab-satchel">
+          <div id="journal-satchel-list" class="journal-quests-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build output
+dist/
+
+# Test / Dev artifacts
+shots/
+art-src/
+archive/
+
+# Editor / OS files
+.DS_Store
+Thumbs.db
+*.local
+.vscode/
+.idea/
+
+# Root loose asset pack duplicate (already in public/assets/)
+/Ninja Adventure - Asset Pack/

@@ -1,0 +1,142 @@
+{
+  "$schema": "./flora.schema.json",
+  "catalogVersion": 1,
+  "generatedBy": "agent-beta",
+  "notes": [
+    "Local names in Ibaloi, Kankanaey or Ifugao depending on the naming community; binomials are codex-only and never appear in observation prompts.",
+    "Entries flagged needsReview are not confirmed by a local speaker yet: confirm before ship or gate them behind the guide quest."
+  ],
+  "species": [
+    {
+      "id": "sp_benguet_pine",
+      "binomial": "Pinus kesiya",
+      "family": "Pinaceae",
+      "localNames": [
+        { "name": "saleng", "language": "ibaloi" },
+        { "name": "Benguet pine", "language": "en" }
+      ],
+      "needsReview": false,
+      "description": "Tall montane pine of the Cordillera ridges, with a broad open crown and a straight resinous trunk. Fire-adapted and fast on disturbed slopes; old trees carry thick, fire-scarred bark.",
+      "observationTraits": [
+        "Needles 15-20 cm long, bundled three to a sheath",
+        "Cones short, ovoid, sitting sideways on the branch",
+        "Bark deeply fissured, dark at the base and redder higher up"
+      ],
+      "habitat": ["canopy", "slope"],
+      "season": "Cones ripen Oct-Feb; fresh needles flush with the monsoon",
+      "codex": {
+        "summary": "The saleng is the landmark tree of Baguio ridges: wood, resin and shade for a whole old-growth canopy.",
+        "campusContext": "Stands on the ridge above the campus slopes.",
+        "ecology": "Fast canopy coloniser; casts a deep floor mat of needles, holds soil on steep drops, and seeds after fire.",
+        "cultural": "Resin-saturated 'saleng' splinters burn slowly and were carried as torches; timber for ridge houses, coffins and ritual posts.",
+        "status": "Blue-listed as a threatened Philippine pine on heavily cleared parts of its range; planted widely on campus.",
+        "threats": ["Clearing for development", "Frequent fire", "Charcoal and timber cutting"],
+        "localNameConfidence": "confirmed"
+      },
+      "sprite": { "palette": "pine", "heightPx": 96 }
+    },
+    {
+      "id": "sp_benguet_lily",
+      "binomial": "Lilium philippinense",
+      "family": "Liliaceae",
+      "localNames": [
+        { "name": "sabong ti bantay", "language": "ibaloi" },
+        { "name": "Benguet lily", "language": "en" }
+      ],
+      "needsReview": false,
+      "description": "Mountain-endemic lily with huge white trumpet flowers held upright on a single stalk above a skirt of narrow grassy leaves. Flowers after the first heavy rains.",
+      "observationTraits": [
+        "Trumpet flowers white with a faint red-purple wash, facing up the stalk",
+        "One unbranched stem per bulb",
+        "Narrow grassy leaves set all around the lower stem"
+      ],
+      "habitat": ["sun", "pathside"],
+      "season": "Flowers Jun-Aug",
+      "codex": {
+        "summary": "A Philippine-endemic lily of highland slopes; when in flower its white trumpets are visible from the path.",
+        "campusContext": "Kept to sunny pathside shoulders on the lower terrace.",
+        "ecology": "Bulbous geophyte, flowering after the first heavy rains; depends on moth and hawk-moth pollinators.",
+        "cultural": "Grown and traded as a cut flower in Baguio and La Trinidad; bulbs collected from the wild.",
+        "status": "Least concern globally, but local populations thin where roads and building cut the bulbs.",
+        "threats": ["Roadside cutting", "Bulb collecting", "Herbicide on verges"],
+        "localNameConfidence": "confirmed"
+      },
+      "sprite": { "palette": "lily", "heightPx": 64 }
+    },
+    {
+      "id": "sp_pakpako",
+      "binomial": "Cyathea spp.",
+      "family": "Cyatheaceae",
+      "localNames": [{ "name": "pakpako", "language": "ibaloi" }],
+      "needsReview": false,
+      "description": "Tree-fern with a single fibrous trunk and a crown of two-metre fronds unfurling from coiled croziers. Its presence marks cool, permanently damp old-growth edges.",
+      "observationTraits": [
+        "Trunk single and fibrous, no branches",
+        "New fronds unroll from tight croziers at the crown",
+        "Fronds spread in one plane; no flowers, no cones, no seed"
+      ],
+      "habitat": ["shade", "stonewall"],
+      "season": "Fertile all year; new croziers in the wet season",
+      "codex": {
+        "summary": "Tree-ferns are rainforest plants of damp shade; a grove of them means the slope has stayed wet for years.",
+        "campusContext": "Sheltering the damp retaining wall of the upper sanctuary edge.",
+        "ecology": "Reproduces by spores, not seed; the crown channels fog and rain down the fibrous trunk into the root mat.",
+        "cultural": "Bracken of other species is gathered for vegetable and medicine; tree-fern trunks are sometimes split for orchid mounts.",
+        "status": "Varies with taxon; collection of wild trunks for gardens is the common pressure.",
+        "threats": ["Drainage of springs", "Forest edge clearing", "Range overharvest"],
+        "localNameConfidence": "generic term"
+      },
+      "sprite": { "palette": "pakpako", "heightPx": 72 }
+    },
+    {
+      "id": "sp_medinilla",
+      "binomial": "Medinilla spp.",
+      "family": "Melastomataceae",
+      "localNames": [{ "name": "malakadios", "language": "kankanaey" }],
+      "needsReview": true,
+      "description": "Woody epiphyte that perches on pine trunks: leathery leaves in stiff whorls, pink to purple bracts and berry clusters hanging under the leaf crown, not at the tip.",
+      "observationTraits": [
+        "Leaves in whorls around the stem, not paired alternately",
+        "Flower and berry clusters hang beneath the leaf crown",
+        "Older stems woody, rooted to another tree's bark"
+      ],
+      "habitat": ["shade", "canopy"],
+      "season": "Flowers most of the year; berries after flowering",
+      "codex": {
+        "summary": "An epiphyte that grows on living pines, not on the ground; the whorled leaves and hanging berry clusters give it away.",
+        "campusContext": "One whorl sits on a saleng trunk where it forks.",
+        "ecology": "Epiphyte, not parasite; birds eat the berries and carry the seed between pines.",
+        "cultural": "Sold in Baguio and La Trinidad markets as an orchid-like ornamental; some Medinilla are taken from pine bark for sale.",
+        "status": "Several Philippine Medinilla are endemic and range-restricted; many are collected from the wild.",
+        "threats": ["Removal from host trees for sale", "Loss of host pine"],
+        "localNameConfidence": "name to confirm with a Kankanaey speaker"
+      },
+      "sprite": { "palette": "medinilla", "heightPx": 56 }
+    },
+    {
+      "id": "sp_nepenthes",
+      "binomial": "Nepenthes (highland spp.)",
+      "family": "Nepenthaceae",
+      "localNames": [{ "name": "bagkong", "language": "kankanaey" }],
+      "needsReview": true,
+      "description": "Highland pitcher plant of mossy seeps and creek banks: a long tendril hangs down into a fleshy cup with a hard ribbed peristome (rim) and a lid over its mouth.",
+      "observationTraits": [
+        "Cup hangs at the end of a long tendril, mouth pointing up",
+        "Rim of the mouth raised into hard ribs",
+        "Lid open above the mouth; cup underside dark red"
+      ],
+      "habitat": ["waterside", "shade"],
+      "season": "Pitchers all year, longest in the rainy season",
+      "codex": {
+        "summary": "A carnivorous highland speciality of mossy seeps; the cup catches insects in fluid and looks nothing like a flower.",
+        "campusContext": "Two plants in the mossy pocket of the sanctuary edge, past the guide's introduction.",
+        "ecology": "Pitcher fluid and slick lips trap insects; the habitat is cool, splashed and permanently wet.",
+        "cultural": "Gathered over it as a curiosity; several highland species are sold from the wild.",
+        "status": "Many Philippine highland Nepenthes are narrow endemic to one or two mountains.",
+        "threats": ["Poaching", "Spring drainage", "Trampling of seep margins"],
+        "localNameConfidence": "name to confirm with a Kankanaey speaker"
+      },
+      "sprite": { "palette": "nepenthes", "heightPx": 64 }
+    }
+  ]
+}

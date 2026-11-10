@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://upb-flora-game.local/schema/flora.schema.json",
+  "title": "FloraCatalog",
+  "description": "Species catalog. Zones reference species by id; sprites are generated from species.sprite and never stored here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "catalogVersion", "species"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "catalogVersion": { "type": "integer", "minimum": 1 },
+    "generatedBy": { "type": "string" },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "species": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/species" }
+    }
+  },
+  "$defs": {
+    "species": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "binomial",
+        "family",
+        "localNames",
+        "needsReview",
+        "description",
+        "observationTraits",
+        "habitat",
+        "season",
+        "codex",
+        "sprite"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^sp_[a-z_]+$" },
+        "binomial": { "type": "string", "minLength": 3 },
+        "family": { "type": "string", "minLength": 3 },
+        "localNames": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "language"],
+            "properties": {
+              "name": { "type": "string", "minLength": 2 },
+              "language": { "type": "string", "enum": ["ibaloi", "kankanaey", "ifugao", "en"] }
+            }
+          }
+        },
+        "needsReview": { "type": "boolean", "description": "Local name not yet confirmed by a native speaker." },
+        "description": { "type": "string", "minLength": 40 },
+        "observationTraits": {
+          "type": "array",
+          "minItems": 2,
+          "description": "Things visible on the sprite. These are the only fair prompt material.",
+          "items": { "type": "string", "minLength": 10 }
+        },
+        "habitat": { "type": "array", "minItems": 1, "items": { "type": "string", "enum": ["shade", "sun", "slope", "waterside", "pathside", "stonewall", "canopy"] } },
+        "season": { "type": "string", "minLength": 3 },
+        "codex": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["summary", "ecology", "cultural", "status", "threats", "localNameConfidence"],
+          "properties": {
+            "summary": { "type": "string", "minLength": 20 },
+            "campusContext": { "type": "string" },
+            "ecology": { "type": "string", "minLength": 20 },
+            "cultural": { "type": "string", "minLength": 20 },
+            "status": { "type": "string", "minLength": 10 },
+            "threats": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "localNameConfidence": { "type": "string", "minLength": 3 }
+          }
+        },
+        "sprite": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["palette", "heightPx"],
+          "properties": {
+            "palette": { "type": "string", "pattern": "^[a-z]+$" },
+            "heightPx": { "type": "integer", "minimum": 48, "maximum": 96 }
+          }
+        }
+      }
+    }
+  }
+}
