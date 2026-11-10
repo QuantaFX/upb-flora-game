@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import { GameState, QUEST_DEFS } from '../src/game/state.js';
+import { PLANTS } from '../src/data/plants.js';
+import { NPCS } from '../src/world/map.js';
+import { getNpcDialogPages } from '../src/data/story.js';
+const saved=new Map();
+globalThis.localStorage={getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)};
+const state=new GameState();
+const talk=npc=>getNpcDialogPages(npc,state,{toast(){}}).forEach(p=>p.onFinish?.());
+assert.equal(PLANTS.length,7);
+for(const q of QUEST_DEFS){
+ const npc=NPCS.find(n=>n.id===q.npcId);
+ assert.ok(npc);
+ assert.equal(state.getQuestStatus(q.id),'available');
+ talk(npc);
+ assert.equal(state.getQuestStatus(q.id),'active');
+ talk(npc);
+ assert.equal(state.getQuestStatus(q.id),'active','Cannot finish without a photo');
+ state.markCollected(q.plantId);
+ talk(npc);
+ assert.equal(state.getQuestStatus(q.id),'completed');
+}
+talk(NPCS.find(n=>n.id==='prof_barcelo'));
+assert.equal(state.data.flags.finale_complete,true);
+const restored=new GameState();
+assert.deepEqual(restored.data,state.data);
+console.log('Seven quests, photo gating, finale, and save/load passed.');

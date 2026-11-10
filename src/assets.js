@@ -62,11 +62,11 @@ export function emoteUrl(emoteNumber) {
 }
 
 export function plantPortraitUrl(plantId) {
-  return `/game/plants/${plantId}.png`;
+  return `/game/plants/${plantId}.${plantId === "benguet_pine" ? "png" : "svg"}`;
 }
 
 export function plantWorldUrl(plantId) {
-  return `/game/plants/${plantId}_world.png`;
+  return plantId === "benguet_pine" ? `/game/plants/${plantId}_world.png` : `/game/plants/${plantId}.svg`;
 }
 
 /**

@@ -47,8 +47,8 @@ export function createEncounterUI(state, assets, audio, toast) {
       : 'Unidentified Campus Specimen';
 
     plantTagEl.textContent = identified
-      ? currentPlant.protected
-        ? 'PROTECTED SPECIMEN'
+      ? (currentPlant.harvestItem.mode === 'photo')
+        ? 'PHOTO SPECIMEN'
         : 'IDENTIFIED FLORA'
       : 'WILD FLORA';
 
@@ -60,7 +60,7 @@ export function createEncounterUI(state, assets, audio, toast) {
     focusHeartsEl.textContent = '❤️'.repeat(focus) + '🖤'.repeat(Math.max(0, 3 - focus));
 
     // Update collect button label based on protection status
-    if (currentPlant.protected) {
+    if ((currentPlant.harvestItem.mode === 'photo')) {
       btnCollect.innerHTML = collected ? '📸 PHOTOGRAPHED ✓' : '📸 PHOTOGRAPH';
     } else {
       btnCollect.innerHTML = collected ? '🌿 COLLECTED ✓' : '🌿 COLLECT SAMPLE';
@@ -128,7 +128,7 @@ export function createEncounterUI(state, assets, audio, toast) {
   function openIdentifyMenu() {
     if (state.isIdentified(currentPlant.id)) {
       showMainMenu(
-        `You already identified this specimen as <strong>${currentPlant.name}</strong> (<em>${currentPlant.scientificName}</em>)! Now select <strong>${currentPlant.protected ? 'PHOTOGRAPH' : 'COLLECT SAMPLE'}</strong>.`,
+        `You already identified this specimen as <strong>${currentPlant.name}</strong> (<em>${currentPlant.scientificName}</em>)! Now select <strong>${(currentPlant.harvestItem.mode === 'photo') ? 'PHOTOGRAPH' : 'COLLECT SAMPLE'}</strong>.`,
       );
       return;
     }
@@ -170,7 +170,7 @@ export function createEncounterUI(state, assets, audio, toast) {
       audio?.playSfx('success');
       toast(`🌿 Identified: ${currentPlant.name} (${currentPlant.scientificName})!`);
       showMainMenu(
-        `✅ <strong>Positive Identification!</strong> This is <strong>${currentPlant.name}</strong> (<em>${currentPlant.scientificName}</em>).<br/>Uses: ${currentPlant.uses}<br/>Select <strong>${currentPlant.protected ? '📸 PHOTOGRAPH' : '🌿 COLLECT SAMPLE'}</strong> to record it in your satchel!`,
+        `✅ <strong>Positive Identification!</strong> This is <strong>${currentPlant.name}</strong> (<em>${currentPlant.scientificName}</em>).<br/>Uses: ${currentPlant.uses}<br/>Select <strong>${(currentPlant.harvestItem.mode === 'photo') ? '📸 PHOTOGRAPH' : '🌿 COLLECT SAMPLE'}</strong> to record it in your satchel!`,
       );
     } else {
       focus -= 1;
@@ -203,8 +203,8 @@ export function createEncounterUI(state, assets, audio, toast) {
     const item = currentPlant.harvestItem;
     toast(`🎒 Added to Satchel: ${item.name}`);
 
-    const actionText = currentPlant.protected
-      ? `📸 <strong>Conservation Protocol:</strong> Because <em>${currentPlant.name}</em> is a protected highland species, you captured a geotagged voucher photograph without disturbing the living plant!`
+    const actionText = (currentPlant.harvestItem.mode === 'photo')
+      ? `📸 <strong>Conservation Protocol:</strong> You captured a geotagged voucher photograph without disturbing the living plant!`
       : `🌿 <strong>Sustainable Harvest:</strong> You carefully gathered <strong>${item.name}</strong> while leaving the parent plant healthy!`;
 
     showMainMenu(`${actionText}<br/><em>(${currentPlant.caution})</em>`);

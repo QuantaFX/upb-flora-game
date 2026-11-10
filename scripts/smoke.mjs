@@ -3,6 +3,7 @@
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
 import { mkdirSync } from 'node:fs';
+import assert from 'node:assert/strict';
 
 mkdirSync('shots', { recursive: true });
 
@@ -41,7 +42,7 @@ await page.click('#btn-start-game');
 await page.waitForTimeout(450);
 await page.screenshot({ path: 'shots/grid-01-oblation-driveway.png' });
 
-// 2. Talk to Prof. Dulay at (67, 30) -> player at (67, 31)
+// 2. Talk to Prof. Barcelo at (67, 30) -> player at (67, 31)
 await page.evaluate(() => window.__game.teleportTo(67, 31, 'up'));
 await page.waitForTimeout(250);
 await page.click('#btn-interact');
@@ -67,7 +68,30 @@ await page.evaluate(() => window.__game.teleportTo(12, 47, 'up'));
 await page.waitForTimeout(350);
 await page.screenshot({ path: 'shots/grid-04-css-and-cac-corner.png' });
 
-// 6. Verify BFS path reachability from Oblation Spawn (67, 32) to all 10 NPCs and all 9 Plant Nodes!
+// Inspect the north stair gardens, then exercise each new sprite in an encounter.
+await page.evaluate(() => window.__game.teleportTo(47, 16, 'up'));
+await page.waitForTimeout(350);
+await page.screenshot({ path: 'shots/grid-05-north-gardens.png' });
+await page.evaluate(() => window.__game.teleportTo(32, 31, 'up'));
+await page.waitForTimeout(350);
+await page.screenshot({ path: 'shots/grid-06-inang-laya.png' });
+const plantIds = await page.evaluate(() => window.__game.map.plantNodes.map(p => p.plantId));
+for (const id of plantIds) {
+  await page.evaluate(id => window.__game.encounterUI.open(id), id);
+  await page.waitForFunction(() => {
+    const img = document.querySelector('#enc-plant-sprite');
+    return img.complete && img.naturalWidth > 0;
+  });
+  await page.locator('[data-cmd="identify"]').click();
+  const scientificName = await page.evaluate(async id => (await import('/src/data/plants.js')).PLANT_BY_ID[id].scientificName, id);
+  await page.locator('#enc-sub-menu button').filter({ hasText: scientificName }).click();
+  await page.locator('#btn-enc-collect').click();
+  assert.ok(await page.evaluate(id => window.__game.state.hasCollected(id), id));
+  if (id === 'kamantigi') await page.screenshot({ path: 'shots/grid-07-plant-encounter.png' });
+  await page.evaluate(() => window.__game.encounterUI.close());
+}
+
+// 6. Verify BFS reachability from spawn to every NPC and all seven plant nodes.
 const check = await page.evaluate(() => {
   const map = window.__game.map;
   const visited = new Set();

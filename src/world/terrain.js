@@ -87,8 +87,26 @@ export function buildTerrain(scene, map, assets) {
           }
         }
       } else if (t.type === 'tall_grass') {
-        drawTile(nature, 7, 11, x, y);
+        // The old atlas cell was a tiled object, not grass. Draw sparse blades
+        // over the grass base so the patches blend into the surrounding lawn.
+        for (let i = 0; i < 5; i += 1) {
+          const gx = x * 16 + 2 + ((i * 7 + hash) % 12);
+          const gy = y * 16 + 6 + ((i * 3) % 9);
+          ctx.fillStyle = i % 2 ? '#59783d' : '#7c9449';
+          ctx.fillRect(gx, gy - 4, 1, 5);
+          ctx.fillRect(gx - 1, gy - 2, 3, 1);
+        }
       }
+    }
+  }
+
+  // Dappled canopy shadows clipped to planted ground, never painted over the stairs.
+  for (const p of map.props.filter(p => p.kind === 'pine')) {
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const t = map.tileAt(p.x + dx, p.y + dy);
+      if (!t || !['grass','tall_grass'].includes(t.type)) continue;
+      ctx.fillStyle = 'rgba(21, 47, 37, 0.13)';
+      ctx.fillRect((p.x+dx)*16+3, (p.y+dy)*16+4, 10, 7);
     }
   }
 

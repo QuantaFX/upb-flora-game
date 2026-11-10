@@ -3,7 +3,7 @@
 // Directly modeled on the user's strict grid layout + UP Baguio Emergency Evacuation Plan
 // and the 21 Democratic Spaces map:
 //   - 4 nested rectangular elevation terraces (Elev 0 outer light-green -> Elev 1 -> Elev 2 -> Elev 3 Summit Quad)
-//   - North Row (Elev 0): Himnasyo Amianan & HK (left) + Innovation & Biodiversity Research Center (right),
+//   - North Row (Elev 0): Himnasyo Amianan & HK (left) + Himnasyo Amianan (right),
 //     connected by a white horizontal walkway and central stairs climbing south into the Summit Quad.
 //   - NW Cluster: Student Alumni Center (#2, Elev 1) with grey courtyard & long west staircase down to CSS (#4),
 //     plus east stairs up to Balay Panganan / Cafeteria (#13, Elev 2).
@@ -19,7 +19,7 @@
 export const MAP_W = 80;
 export const MAP_H = 60;
 
-// Player starts on the Lower East Driveway Landing (Elev 1), looking straight north at Prof. Dulay
+// Player starts on the Lower East Driveway Landing (Elev 1), looking straight north at Prof. Barcelo
 // and the UP Oblation Statue right in the middle between the two East Driveway staircases!
 export const PLAYER_SPAWN = { x: 67, y: 32, dir: 'up' };
 
@@ -27,7 +27,7 @@ export const BUILDINGS = [
   // --- NORTH LOWLAND ROW (Elevation 0 — Sunshine Park / Harrison Rd Edge) ---
   {
     id: 'b_himnasyo',
-    name: 'HIMNASYO AMIANAN & HK',
+    name: 'HUMAN KINETICS PROGRAM',
     sub: 'Human Kinetics Program (North Lower Campus)',
     elev: 0,
     x: 38,
@@ -40,9 +40,9 @@ export const BUILDINGS = [
     doorX: 44,
   },
   {
-    id: 'b_biodiv',
-    name: 'BIODIVERSITY RESEARCH CTR',
-    sub: 'Innovation & Biodiversity Research Center',
+    id: 'b_gym',
+    name: 'HIMNASYO AMIANAN',
+    sub: 'Himnasyo Amianan',
     elev: 0,
     x: 52,
     y: 3,
@@ -302,8 +302,8 @@ export const BUILDINGS = [
 
 export const NPCS = [
   {
-    id: 'prof_dulay',
-    name: 'Prof. Mila Dulay',
+    id: 'prof_barcelo',
+    name: 'Prof. Racquel Barcelo',
     role: 'Department of Biology · Project Saleng Lead',
     sprite: 'Princess',
     x: 67,
@@ -395,77 +395,61 @@ export const NPCS = [
 
 export const PLANT_NODES = [
   {
-    id: 'node_saleng_plaza',
-    plantId: 'benguet_pine',
-    x: 57,
-    y: 38,
-    scale: 2.35,
-    questHint: 'Heritage Saleng (Benguet Pine) in the UPB Woods (#15 / #17 beside Court A)',
+    "id": "node_benguet_pine",
+    "plantId": "benguet_pine",
+    "x": 31,
+    "y": 28,
+    "scale": 2.35,
+    "questHint": "Pine tree to the left of Inang Laya"
   },
   {
-    id: 'node_lagundi_dorm',
-    plantId: 'lagundi',
-    x: 16,
-    y: 44,
-    scale: 1.5,
-    questHint: 'Aromatic 5-leaflet Lagundi shrub on the CSS & Library Courtyard slope (#6 / #7)',
+    "id": "node_tri_vein_fern",
+    "plantId": "tri_vein_fern",
+    "x": 33,
+    "y": 31,
+    "scale": 1.2,
+    "questHint": "Tri-vein fern in front of Inang Laya"
   },
   {
-    id: 'node_sambong_cs',
-    plantId: 'sambong',
-    x: 51,
-    y: 21,
-    scale: 1.5,
-    questHint: 'Camphor-scented Sambong herb on the Summit KA / College of Science Quad (#12)',
+    "id": "node_gipas",
+    "plantId": "gipas",
+    "x": 44,
+    "y": 13,
+    "scale": 1.5,
+    "questHint": "Gipas beside the north stairs between KA and HKP"
   },
   {
-    id: 'node_tsaang_gubat_canteen',
-    plantId: 'tsaang_gubat',
-    x: 25,
-    y: 19,
-    scale: 1.45,
-    questHint: 'Glossy Tsaang Gubat shrub between Balay Panganan (#13) & Student Alumni Center',
+    "id": "node_kamantigi",
+    "plantId": "kamantigi",
+    "x": 49,
+    "y": 12,
+    "scale": 1.4,
+    "questHint": "Kamantigi beside the north stairs"
   },
   {
-    id: 'node_takip_kuhol_court',
-    plantId: 'takip_kuhol',
-    x: 54,
-    y: 40,
-    scale: 1.3,
-    questHint: 'Low fan-leaved Takip-kuhol along the east edge of Open Court A (#21)',
+    "id": "node_fishtail_fern",
+    "plantId": "fishtail_fern",
+    "x": 50,
+    "y": 14,
+    "scale": 1.3,
+    "questHint": "Fishtail fern between KA and HKP"
   },
   {
-    id: 'node_benguet_lily_hill',
-    plantId: 'benguet_lily',
-    x: 11,
-    y: 20,
-    scale: 1.55,
-    questHint: 'Endemic white Benguet Lily in the Woods behind CSS (#3)',
+    "id": "node_moclame",
+    "plantId": "moclame",
+    "x": 54,
+    "y": 14,
+    "scale": 2.1,
+    "questHint": "Moclame between KA and HKP"
   },
   {
-    id: 'node_tree_fern_seep',
-    plantId: 'tree_fern',
-    x: 62,
-    y: 13,
-    scale: 2.25,
-    questHint: 'Protected Tibanglan Tree Fern along Lower KA & Biodiversity Research Center (#14)',
-  },
-  {
-    id: 'node_sunflower_terrace',
-    plantId: 'mexican_sunflower',
-    x: 42,
-    y: 21,
-    scale: 1.6,
-    questHint: 'Blooming Mirassol (Mexican Sunflower) on the Kolehiyo ng Agham Quad (#12)',
-  },
-  {
-    id: 'node_sapinit_hill',
-    plantId: 'sapinit',
-    x: 17,
-    y: 49,
-    scale: 1.45,
-    questHint: 'Wild Sapinit raspberry bramble near CAC Dap-ay (#6) & Library',
-  },
+    "id": "node_agoho",
+    "plantId": "agoho",
+    "x": 58,
+    "y": 22,
+    "scale": 2.6,
+    "questHint": "Agoho beside the College of Science AVR"
+  }
 ];
 
 export const SIGNS = [
@@ -605,7 +589,7 @@ export function createCampusMap() {
     }
   };
 
-  // 1. NORTH ROW WALKWAYS & CENTRAL NORTH STAIRCASE (Himnasyo Amianan & Biodiversity Research Center)
+  // 1. NORTH ROW WALKWAYS & CENTRAL NORTH STAIRCASE (Himnasyo Amianan & Himnasyo Amianan)
   fillRect(38, 8, 51, 9, { type: 'path', elev: 0, solid: false });
   // Central North Staircase climbing South from North Row (y=8..9, Elev 0) up to North KA Rim (y=16, Elev 2)
   buildStairRamp(46, 10, 47, 12, 0, 1, 'south');
@@ -613,8 +597,9 @@ export function createCampusMap() {
   // Long horizontal white walkway along North Rim of Kolehiyo ng Agham (x=36..61, y=16, Elev 2)
   fillRect(36, 16, 61, 16, { type: 'path', elev: 2, solid: false });
   // North-East connector walkway from Biodiversity South Door (x=60..61, y=10..15) climbing south
-  fillRect(60, 10, 61, 13, { type: 'path', elev: 1, solid: false });
-  buildStairRamp(60, 10, 61, 11, 0, 1, 'south');
+  fillRect(58, 10, 61, 11, { type: 'path', elev: 0, solid: false });
+  fillRect(60, 12, 61, 13, { type: 'path', elev: 1, solid: false });
+  buildStairRamp(60, 12, 61, 13, 0, 1, 'south');
   buildStairRamp(60, 14, 61, 15, 1, 2, 'south');
 
   // 2. SUMMIT CROWN QUAD (Elevation 3 — Main White Academic Courtyard x=25..59, y=18..32)
@@ -626,8 +611,9 @@ export function createCampusMap() {
 
   // 3. NORTHWEST TERRACE: STUDENT ALUMNI CENTER, GREY COURTYARD, & WEST STAIRS TO CSS
   // Short stairs east of Student Alumni Center (x=23..24, y=18..19) climbing from Elev 1 -> Elev 2/3
-  buildStairRamp(23, 18, 24, 19, 1, 2, 'east');
-  buildStairRamp(25, 18, 26, 19, 2, 3, 'east');
+  fillRect(21, 21, 22, 22, { type: 'path', elev: 1, solid: false });
+  buildStairRamp(23, 21, 24, 22, 1, 3, 'east');
+  fillRect(25, 21, 25, 22, { type: 'path', elev: 3, solid: false });
   // Grey Courtyard south of Student Alumni Center (x=19..21, y=20..25, Elev 1)
   fillRect(19, 20, 21, 25, { type: 'road', elev: 1, solid: false });
   // Long West Staircase descending from Alumni Grey Courtyard (x=18, Elev 1) to CSS North Landing (x=13, Elev 0)
@@ -637,7 +623,7 @@ export function createCampusMap() {
 
   // 4. EAST VERTICAL SPINE, TWO PARALLEL DRIVEWAY STAIR CORRIDORS, & OBLATION STATUE IN THE MIDDLE
   // Vertical spine east of College of Science (x=60..61, y=17..33)
-  buildStairRamp(60, 17, 61, 18, 1, 2, 'south');
+  fillRect(60, 17, 61, 18, { type: 'path', elev: 2, solid: false });
   fillRect(60, 19, 61, 33, { type: 'path', elev: 2, solid: false });
   // Bridges from Summit Quad (x=59) to East Spine (x=60..61) aligned with the two driveway corridors
   buildStairRamp(59, 25, 59, 26, 2, 3, 'west');
@@ -699,10 +685,13 @@ export function createCampusMap() {
   // - Left vertical white path along the west edge of CAC (x=6..9, y=46..54, Elev 0)
   fillRect(6, 46, 9, 54, { type: 'path', elev: 0, solid: false });
 
+  fillRect(14, 27, 15, 48, { type: 'path', elev: 0, solid: false });
+  fillRect(12, 27, 15, 28, { type: 'path', elev: 0, solid: false });
+
   // 7. Tall Grass Patches (Wild Flora Encounters in the green terrace pockets)
   fillRect(10, 18, 13, 22, { type: 'tall_grass', elev: 0 }); // Woods behind CSS (#3)
   fillRect(54, 36, 58, 39, { type: 'tall_grass', elev: 1 }); // UPB Woods beside Court A (#15 / #17)
-  fillRect(15, 42, 18, 45, { type: 'tall_grass', elev: 0 }); // CSS & Library herbal slope (Lagundi)
+  fillRect(16, 42, 18, 45, { type: 'tall_grass', elev: 0 }); // CSS & Library herbal slope (Lagundi)
   fillRect(63, 12, 66, 16, { type: 'tall_grass', elev: 1 }); // Lower KA / Biodiversity slope (#14)
 
   // 8. Stamp Building Footprints AND a 1-tile foundation apron around each building to its exact `b.elev`
@@ -711,7 +700,7 @@ export function createCampusMap() {
     for (let y = b.y - 1; y <= b.y + b.d; y += 1) {
       for (let x = b.x - 1; x <= b.x + b.w; x += 1) {
         const t = tiles[y]?.[x];
-        if (t && t.type !== 'stair') {
+        if (t && ['grass', 'tall_grass'].includes(t.type)) {
           t.elev = b.elev;
         }
       }
@@ -723,11 +712,19 @@ export function createCampusMap() {
     }
   }
 
+  // Beds beside Inang Laya leave its door and the museum-side corridor clear.
+  fillRect(31, 26, 32, 30, { type: 'grass' });
+  fillRect(33, 30, 34, 31, { type: 'grass' });
+  fillRect(58, 20, 58, 23, { type: 'grass' });
+  // Reference specimens elsewhere occupy the existing terrace gardens.
+  for (const p of PLANT_NODES) setTile(p.x, p.y, { type: 'grass' });
+
   // 9. Decorative Cordillera Pines, Sunflowers, and Benches
   const props = [];
   const addProp = (kind, x, y) => {
     const t = tiles[y]?.[x];
-    if (t && !t.solid && t.type !== 'stair') {
+    if (t && !t.solid && (kind === 'bench' || ['grass', 'tall_grass'].includes(t.type))
+      && ![...PLANT_NODES, ...NPCS, ...SIGNS].some(p => Math.abs(p.x-x) <= 1 && Math.abs(p.y-y) <= 1)) {
       if (kind === 'pine' || kind === 'bench') {
         t.solid = true;
       }
@@ -754,6 +751,20 @@ export function createCampusMap() {
     [20, 49], [30, 49], // Library & CAC Promenade benches
   ];
   for (const [x, y] of benchCoords) addProp('bench', x, y);
+
+  // Deterministic woodland planting, with a full tile of clearance around paths and landmarks.
+  for (let y = 4; y < MAP_H - 3; y += 2) {
+    for (let x = 4; x < MAP_W - 3; x += 2) {
+      const hash = (x * 37 + y * 71) % 19;
+      if (hash > 6) continue;
+      const t = tiles[y][x];
+      const clear = [-1,0,1].every(dy => [-1,0,1].every(dx => {
+        const n = tiles[y+dy]?.[x+dx];
+        return n && !n.solid && ['grass','tall_grass'].includes(n.type) && n.elev === t.elev;
+      }));
+      if (clear) addProp(hash < 2 ? 'pine' : 'understory', x, y);
+    }
+  }
 
   return {
     w: MAP_W,
@@ -782,7 +793,7 @@ export function createCampusMap() {
 }
 
 function getZoneName(x, y, elev) {
-  if (y <= 11 && x >= 36 && x <= 66) return 'North Campus · Himnasyo Amianan & Biodiversity Research Ctr (Elev 0)';
+  if (y <= 11 && x >= 36 && x <= 66) return 'North Campus · Himnasyo Amianan & Human Kinetics Program (Elev 0)';
   if (x >= 60 && y >= 20 && y <= 35) return 'East Driveway Stairs & Oblation Ground (Elev 0–2)';
   if (x >= 37 && x <= 55 && y >= 35 && y <= 44) return 'Open Court A (#21 · Elev 0) & North Bleachers (Elev 1)';
   if (x >= 53 && x <= 68 && y >= 35 && y <= 43) return 'UPB Woods (#15 / #17 · Elev 1)';

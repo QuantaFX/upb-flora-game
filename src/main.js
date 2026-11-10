@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { loadAllAssets } from './assets.js';
 import { ALL_PLANT_IDS, PLANT_BY_ID } from './data/plants.js';
 import { createCampusMap, NPCS, PLANT_NODES, SIGNS } from './world/map.js';
+import { buildEnvironment } from './world/environment.js';
 import { buildTerrain } from './world/terrain.js';
 import { buildPropsAndBuildings } from './world/props.js';
 import { Actor } from './world/actor.js';
@@ -85,6 +86,8 @@ async function boot() {
   buildTerrain(scene, map, assets);
   const propsCtrl = buildPropsAndBuildings(scene, map, assets);
 
+  const environment = buildEnvironment(scene, map);
+
   // Drifting Cordillera mist clouds
   const mistGroup = new THREE.Group();
   scene.add(mistGroup);
@@ -105,7 +108,7 @@ async function boot() {
       new THREE.MeshBasicMaterial({ map: mistTex, transparent: true, depthWrite: false }),
     );
     m.rotation.x = -Math.PI / 2.3;
-    m.position.set(6 + i * 6, 1.8 + (i % 3) * 0.9, 4 + ((i * 7) % 26));
+    m.position.set(6 + i * 11, 6.8 + (i % 3) * 0.9, 4 + ((i * 9) % 50));
     m.userData.speed = 0.35 + (i % 3) * 0.15;
     mistGroup.add(m);
   }
@@ -277,10 +280,10 @@ async function boot() {
     if (t?.type === 'tall_grass' && Math.random() < 0.14) {
       // Pick a wild species appropriate for this terrace elevation
     const poolByElev = {
-      0: ['lagundi', 'mexican_sunflower'],
-      1: ['sapinit', 'tree_fern', 'benguet_pine'],
-      2: ['benguet_lily', 'takip_kuhol', 'benguet_pine'],
-      3: ['sambong', 'tsaang_gubat', 'mexican_sunflower'],
+      0: ['benguet_pine', 'tri_vein_fern'],
+      1: ['kamantigi', 'gipas', 'benguet_pine'],
+      2: ['gipas', 'fishtail_fern', 'moclame'],
+      3: ['benguet_pine', 'tri_vein_fern', 'agoho'],
     };
       const pool = poolByElev[Math.round(elev)] || ALL_PLANT_IDS;
       const wildId = pool[Math.floor(Math.random() * pool.length)];
@@ -431,10 +434,11 @@ async function boot() {
     propsCtrl.update(elapsed, player);
 
     for (const m of mistGroup.children) {
-      m.position.x += m.userData.speed * dt;
+      m.position.x += environment.reducedMotion ? 0 : m.userData.speed * dt;
       if (m.position.x > map.w + 6) m.position.x = -6;
     }
 
+    environment.update(elapsed);
     updateCamera(dt);
     renderer.render(scene, camera);
   }

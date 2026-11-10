@@ -211,7 +211,7 @@ export function buildPropsAndBuildings(scene, map, assets) {
   }
 
   // 3. Decorative Trees, Sunflowers, Benches from Ninja Adventure Tilesets
-  const sunflowerTex = sliceTileTexture(nature, 0, 11, 1, 1);
+  const sunflowerTex = assets.plants.kamantigi.worldTex;
   const benchTex = sliceTileTexture(element, 11, 1, 3, 1);
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
 
@@ -231,6 +231,12 @@ export function buildPropsAndBuildings(scene, map, assets) {
       mesh.rotation.x = -0.32;
       group.add(mesh);
       treeEntries.push({ x: p.x, y: p.y, mat });
+    } else if (p.kind === 'understory') {
+      const id = ['tri_vein_fern', 'gipas', 'kamantigi', 'fishtail_fern'][(p.x + p.y) % 4];
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), new THREE.MeshBasicMaterial({ map: assets.plants[id].worldTex, transparent: true, alphaTest: 0.35 }));
+      mesh.position.set(p.x + 0.5, p.elev + 0.43, p.y + 0.5);
+      mesh.rotation.x = -0.32;
+      group.add(mesh);
     } else if (p.kind === 'sunflower_deco') {
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.95, 1.05),

@@ -1,78 +1,79 @@
 // Game State, Quest Progression, Herbarium Journal Unlocking, Satchel Inventory, and Save/Load.
 
-const STORAGE_KEY = 'upb_flora_quest_save_v1';
+import { PLANTS } from '../data/plants.js';
+const STORAGE_KEY = 'upb_flora_quest_save_v2'; // Keep the old story save intact.
 
 export const QUEST_DEFS = [
   {
-    id: 'm1_saleng',
-    code: 'M1',
-    title: 'Roots of the Campus (Saleng)',
-    giver: 'Prof. Mila Dulay',
-    plantId: 'benguet_pine',
-    locationHint: 'Oblation Ground & UPB Woods (#15, SE Entrance · Elev 0)',
-    summary:
-      'Meet Prof. Dulay at the Oblation Ground (SE Driveway), examine & identify the heritage Benguet Pine (Saleng) in the UPB Woods, and listen to Apo Sabado’s Cordillera lore.',
+    "id": "field_benguet_pine",
+    "code": "M1",
+    "title": "Roots of the Campus",
+    "giver": "Prof. Racquel Barcelo",
+    "npcId": "prof_barcelo",
+    "plantId": "benguet_pine",
+    "locationHint": "Left of Inang Laya",
+    "summary": "Identify and photograph Pine Tree (Pinus kesiya). Left of Inang Laya. Return to Prof. Racquel Barcelo with your observations."
   },
   {
-    id: 'm2_lagundi',
-    code: 'M2',
-    title: 'Ubo sa Library Courtyard (Campus Cough)',
-    giver: 'Paolo (CAC / Library Student)',
-    plantId: 'lagundi',
-    locationHint: 'UPB Library (#7) & CAC Dap-ay Courtyard (#6 · Elev 0)',
-    summary:
-      'Your classmate Paolo outside the UPB Library & CAC Courtyard has a dry cough from studying in the Baguio mist. Identify & harvest five-leaflet Lagundi (Dangla) on the slope between CSS and the Library.',
+    "id": "field_tri_vein_fern",
+    "code": "M2",
+    "title": "Fronds at Inang Laya",
+    "giver": "Paolo",
+    "npcId": "paolo",
+    "plantId": "tri_vein_fern",
+    "locationHint": "In front of Inang Laya",
+    "summary": "Identify and photograph Tri-vein Fern (Christella parasitica). In front of Inang Laya. Return to Paolo with your observations."
   },
   {
-    id: 'm3_sambong',
-    code: 'M3',
-    title: 'Manong Ben’s Burden',
-    giver: 'Manong Ben (Driveway Guard)',
-    plantId: 'sambong',
-    locationHint: 'Oblation Gate (Elev 0) → KA / CS Quad (Summit · Elev 3)',
-    summary:
-      'Manong Ben’s doctor advised a DOH-approved herbal diuretic for his urinary stone history and swollen ankles. Climb to the Level 3 Summit Crown and find Sambong (Subusob) on the KA/CS Quad (#12).',
+    "id": "field_gipas",
+    "code": "M3",
+    "title": "The Gipas Stair Garden",
+    "giver": "Nurse Ruth",
+    "npcId": "nurse_ruth",
+    "plantId": "gipas",
+    "locationHint": "Beside the north stairs, between KA and HKP",
+    "summary": "Identify and photograph Gipas (Sarcandra glabra). Beside the north stairs, between KA and HKP. Return to Nurse Ruth with your observations."
   },
   {
-    id: 'm4_tsaang_gubat',
-    code: 'M4',
-    title: 'Sakit ng Tiyan sa Balay Panganan',
-    giver: 'Ate Lorna & Jun-jun',
-    plantId: 'tsaang_gubat',
-    locationHint: 'Balay Panganan / Cafeteria (#13, Summit North · Elev 3)',
-    summary:
-      'At Balay Panganan on the Summit Plateau, Ate Lorna’s son Jun-jun has stomach cramps. Identify & gather glossy Tsaang Gubat leaves beside the Student Alumni Center (#2) to pair with his ORS.',
+    "id": "field_kamantigi",
+    "code": "M4",
+    "title": "Flowers on the Steps",
+    "giver": "Ate Lorna",
+    "npcId": "ate_lorna",
+    "plantId": "kamantigi",
+    "locationHint": "Beside the north stairs",
+    "summary": "Identify and photograph Kamantigi (Impatiens balsamina). Beside the north stairs. Return to Ate Lorna with your observations."
   },
   {
-    id: 'm5_takip_kuhol',
-    code: 'M5',
-    title: 'Gasgas sa Court A (Varsity Scrape)',
-    giver: 'Kiko & Nurse Ruth',
-    plantId: 'takip_kuhol',
-    locationHint: 'Open Court A (#21 · Elev 0) & UPB Woods (#17 · Elev 1)',
-    summary:
-      'Kiko scraped his knee during practice at Open Court A (Elev 0). After washing the wound with soap and water, find fan-leaved Takip-kuhol along the east bank of Court A.',
+    "id": "field_fishtail_fern",
+    "code": "M5",
+    "title": "A Fern Without Flowers",
+    "giver": "Kiko",
+    "npcId": "kiko",
+    "plantId": "fishtail_fern",
+    "locationHint": "Between KA and HKP",
+    "summary": "Identify and photograph Fishtail Fern (Microsorum punctatum). Between KA and HKP. Return to Kiko with your observations."
   },
   {
-    id: 'm6_benguet_lily',
-    code: 'M6',
-    title: 'Liryo ng Kabundukan (Mountain Lily)',
-    giver: 'Dr. Alangdeo (Museo Kordilyera)',
-    plantId: 'benguet_lily',
-    locationHint: 'Museo Kordilyera (#9, Elev 3) → Woods behind CSS (#3, Elev 2)',
-    summary:
-      'Document the threatened endemic Benguet Lily (Lilium philippinense) in the Woods behind CSS (#3) for the Museo Kordilyera exhibit — strictly via non-destructive photography!',
+    "id": "field_moclame",
+    "code": "M6",
+    "title": "The Moclame Canopy",
+    "giver": "Dr. Alangdeo",
+    "npcId": "curator",
+    "plantId": "moclame",
+    "locationHint": "Between KA and HKP",
+    "summary": "Identify and photograph Moclame (Ficus microcarpa). Between KA and HKP. Return to Dr. Alangdeo with your observations."
   },
   {
-    id: 's1_sunflower',
-    code: 'S1',
-    title: 'Sunflower Season Twist (Side Quest)',
-    giver: 'Bea (UPB Outcrop Photographer)',
-    plantId: 'mexican_sunflower',
-    locationHint: 'Kolehiyo ng Agham (KA) Quad (#12, Summit · Elev 3)',
-    summary:
-      'Outcrop photographer Bea on the Summit KA Quad wants to know if Baguio’s famous yellow sunflowers (Tithonia diversifolia) are truly native Cordillera plants. Examine the bush and share the truth!',
-  },
+    "id": "field_agoho",
+    "code": "M7",
+    "title": "Agoho or Pine?",
+    "giver": "Bea",
+    "npcId": "bea",
+    "plantId": "agoho",
+    "locationHint": "Near the College of Science AVR",
+    "summary": "Identify and photograph Agoho (Casuarina equisetifolia). Near the College of Science AVR. Return to Bea with your observations."
+  }
 ];
 
 export function createInitialState() {
@@ -80,15 +81,7 @@ export function createInitialState() {
     playerName: 'Isko',
     started: false,
     // Quest status: 'locked' | 'available' | 'active' | 'completed'
-    quests: {
-      m1_saleng: 'available',
-      m2_lagundi: 'locked',
-      m3_sambong: 'locked',
-      m4_tsaang_gubat: 'locked',
-      m5_takip_kuhol: 'locked',
-      m6_benguet_lily: 'locked',
-      s1_sunflower: 'available',
-    },
+    quests: Object.fromEntries(QUEST_DEFS.map((q,i) => [q.id, i === 0 ? 'available' : 'locked'])),
     flags: {
       talked_prof_intro: false,
       talked_apo_sabado: false,
@@ -204,16 +197,8 @@ export class GameState {
 
   setQuestStatus(questId, status) {
     this.data.quests[questId] = status;
-    // Unlock M2..M5 when M1 is completed
-    if (questId === 'm1_saleng' && status === 'completed') {
-      for (const q of ['m2_lagundi', 'm3_sambong', 'm4_tsaang_gubat', 'm5_takip_kuhol']) {
-        if (this.data.quests[q] === 'locked') {
-          this.data.quests[q] = 'available';
-        }
-      }
-      if (this.data.quests.m6_benguet_lily === 'locked') {
-        this.data.quests.m6_benguet_lily = 'available';
-      }
+    if (questId === 'field_benguet_pine' && status === 'completed') {
+      for (const q of QUEST_DEFS.slice(1)) if (this.data.quests[q.id] === 'locked') this.data.quests[q.id] = 'available';
     }
     this.notify();
   }
@@ -224,50 +209,10 @@ export class GameState {
   }
 
   getActiveHeadline() {
-    const q = this.data.quests;
-    if (this.data.flags.finale_complete) {
-      return `🎉 Project Saleng Complete! (${this.data.identifiedPlants.length}/9 Flora Documented)`;
-    }
-    if (q.m1_saleng === 'available') {
-      return 'M1: Talk to Prof. Dulay at the Oblation Plaza';
-    }
-    if (q.m1_saleng === 'active') {
-      if (!this.hasCollected('benguet_pine')) {
-        return 'M1: Examine & document the Benguet Pine (Saleng) at the Plaza';
-      }
-      if (!this.data.flags.talked_apo_sabado) {
-        return 'M1: Ask Apo Sabado about traditional Saleng lore';
-      }
-      return 'M1: Report back to Prof. Dulay at the Oblation Plaza';
-    }
-
-    // Check active medicinal quests first
-    const activeOrder = [
-      ['m2_lagundi', 'lagundi', 'M2: Harvest Lagundi on the CSS & Library slope for Paolo', 'M2: Deliver Lagundi leaves to Paolo at Library/CAC Courtyard'],
-      ['m3_sambong', 'sambong', 'M3: Climb to Summit KA/CS Quad (Elev 3) to find Sambong', 'M3: Bring Sambong back to Manong Ben at Oblation Gate'],
-      ['m4_tsaang_gubat', 'tsaang_gubat', 'M4: Gather Tsaang Gubat beside Balay Panganan (Elev 3)', 'M4: Give Tsaang Gubat to Ate Lorna at Balay Panganan'],
-      ['m5_takip_kuhol', 'takip_kuhol', 'M5: Find Takip-kuhol by Open Court A drain (Elev 2)', 'M5: Bring Takip-kuhol poultice leaves to Kiko at Court A'],
-      ['m6_benguet_lily', 'benguet_lily', 'M6: Photograph Benguet Lily in Woods behind CSS (Elev 2)', 'M6: Show Benguet Lily photo to Dr. Alangdeo at Museo Kordilyera'],
-      ['s1_sunflower', 'mexican_sunflower', 'S1: Examine the yellow Sunflower bush on Summit KA Quad', 'S1: Tell Bea on the KA Quad the truth about Mexican Sunflowers'],
-    ];
-
-    for (const [id, plantId, findMsg, returnMsg] of activeOrder) {
-      if (q[id] === 'active') {
-        return this.hasCollected(plantId) ? returnMsg : findMsg;
-      }
-    }
-
-    // Count completed core missions
-    const coreDone = ['m2_lagundi', 'm3_sambong', 'm4_tsaang_gubat', 'm5_takip_kuhol'].filter(
-      (k) => q[k] === 'completed',
-    ).length;
-
-    if (coreDone < 4) {
-      return `Campus Herbal Missions (${coreDone}/4 healed) — Look for ! bubbles on NPCs`;
-    }
-    if (q.m6_benguet_lily !== 'completed') {
-      return 'M6: Visit Dr. Alangdeo at Museo Kordilyera (East Terrace)';
-    }
-    return 'Finale: Return to Prof. Dulay at the Oblation Plaza!';
+    if (this.data.flags.finale_complete) return `Project Saleng complete! (${this.data.identifiedPlants.length}/${PLANTS.length} documented)`;
+    const active = QUEST_DEFS.find(q => this.getQuestStatus(q.id) === 'active');
+    if (active) return this.hasCollected(active.plantId) ? `${active.code}: Return to ${active.giver}` : `${active.code}: ${active.locationHint}`;
+    const available = QUEST_DEFS.find(q => this.getQuestStatus(q.id) === 'available');
+    return available ? `${available.code}: Talk to ${available.giver}` : 'Return to Prof. Barcelo at the Oblation for your fieldwork review';
   }
 }
