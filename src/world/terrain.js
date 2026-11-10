@@ -47,8 +47,8 @@ export function buildTerrain(scene, map, assets) {
       } else if (t.type === 'court') {
         // Blue-grey patterned basketball court tiles
         drawTile(floor, 4 + (x % 2), 22 + (y % 2), x, y);
-        // Court boundary lines (Open Court A at x=29..34, y=18..23)
-        if (x === 29 || x === 34 || y === 18 || y === 23) {
+        // Court boundary lines (Open Court A at x=43..51, y=26..34)
+        if (x === 43 || x === 51 || y === 26 || y === 34) {
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 1;
           ctx.strokeRect(x * 16 + 1, y * 16 + 1, 14, 14);
@@ -57,7 +57,7 @@ export function buildTerrain(scene, map, assets) {
         // Governor Pack Road & Government Center Road asphalt + yellow center dashed line
         ctx.fillStyle = '#3b3f46';
         ctx.fillRect(x * 16, y * 16, 16, 16);
-        if ((y === 40 && x % 2 === 0) || (x === 1 && y % 2 === 0)) {
+        if ((y === 61 && x % 2 === 0) || (x === 2 && y % 2 === 0)) {
           ctx.fillStyle = '#f2c144';
           ctx.fillRect(x * 16 + 4, y * 16 + 4, 8, 3);
         }

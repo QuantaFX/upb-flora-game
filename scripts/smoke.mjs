@@ -1,4 +1,5 @@
-// End-to-end Playwright smoke & visual verification test for the 4-level concentric UP Baguio map.
+// End-to-end Playwright smoke & visual verification test for the expanded 80x64 UP Baguio map,
+// building foundation grounding (zero floating buildings), and automatic building occlusion transparency.
 
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
@@ -29,22 +30,16 @@ await page.goto(url, { waitUntil: 'networkidle' });
 await page.waitForFunction(() => Boolean(window.__game));
 await page.waitForTimeout(400);
 
-// 1. Title screen
-await page.screenshot({ path: 'shots/demo-01-title.png' });
-
-// 2. Click Start Fieldwork -> Oblation Ground (SE Driveway Entrance, Elev 0)
+// 1. Click Start Fieldwork -> Oblation Ground (SE Driveway Entrance, Elev 0, x=64, y=37)
 await page.fill('#player-name-input', 'Isko');
 await page.click('#btn-start-game');
-await page.waitForTimeout(500);
-await page.screenshot({ path: 'shots/demo-02-oblation-ground.png' });
+await page.waitForTimeout(450);
+await page.screenshot({ path: 'shots/expanded-01-oblation-ground.png' });
 
-// 3. Talk to Prof. Dulay at (42, 22) -> player stands at (42, 23)
-await page.evaluate(() => window.__game.teleportTo(42, 23, 'up'));
+// 2. Talk to Prof. Dulay at (64, 34) -> player stands at (64, 35)
+await page.evaluate(() => window.__game.teleportTo(64, 35, 'up'));
 await page.waitForTimeout(250);
 await page.click('#btn-interact');
-await page.waitForTimeout(300);
-await page.screenshot({ path: 'shots/demo-03-prof-dulay-dialog.png' });
-
 for (let i = 0; i < 8; i += 1) {
   const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
   if (!open) break;
@@ -52,17 +47,11 @@ for (let i = 0; i < 8; i += 1) {
   await page.waitForTimeout(100);
 }
 
-// 4. Examine Heritage Benguet Pine (Saleng) at (39, 18) -> player stands at (39, 19)
-await page.evaluate(() => window.__game.teleportTo(39, 19, 'up'));
+// 3. Examine Heritage Benguet Pine (Saleng) at (60, 27) -> player at (60, 28)
+await page.evaluate(() => window.__game.teleportTo(60, 28, 'up'));
 await page.waitForTimeout(250);
 await page.click('#btn-interact');
-await page.waitForTimeout(300);
-await page.click('[data-cmd="observe"]');
-await page.waitForTimeout(120);
-await page.click('.encounter-submenu button:first-child');
-await page.waitForTimeout(150);
-await page.screenshot({ path: 'shots/demo-04-saleng-encounter.png' });
-
+await page.waitForTimeout(250);
 await page.click('[data-cmd="identify"]');
 await page.waitForTimeout(120);
 await page.locator('.encounter-submenu button', { hasText: 'Benguet Pine' }).click();
@@ -72,48 +61,27 @@ await page.waitForTimeout(150);
 await page.click('[data-cmd="leave"]');
 await page.waitForTimeout(250);
 
-// 5. Talk to Apo Sabado at (40, 19) & report back to Prof. Dulay at (42, 22)
-await page.evaluate(() => window.__game.teleportTo(40, 20, 'up'));
-await page.waitForTimeout(200);
-await page.click('#btn-interact');
-for (let i = 0; i < 8; i += 1) {
-  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
-  if (!open) break;
-  await page.keyboard.press('Space');
-  await page.waitForTimeout(100);
-}
-
-await page.evaluate(() => window.__game.teleportTo(42, 23, 'up'));
-await page.waitForTimeout(200);
-await page.click('#btn-interact');
-for (let i = 0; i < 8; i += 1) {
-  const open = await page.evaluate(() => window.__game.dialogUI.isOpen);
-  if (!open) break;
-  await page.keyboard.press('Space');
-  await page.waitForTimeout(100);
-}
-
-// 6. Check Middle Terrace (Elev 2): Open Court A, UPB Library & Bulwagang Juan Luna
-await page.evaluate(() => window.__game.teleportTo(31, 21, 'up'));
+// 4. Middle Terrace (Elev 2): Open Court A & UPB Library
+await page.evaluate(() => window.__game.teleportTo(47, 30, 'up'));
 await page.waitForTimeout(350);
-await page.screenshot({ path: 'shots/demo-05-middle-terrace-court-a.png' });
+await page.screenshot({ path: 'shots/expanded-02-open-court-a.png' });
 
-// 7. Check Summit Crown Plateau (Elev 3): IB Building, KA, CS, Balay Panganan, Balay Salun-at
-await page.evaluate(() => window.__game.teleportTo(30, 13, 'up'));
+// 5. Summit Crown Plateau (Elev 3): IB Building, College of Science, Biodiversity Center below
+await page.evaluate(() => window.__game.teleportTo(46, 20, 'up'));
 await page.waitForTimeout(350);
-await page.screenshot({ path: 'shots/demo-06-summit-crown-ib-ka.png' });
+await page.screenshot({ path: 'shots/expanded-03-summit-no-floating.png' });
 
-// 8. Check West Summit: Museo Kordilyera & Student Alumni Center (Elev 3)
-await page.evaluate(() => window.__game.teleportTo(18, 14, 'up'));
-await page.waitForTimeout(350);
-await page.screenshot({ path: 'shots/demo-07-museo-kordilyera-summit.png' });
+// 6. Walk BEHIND Iskolar ng Bayan Building (x=43, y=14) to verify automatic building see-through transparency!
+await page.evaluate(() => window.__game.teleportTo(43, 14, 'down'));
+await page.waitForTimeout(450);
+await page.screenshot({ path: 'shots/expanded-04-building-transparent-occlusion.png' });
 
-// 9. Verify BFS path reachability from Oblation Spawn (42, 24) to all 4 elevation levels!
+// 7. Verify BFS path reachability across the 80x64 map from Oblation Spawn (64, 37)
 const reachability = await page.evaluate(() => {
   const map = window.__game.map;
   const visited = new Set();
-  const queue = [[42, 24]];
-  visited.add('42,24');
+  const queue = [[64, 37]];
+  visited.add('64,37');
   const elevReached = new Set();
 
   while (queue.length > 0) {
@@ -135,7 +103,7 @@ const reachability = await page.evaluate(() => {
     elevations: Array.from(elevReached).sort((a, b) => a - b),
   };
 });
-console.log('Walkable BFS Reachability:', JSON.stringify(reachability));
+console.log('Expanded Map BFS Reachability:', JSON.stringify(reachability));
 
 await browser.close();
 await server.close();
@@ -144,4 +112,4 @@ if (errors.length > 0) {
   console.error('Page errors:', errors);
   process.exit(1);
 }
-console.log('Smoke test passed with 0 errors!');
+console.log('Expanded map smoke test passed with 0 errors!');

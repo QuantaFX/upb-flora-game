@@ -428,7 +428,7 @@ async function boot() {
     for (const entry of npcActors.values()) {
       entry.actor.update(dt, elapsed);
     }
-    propsCtrl.update(elapsed);
+    propsCtrl.update(elapsed, player);
 
     for (const m of mistGroup.children) {
       m.position.x += m.userData.speed * dt;

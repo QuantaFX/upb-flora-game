@@ -1,5 +1,5 @@
-// 3D Campus Buildings, Oblation Monument, Quest Plant Billboards with sparkles,
-// decorative trees, signs, and benches.
+// 3D Campus Buildings (with solid basement skirts & automatic player-occlusion transparency),
+// Oblation Monument, Four Pillars, Quest Plant Billboards with sparkles, trees, signs, and benches.
 
 import * as THREE from 'three';
 import { canvasToTexture, sliceTileTexture } from '../assets.js';
@@ -86,16 +86,44 @@ export function buildPropsAndBuildings(scene, map, assets) {
 
   const { nature, element } = assets.tilesets;
 
-  // 1. 3D Campus Buildings
+  // Track building visual instances so we can smoothly fade them when they occlude the player
+  const buildingEntries = [];
+
+  // 1. 3D Campus Buildings (with solid stone foundation plinth so no building ever looks floating)
   for (const b of BUILDINGS) {
-    const elev = map.tileAt(b.x, b.y)?.elev ?? 0;
+    const elev = b.elev ?? map.tileAt(b.x, b.y)?.elev ?? 0;
     const bGroup = new THREE.Group();
     bGroup.position.set(b.x + b.w / 2, elev, b.y + b.d / 2);
 
+    // Concrete foundation plinth extending 0.6 units below terrace surface to seal any slope seam
+    const plinthMat = new THREE.MeshLambertMaterial({
+      color: '#8c867a',
+      transparent: true,
+      opacity: 1,
+    });
+    const plinthMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(b.w + 0.16, 0.7, b.d + 0.16),
+      plinthMat,
+    );
+    plinthMesh.position.y = -0.25;
+    bGroup.add(plinthMesh);
+
     const facadeTex = createBuildingFacadeTexture(b);
-    const sideMat = new THREE.MeshLambertMaterial({ color: b.wallColor || '#e8dac2' });
-    const frontMat = new THREE.MeshLambertMaterial({ map: facadeTex });
-    const roofMat = new THREE.MeshLambertMaterial({ color: b.roofColor || '#7b1113' });
+    const sideMat = new THREE.MeshLambertMaterial({
+      color: b.wallColor || '#e8dac2',
+      transparent: true,
+      opacity: 1,
+    });
+    const frontMat = new THREE.MeshLambertMaterial({
+      map: facadeTex,
+      transparent: true,
+      opacity: 1,
+    });
+    const roofMat = new THREE.MeshLambertMaterial({
+      color: b.roofColor || '#7b1113',
+      transparent: true,
+      opacity: 1,
+    });
 
     // Box geometry material order: +x, -x, +y, -y, +z (south/front), -z (north/back)
     const bodyGeo = new THREE.BoxGeometry(b.w, b.h, b.d);
@@ -111,31 +139,36 @@ export function buildPropsAndBuildings(scene, map, assets) {
     bGroup.add(bodyMesh);
 
     // Pitched hip roof overhang
-    const roofGeo = new THREE.ConeGeometry(Math.max(b.w, b.d) * 0.68, 1.1, 4);
+    const roofGeo = new THREE.ConeGeometry(Math.max(b.w, b.d) * 0.68, 1.15, 4);
     roofGeo.rotateY(Math.PI / 4);
     const roofMesh = new THREE.Mesh(roofGeo, roofMat);
     roofMesh.scale.set(1, 1, (b.d / b.w) * 1.05);
-    roofMesh.position.y = b.h + 0.52;
+    roofMesh.position.y = b.h + 0.55;
     bGroup.add(roofMesh);
 
     group.add(bGroup);
+    buildingEntries.push({
+      def: b,
+      elev,
+      materials: [sideMat, frontMat, roofMat, plinthMat],
+      currentOpacity: 1,
+    });
   }
 
-  // 2. Iconic UP Oblation Monument in the Oblation Ground (SE Entrance, x=42..43, y=21)
+  // 2. Iconic UP Oblation Monument in the Oblation Ground (SE Entrance, x=64..65, y=32)
   {
     const obGroup = new THREE.Group();
-    obGroup.position.set(43, 0, 21.5);
+    obGroup.position.set(65, 0, 32.5);
 
     const pedMat = new THREE.MeshLambertMaterial({ color: '#d8d2c5' });
-    const ped1 = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.45, 1.4), pedMat);
+    const ped1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.45, 1.5), pedMat);
     ped1.position.y = 0.225;
     obGroup.add(ped1);
 
-    const ped2 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.9, 0.9), pedMat);
+    const ped2 = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.95, 0.95), pedMat);
     ped2.position.y = 0.85;
     obGroup.add(ped2);
 
-    // Statue silhouette canvas
     const sc = document.createElement('canvas');
     sc.width = 32;
     sc.height = 48;
@@ -147,46 +180,53 @@ export function buildPropsAndBuildings(scene, map, assets) {
     sg.fillRect(13, 29, 6, 15); // legs
     const statueTex = canvasToTexture(sc);
     const statueMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.4, 2.0),
+      new THREE.PlaneGeometry(1.45, 2.05),
       new THREE.MeshBasicMaterial({ map: statueTex, transparent: true, alphaTest: 0.3 }),
     );
-    statueMesh.position.set(0, 2.2, 0.05);
+    statueMesh.position.set(0, 2.25, 0.05);
     statueMesh.rotation.x = -0.32;
     obGroup.add(statueMesh);
 
     group.add(obGroup);
   }
 
-  // 2b. Four Pillars Monument near CAC Dap-ay (#6, SW Level 1 Terrace at x=13, y=28)
+  // 2b. Four Pillars Monument near CAC Dap-ay (#6, SW Level 1 Terrace at x=18, y=44)
   {
     const fpGroup = new THREE.Group();
-    fpGroup.position.set(13.5, 1, 28.5);
+    fpGroup.position.set(18, 1, 44.5);
     const pillarMat = new THREE.MeshLambertMaterial({ color: '#e4ddd0' });
     for (let i = 0; i < 4; i += 1) {
-      const p = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.8 + (i % 2) * 0.25, 0.28), pillarMat);
-      p.position.set((i - 1.5) * 0.45, 0.9, (i % 2) * 0.25);
+      const p = new THREE.Mesh(
+        new THREE.BoxGeometry(0.3, 1.9 + (i % 2) * 0.25, 0.3),
+        pillarMat,
+      );
+      p.position.set((i - 1.5) * 0.5, 0.95, (i % 2) * 0.25);
       fpGroup.add(p);
     }
     group.add(fpGroup);
   }
 
   // 3. Decorative Trees, Sunflowers, Benches from Ninja Adventure Tilesets
-  const pineTex = sliceTileTexture(nature, 0, 2, 4, 3); // 3-pine cluster or single conifer
   const sunflowerTex = sliceTileTexture(nature, 0, 11, 1, 1);
   const benchTex = sliceTileTexture(element, 11, 1, 3, 1);
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
 
+  const treeEntries = [];
+
   for (const p of map.props) {
     if (p.kind === 'pine') {
-      // Use our custom high-res Benguet Pine world sprite for authentic Cordillera pines!
       const tex = assets.plants.benguet_pine.worldTex;
-      const mesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.1, 2.7),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.4 }),
-      );
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        alphaTest: 0.35,
+        opacity: 1,
+      });
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 2.7), mat);
       mesh.position.set(p.x + 0.5, p.elev + 1.25, p.y + 0.5);
       mesh.rotation.x = -0.32;
       group.add(mesh);
+      treeEntries.push({ x: p.x, y: p.y, mat });
     } else if (p.kind === 'sunflower_deco') {
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.95, 1.05),
@@ -203,8 +243,6 @@ export function buildPropsAndBuildings(scene, map, assets) {
       mesh.position.set(p.x + 0.5, p.elev + 0.4, p.y + 0.5);
       mesh.rotation.x = -0.32;
       group.add(mesh);
-    } else {
-      void pineTex;
     }
   }
 
@@ -259,12 +297,43 @@ export function buildPropsAndBuildings(scene, map, assets) {
     plantMeshes.push({ node, group: pGroup, sparkle, baseH: h + 0.25 });
   }
 
-  function update(timeSec) {
+  /**
+   * Updates floating sparkles AND fades any building or tall pine tree that sits between
+   * the camera (+Z/south) and the player (behind/north of the building).
+   */
+  function update(timeSec, playerActor = null) {
     for (const pm of plantMeshes) {
       pm.sparkle.position.y = pm.baseH + Math.sin(timeSec * 4 + pm.node.x) * 0.1;
       pm.sparkle.scale.setScalar(0.85 + Math.sin(timeSec * 6 + pm.node.y) * 0.2);
     }
+
+    if (!playerActor) return;
+    const px = playerActor.group.position.x;
+    const pz = playerActor.group.position.z;
+
+    for (const entry of buildingEntries) {
+      const b = entry.def;
+      // Camera looks from South (+Z) toward North (-Z).
+      // A building covers the player when the player is horizontally within the building's width (+margin)
+      // and behind (north of) the building's south wall within ~4.5 tiles.
+      const inX = px >= b.x - 0.9 && px <= b.x + b.w + 0.9;
+      const behindZ = pz >= b.y - 3.8 && pz <= b.y + b.d + 0.3;
+      const targetOpacity = inX && behindZ ? 0.28 : 1.0;
+
+      entry.currentOpacity += (targetOpacity - entry.currentOpacity) * 0.18;
+      const isTransparent = entry.currentOpacity < 0.98;
+      for (const m of entry.materials) {
+        m.opacity = entry.currentOpacity;
+        m.depthWrite = !isTransparent;
+      }
+    }
+
+    for (const tree of treeEntries) {
+      const inX = Math.abs(px - (tree.x + 0.5)) < 1.3;
+      const behindZ = pz < tree.y + 0.5 && pz > tree.y - 2.6;
+      tree.mat.opacity = inX && behindZ ? 0.35 : 1.0;
+    }
   }
 
-  return { group, plantMeshes, update };
+  return { group, plantMeshes, buildingEntries, update };
 }
