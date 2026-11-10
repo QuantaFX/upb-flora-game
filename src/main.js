@@ -266,11 +266,23 @@ async function boot() {
         };
       }
     }
-    // Fixed mission targets have priority. A visitor can also be addressed while
-    // sharing a tile, since walking through the wandering crowd is allowed.
-    for (const c of [...candidates, {x:player.tileX,y:player.tileY}]) {
-      const entry = [...visitors.entries.values()].find(e => !e.actor.moving && e.actor.tileX===c.x && e.actor.tileY===c.y);
-      if (entry) return {type:'visitor',entry,label:`Talk to ${entry.def.name}`};
+    // Fixed mission targets have priority. A visitor or campus pet can also be addressed
+    // while sharing a tile, since walking through the wandering crowd is allowed.
+    for (const c of [...candidates, { x: player.tileX, y: player.tileY }]) {
+      const petEntry = [...(visitors.pets?.values() || [])].find(
+        (e) => !e.actor.moving && e.actor.tileX === c.x && e.actor.tileY === c.y,
+      );
+      if (petEntry) {
+        return {
+          type: 'pet',
+          entry: petEntry,
+          label: `🐾 Pet ${petEntry.def.name}`,
+        };
+      }
+      const entry = [...visitors.entries.values()].find(
+        (e) => !e.actor.moving && e.actor.tileX === c.x && e.actor.tileY === c.y,
+      );
+      if (entry) return { type: 'visitor', entry, label: `Talk to ${entry.def.name}` };
     }
     return null;
   }
@@ -288,18 +300,39 @@ async function boot() {
     const target = getInteractTarget();
     if (!target) return;
 
-    if (target.type === 'visitor') {
+    if (target.type === 'pet') {
+      const entry = target.entry;
+      entry.actor.locked = true;
+      player.faceToward(entry.actor.tileX, entry.actor.tileY);
+      entry.actor.faceToward(player.tileX, player.tileY);
+      entry.actor.setEmote(assets.emotes[27]);
+      entry.heartUntil = clock.elapsedTime + 5.0;
+      audio.playSfx('success');
+      showToast(`🐾 You petted ${entry.def.name} (${entry.def.species})! ❤️`);
+      const line = entry.def.lines[entry.line++ % entry.def.lines.length];
+      const faceUrl = assets.animals?.[entry.def.sprite]?.faceUrl || null;
+      dialogUI.open(
+        [{ speaker: `${entry.def.name} · ${entry.def.species}`, text: line }],
+        faceUrl,
+        () => {
+          entry.actor.locked = false;
+          refreshHudAndEmotes();
+        },
+      );
+    } else if (target.type === 'visitor') {
       const entry = target.entry;
       entry.actor.locked = true;
       player.faceToward(entry.actor.tileX, entry.actor.tileY);
       entry.actor.faceToward(player.tileX, player.tileY);
       const line = entry.def.lines[entry.line++ % entry.def.lines.length];
-      dialogUI.open([{speaker:entry.def.name,text:line}], assets.characters[entry.def.sprite].faceUrl, () => {
-        entry.actor.locked = false;
-        audio.stopVoice();
-        refreshHudAndEmotes();
-      });
-      audio.speak(line);
+      dialogUI.open(
+        [{ speaker: entry.def.name, text: line }],
+        assets.characters[entry.def.sprite].faceUrl,
+        () => {
+          entry.actor.locked = false;
+          refreshHudAndEmotes();
+        },
+      );
     } else if (target.type === 'npc') {
       player.faceToward(target.actor.tileX, target.actor.tileY);
       target.actor.faceToward(player.tileX, player.tileY);

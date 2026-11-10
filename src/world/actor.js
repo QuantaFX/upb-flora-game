@@ -48,10 +48,14 @@ export class Actor {
     this.dir = opts.dir || 'down';
     this.elev = this.map.tileAt(this.tileX, this.tileY)?.elev ?? 0;
 
-    // Determine how many walk rows this sheet has (Child/OldWoman have 2 rows, standard has 4+)
-    this.maxWalkFrames = Math.min(4, Math.floor(this.sheet.height / 16));
+    // Determine whether this is a 2-frame horizontal Animal sheet (32x16) or a 4-column human sheet (64x64)
+    this.isAnimalSheet = this.sheet.width <= 32 && this.sheet.height === 16;
+    this.maxWalkFrames = this.isAnimalSheet ? 2 : Math.min(4, Math.floor(this.sheet.height / 16));
     this.frame = 0;
     this.animTimer = 0;
+    this.facingLeft = false;
+
+    const scale = opts.scale || 1;
 
     // Canvas for the current 16x16 frame
     this.canvas = document.createElement('canvas');
@@ -65,7 +69,7 @@ export class Actor {
     this.scene.add(this.group);
 
     // Shadow disc on ground
-    const shadowGeo = new THREE.PlaneGeometry(0.85, 0.55);
+    const shadowGeo = new THREE.PlaneGeometry(0.85 * scale, 0.55 * scale);
     shadowGeo.rotateX(-Math.PI / 2);
     const shadowMat = new THREE.MeshBasicMaterial({
       map: SHADOW_TEX,
@@ -77,7 +81,7 @@ export class Actor {
     this.group.add(this.shadow);
 
     // Upright billboard plane tilted slightly back to match camera pitch
-    const spriteGeo = new THREE.PlaneGeometry(1.15, 1.35);
+    const spriteGeo = new THREE.PlaneGeometry(1.15 * scale, 1.35 * scale);
     const spriteMat = new THREE.MeshBasicMaterial({
       map: this.texture,
       transparent: true,
@@ -85,13 +89,13 @@ export class Actor {
       side: THREE.DoubleSide,
     });
     this.mesh = new THREE.Mesh(spriteGeo, spriteMat);
-    this.mesh.position.set(0, 0.68, 0.05);
+    this.mesh.position.set(0, 0.68 * scale, 0.05);
     this.mesh.rotation.x = -0.32;
     this.group.add(this.mesh);
 
-    // Optional emote bubble above NPC head
+    // Optional emote bubble above NPC/animal head
     this.emoteMesh = null;
-    this.emoteBaseY = 1.65;
+    this.emoteBaseY = 1.45 * scale + 0.2;
 
     // Movement interpolation state
     this.moving = false;
@@ -107,10 +111,23 @@ export class Actor {
   }
 
   drawFrame() {
-    const col = DIR_COL[this.dir] ?? 0;
-    const row = this.frame % this.maxWalkFrames;
     this.ctx.clearRect(0, 0, 16, 16);
-    this.ctx.drawImage(this.sheet, col * 16, row * 16, 16, 16, 0, 0, 16, 16);
+    if (this.isAnimalSheet) {
+      if (this.dir === 'left') this.facingLeft = true;
+      else if (this.dir === 'right') this.facingLeft = false;
+      const col = this.moving ? this.frame % 2 : 0;
+      this.ctx.save();
+      if (this.facingLeft) {
+        this.ctx.translate(16, 0);
+        this.ctx.scale(-1, 1);
+      }
+      this.ctx.drawImage(this.sheet, col * 16, 0, 16, 16, 0, 0, 16, 16);
+      this.ctx.restore();
+    } else {
+      const col = DIR_COL[this.dir] ?? 0;
+      const row = this.frame % this.maxWalkFrames;
+      this.ctx.drawImage(this.sheet, col * 16, row * 16, 16, 16, 0, 0, 16, 16);
+    }
     this.texture.needsUpdate = true;
   }
 

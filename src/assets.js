@@ -117,6 +117,30 @@ export async function loadAllAssets(plantIds, characterNames) {
     }),
   );
 
+  const animalSpecs = {
+    cat_ginger: ['Cat/SpriteSheet.png', 'Cat/Faceset.png'],
+    cat_orange: ['CatOrange/SpriteSheet.png', 'CatOrange/Faceset.png'],
+    cat_black: ['CatBlack/SpriteSheet.png', 'CatBlack/Faceset.png'],
+    cat_white: ['CatWhite/SpriteSheet.png', 'CatWhite/Faceset.png'],
+    dog_brown: ['Dog/SpriteSheet.png', 'Dog/Faceset.png'],
+    dog_spotted: ['Dog2/SpriteSheet.png', 'Dog2/Faceset.png'],
+    dog_orange: ['DogOrange/SpriteSheet.png', 'DogOrange/Faceset.png'],
+    dog_yellow: ['DogYellow/SpriteSheet.png', 'DogYellow/Faceset.png'],
+    bird_blue: ['Parrot/SpriteSheetBlue.png', 'Parrot/FacesetBlue.png'],
+    bird_red: ['Parrot/SpriteSheetRed.png', 'Parrot/FacesetRed.png'],
+    bird_sparrow: ['Chicken/SpriteSheetCute.png', 'Chicken/FacesetCute.png'],
+    bird_dove: ['Chicken/SpriteSheetWhite.png', 'Chicken/FacesetWhite.png'],
+  };
+  const animals = {};
+  await Promise.all(
+    Object.entries(animalSpecs).map(async ([key, [sheetRel, faceRel]]) => {
+      const sheetUrl = `${PACK_BASE}/Actor/Animal/${sheetRel}`;
+      const faceUrl = `${PACK_BASE}/Actor/Animal/${faceRel}`;
+      const [sheet, face] = await Promise.all([loadImage(sheetUrl), loadImage(faceUrl)]);
+      animals[key] = { sheet, face, faceUrl };
+    }),
+  );
+
   const emoteNums = [12, 20, 22, 25, 27];
   const emotes = {};
   await Promise.all(
@@ -129,6 +153,7 @@ export async function loadAllAssets(plantIds, characterNames) {
   return {
     tilesets: { floor, nature, relief, element, house },
     characters,
+    animals,
     plants,
     emotes,
   };

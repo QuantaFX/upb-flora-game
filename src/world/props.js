@@ -210,16 +210,48 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(fpGroup);
   }
 
-  // 3. Decorative Trees, Sunflowers, Benches from Ninja Adventure Tilesets
+  // 3. Decorative Trees, Bushes, Small Plants, Sunflowers, and Benches
   const sunflowerTex = assets.plants.kamantigi.worldTex;
   const benchTex = sliceTileTexture(element, 11, 1, 3, 1);
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
+
+  // Lush pixel-art bushes, shrubs, and small ground-cover plants from TilesetNature
+  const bushRoundTex = sliceTileTexture(nature, 0, 0, 2, 2);
+  const bushPineTex = sliceTileTexture(nature, 2, 0, 2, 2);
+  const treeRoundTex = sliceTileTexture(nature, 16, 0, 2, 2);
+  const smallPlantTexs = [
+    sliceTileTexture(nature, 0, 10, 1, 1),
+    sliceTileTexture(nature, 1, 10, 1, 1),
+    sliceTileTexture(nature, 2, 10, 1, 1),
+    sliceTileTexture(nature, 8, 10, 1, 1),
+    sliceTileTexture(nature, 9, 10, 1, 1),
+    sliceTileTexture(nature, 0, 11, 1, 1),
+    sliceTileTexture(nature, 2, 11, 1, 1),
+    sliceTileTexture(nature, 3, 11, 1, 1),
+    sliceTileTexture(nature, 6, 11, 1, 1),
+    sliceTileTexture(nature, 8, 11, 1, 1),
+  ];
+  const smallPlantMats = smallPlantTexs.map(
+    (tex) => new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.35 }),
+  );
+  const bushMats = [
+    new THREE.MeshBasicMaterial({ map: bushRoundTex, transparent: true, alphaTest: 0.35 }),
+    new THREE.MeshBasicMaterial({ map: bushPineTex, transparent: true, alphaTest: 0.35 }),
+  ];
 
   const treeEntries = [];
 
   for (const p of map.props) {
     if (p.kind === 'pine') {
-      const tex = assets.plants.benguet_pine.worldTex;
+      const treeVariant = (p.x * 7 + p.y * 13) % 5;
+      const tex =
+        treeVariant === 0
+          ? assets.plants.agoho?.worldTex || assets.plants.benguet_pine.worldTex
+          : treeVariant === 1
+            ? assets.plants.moclame?.worldTex || assets.plants.benguet_pine.worldTex
+            : treeVariant === 2
+              ? treeRoundTex
+              : assets.plants.benguet_pine.worldTex;
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -232,11 +264,29 @@ export function buildPropsAndBuildings(scene, map, assets) {
       group.add(mesh);
       treeEntries.push({ x: p.x, y: p.y, mat });
     } else if (p.kind === 'understory') {
-      const id = ['tri_vein_fern', 'gipas', 'kamantigi', 'fishtail_fern'][(p.x + p.y) % 4];
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), new THREE.MeshBasicMaterial({ map: assets.plants[id].worldTex, transparent: true, alphaTest: 0.35 }));
-      mesh.position.set(p.x + 0.5, p.elev + 0.43, p.y + 0.5);
-      mesh.rotation.x = -0.32;
-      group.add(mesh);
+      const variant = (p.x * 3 + p.y * 5) % 6;
+      if (variant < 4) {
+        const id = ['tri_vein_fern', 'gipas', 'kamantigi', 'fishtail_fern'][variant];
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.95, 0.95),
+          new THREE.MeshBasicMaterial({
+            map: assets.plants[id].worldTex,
+            transparent: true,
+            alphaTest: 0.35,
+          }),
+        );
+        mesh.position.set(p.x + 0.5, p.elev + 0.45, p.y + 0.5);
+        mesh.rotation.x = -0.32;
+        group.add(mesh);
+      } else {
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(1.15, 1.1),
+          bushMats[variant - 4],
+        );
+        mesh.position.set(p.x + 0.5, p.elev + 0.52, p.y + 0.5);
+        mesh.rotation.x = -0.32;
+        group.add(mesh);
+      }
     } else if (p.kind === 'sunflower_deco') {
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.95, 1.05),
@@ -245,22 +295,6 @@ export function buildPropsAndBuildings(scene, map, assets) {
       mesh.position.set(p.x + 0.5, p.elev + 0.5, p.y + 0.5);
       mesh.rotation.x = -0.32;
       group.add(mesh);
-    } else if (p.kind === 'bin') {
-      const bin = new THREE.Group();
-      bin.position.set(p.x + 0.5, p.elev, p.y + 0.5);
-      const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.55), new THREE.MeshLambertMaterial({color:'#315f4c'}));
-      body.position.y = 0.35;
-      bin.add(body);
-      const lid = new THREE.Mesh(new THREE.BoxGeometry(0.63, 0.12, 0.63), new THREE.MeshLambertMaterial({color:'#d5b34d'}));
-      lid.position.y = 0.75;
-      bin.add(lid);
-      const slot = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.1), new THREE.MeshBasicMaterial({color:'#172e26'}));
-      slot.position.set(0,0.58,0.281);
-      bin.add(slot);
-      const label = new THREE.Mesh(new THREE.PlaneGeometry(0.23,0.22), new THREE.MeshBasicMaterial({color:'#eee6bc'}));
-      label.position.set(0,0.3,0.281);
-      bin.add(label);
-      group.add(bin);
     } else if (p.kind === 'noticeboard') {
       const board = new THREE.Group();
       board.position.set(p.x+0.5,p.elev,p.y+0.5);
@@ -287,6 +321,33 @@ export function buildPropsAndBuildings(scene, map, assets) {
       mesh.position.set(p.x + 0.5, p.elev + 0.4, p.y + 0.5);
       mesh.rotation.x = -0.32;
       group.add(mesh);
+    }
+  }
+
+  // 3b. Walkable Ground-Cover Bushes, Small Plants, Ferns & Wildflowers across Grass Tiles
+  const smallGeo = new THREE.PlaneGeometry(0.68, 0.68);
+  const bushSmallGeo = new THREE.PlaneGeometry(0.88, 0.85);
+  for (let y = 2; y < map.h - 2; y += 1) {
+    for (let x = 2; x < map.w - 2; x += 1) {
+      const t = map.tileAt(x, y);
+      if (!t || !['grass', 'tall_grass'].includes(t.type)) continue;
+      // Skip tiles occupied by buildings, NPCs, or Quest Plant Nodes
+      if (
+        BUILDINGS.some((b) => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.d) ||
+        PLANT_NODES.some((p) => p.x === x && p.y === y)
+      ) {
+        continue;
+      }
+      const h = (x * 43 + y * 97) % 17;
+      if (h < 7) {
+        const mat = smallPlantMats[(x * 19 + y * 31) % smallPlantMats.length];
+        const ox = (((x * 13 + y * 7) % 5) - 2) * 0.08;
+        const oz = (((x * 23 + y * 11) % 5) - 2) * 0.08;
+        const m = new THREE.Mesh(h < 2 ? bushSmallGeo : smallGeo, mat);
+        m.position.set(x + 0.5 + ox, t.elev + (h < 2 ? 0.4 : 0.32), y + 0.5 + oz);
+        m.rotation.x = -0.32;
+        group.add(m);
+      }
     }
   }
 

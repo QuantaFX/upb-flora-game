@@ -63,23 +63,12 @@ export function createAudioManager() {
   }
 
   function stopVoice() {
-    window.speechSynthesis?.cancel();
+    // TTS removed per user request
   }
 
-  function speak(line) {
-    if (muted || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    stopVoice();
-    const utterance = new SpeechSynthesisUtterance(line);
-    utterance.lang = 'en-PH';
-    utterance.rate = 0.95;
-    utterance.volume = 0.75;
-    // Prefer an installed voice; text dialogue remains available on every device.
-    const voices = window.speechSynthesis.getVoices();
-    utterance.voice = voices.find(v => v.lang === 'en-PH' && v.localService)
-      || voices.find(v => v.lang.startsWith('en') && v.localService) || null;
-    window.speechSynthesis.speak(utterance);
+  function speak() {
+    // TTS removed per user request
   }
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stopVoice(); });
 
   return {
     playBgm,

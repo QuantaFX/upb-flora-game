@@ -92,6 +92,27 @@ for (const id of plantIds) {
   await page.evaluate(() => window.__game.encounterUI.close());
 }
 
+// Verify southern fog covers the bottom edge and test petting a campus animal
+await page.evaluate(() => {
+  const g = window.__game;
+  const pet = g.visitors.pets.get('pet_sagada');
+  pet.actor.locked = true;
+  pet.actor.moving = false;
+  pet.actor.tileX = 46;
+  pet.actor.tileY = 44;
+  pet.actor.syncWorldPosition();
+  g.teleportTo(46, 53, 'down');
+});
+await page.waitForTimeout(350);
+await page.screenshot({ path: 'shots/grid-08-south-fog.png' });
+
+await page.evaluate(() => window.__game.teleportTo(46, 45, 'up'));
+await page.waitForTimeout(200);
+await page.click('#btn-interact');
+await page.waitForTimeout(450);
+await page.screenshot({ path: 'shots/grid-09-pet-animal.png' });
+await page.evaluate(() => window.__game.dialogUI.close());
+
 // 6. Verify BFS reachability from spawn to every NPC and all seven plant nodes.
 const check = await page.evaluate(() => {
   const map = window.__game.map;

@@ -739,41 +739,47 @@ export function createCampusMap() {
   };
 
   const pineCoords = [
-    [9, 14], [12, 15], [8, 20], // Woods behind CSS (#3)
-    [55, 38], [58, 40], [65, 36], // UPB Woods (#15 / #17)
-    [34, 5], [67, 6], [66, 14], // North HK / Biodiversity woods
-    [16, 39], [45, 48], [60, 48],
+    [9, 14], [12, 15], [8, 20], [6, 18], [12, 10], // Woods behind CSS (#3)
+    [55, 38], [58, 40], [65, 36], [56, 41], [67, 39], // UPB Woods (#15 / #17)
+    [34, 5], [67, 6], [66, 14], [28, 7], [71, 12], // North HK / Biodiversity woods
+    [16, 39], [45, 48], [60, 48], [52, 50], [68, 50],
   ];
   for (const [x, y] of pineCoords) addProp('pine', x, y);
 
   const sunflowerCoords = [
     [40, 21], [49, 21], [31, 29], [53, 39], [64, 29], [16, 43],
+    [11, 21], [57, 37], [65, 15], [22, 13], [42, 47], [58, 47],
   ];
   for (const [x, y] of sunflowerCoords) addProp('sunflower_deco', x, y);
 
   const benchCoords = [
     [66, 29], [69, 29], // Oblation Plaza benches (between the two East Driveway stairs)
-    [41, 30], [48, 30], // Summit IB Quad benches
-    [20, 49], [30, 49], // Library & CAC Promenade benches
+    [67, 25], [76, 25], [76, 32], // East Driveway benches
+    [41, 30], [48, 30], [39, 31], [51, 31], // Summit IB Quad benches
+    [29, 23], [35, 22], [40, 20], [49, 20], [52, 24], [56, 28], [30, 31], // Summit Academic Quad benches
+    [42, 35], [50, 35], // Upper Court A Bleacher Overlook benches
+    [39, 43], [44, 43], [51, 43], [57, 43], [65, 43], [71, 43], // South Promenade benches
+    [20, 49], [30, 49], [18, 47], [32, 48], [7, 46], [12, 46], [7, 52], [36, 45], // Library, CAC & CSS Courtyard benches
+    [9, 25], [19, 21], // CSS North Landing & Alumni Center Courtyard benches
+    [40, 9], [44, 8], [50, 8], // North Campus benches
   ];
   for (const [x, y] of benchCoords) addProp('bench', x, y);
 
-  // Seating and waste stations sit at the edges of the broad plazas.
-  for (const [x,y] of [[39,31],[51,31],[18,47],[32,48],[44,43],[51,43],[40,9]]) addProp('bench',x,y);
-  for (const [x,y] of [[69,31],[39,30],[51,30],[18,48],[32,49],[43,43],[52,43],[41,9]]) addProp('bin',x,y);
-  for (const [x,y] of [[42,31],[24,50],[70,29]]) addProp('noticeboard',x,y);
+  for (const [x, y] of [[42, 31], [24, 50], [70, 29]]) addProp('noticeboard', x, y);
 
-  // Deterministic woodland planting, with a full tile of clearance around paths and landmarks.
+  // Dense deterministic woodland & bush planting on even grid coordinates, leaving odd rows/cols open for walking.
   for (let y = 4; y < MAP_H - 3; y += 2) {
     for (let x = 4; x < MAP_W - 3; x += 2) {
       const hash = (x * 37 + y * 71) % 19;
-      if (hash > 6) continue;
+      if (hash > 13) continue;
       const t = tiles[y][x];
-      const clear = [-1,0,1].every(dy => [-1,0,1].every(dx => {
-        const n = tiles[y+dy]?.[x+dx];
-        return n && !n.solid && ['grass','tall_grass'].includes(n.type) && n.elev === t.elev;
-      }));
-      if (clear) addProp(hash < 2 ? 'pine' : 'understory', x, y);
+      const clear = [-1, 0, 1].every((dy) =>
+        [-1, 0, 1].every((dx) => {
+          const n = tiles[y + dy]?.[x + dx];
+          return n && !n.solid && ['grass', 'tall_grass'].includes(n.type) && n.elev === t.elev;
+        }),
+      );
+      if (clear) addProp(hash < 4 ? 'pine' : 'understory', x, y);
     }
   }
 
