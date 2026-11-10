@@ -155,10 +155,10 @@ export function buildPropsAndBuildings(scene, map, assets) {
     });
   }
 
-  // 2. Iconic UP Oblation Monument in the Oblation Ground (SE Entrance, x=64..65, y=32)
+  // 2. Iconic UP Oblation Monument in the Oblation Ground (East Entrance, x=67..68, y=33)
   {
     const obGroup = new THREE.Group();
-    obGroup.position.set(65, 0, 32.5);
+    obGroup.position.set(68, 0, 33.5);
 
     const pedMat = new THREE.MeshLambertMaterial({ color: '#d8d2c5' });
     const ped1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.45, 1.5), pedMat);
@@ -190,10 +190,10 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(obGroup);
   }
 
-  // 2b. Four Pillars Monument near CAC Dap-ay (#6, SW Level 1 Terrace at x=18, y=44)
+  // 2b. Four Pillars Monument near CAC Dap-ay (#6, SW Promenade at x=15, y=47)
   {
     const fpGroup = new THREE.Group();
-    fpGroup.position.set(18, 1, 44.5);
+    fpGroup.position.set(15.5, 0, 47.5);
     const pillarMat = new THREE.MeshLambertMaterial({ color: '#e4ddd0' });
     for (let i = 0; i < 4; i += 1) {
       const p = new THREE.Mesh(
