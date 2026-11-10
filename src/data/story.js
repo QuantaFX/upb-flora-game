@@ -12,7 +12,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
  const page = (text, onFinish) => ({speaker:npc.name,text,onFinish});
  if (npc.id === 'prof_barcelo' && allComplete(state)) return [page(
   state.data.flags.finale_complete ? 'Your seven-species herbarium is complete. Keep exploring the campus gardens!' : 'You documented all seven campus plants and their habitats. Your field photographs will help the next class recognize them. Well done, Student Curator!',
-  () => {state.setFlag('finale_complete'); callbacks.toast('Project Saleng complete: seven campus plants documented.');}
+  () => {state.setFlag('finale_complete'); callbacks.toast('Ex-Flora-Tive complete: seven campus plants documented.');}
  )];
  const q = QUEST_DEFS.find(q => q.npcId === npc.id);
  if (!q) {
@@ -26,7 +26,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
  const p = PLANT_BY_ID[q.plantId], status=state.getQuestStatus(q.id);
  if (status === 'locked') return [page("Complete Prof. Barcelo's pine-tree fieldwork at Inang Laya first, then return for our next specimen.")];
  if (status === 'available') return [
-  page(npc.id === 'prof_barcelo' ? `Welcome, ${state.data.playerName}! I am Prof. Racquel Barcelo. We will identify seven campus plants and build a photographic herbarium.` : `Our next field study is ${p.name}. ${q.locationHint}.`),
+  page(npc.id === 'prof_barcelo' ? `Welcome, ${state.data.playerName}! I am Prof. Racquel Barcelo. Welcome to Native Plants Week! We will identify seven campus plants and build a photographic herbarium.` : `Our next field study is ${p.name}. ${q.locationHint}.`),
   page(`Look for this clue: ${p.clues.leaves} Observe, identify, then photograph the specimen. Return to me with your record.`, () => {state.setQuestStatus(q.id,'active'); state.setFlag('talked_prof_intro'); callbacks.toast(`Fieldwork started: ${p.name}`);})
  ];
  if (status === 'active' && !state.hasCollected(p.id)) return [page(`${q.locationHint}. ${p.clues.flowers} Use Observe and Identify, then Photograph to save your record.`)];

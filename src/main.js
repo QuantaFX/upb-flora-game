@@ -1,4 +1,4 @@
-// Main entry point for UP Baguio Flora Quest (Project Saleng).
+// Main entry point for Ex-Flora-Tive, UP Baguio's Native Plants Week adventure.
 // Boots the 2.5D Three.js scene, loads assets, wires NPCs, quests, encounters, and Herbarium UI.
 
 import * as THREE from 'three';
@@ -6,6 +6,9 @@ import { loadAllAssets } from './assets.js';
 import { ALL_PLANT_IDS, PLANT_BY_ID } from './data/plants.js';
 import { createCampusMap, NPCS, PLANT_NODES, SIGNS } from './world/map.js';
 import { buildEnvironment } from './world/environment.js';
+import { buildBoundaryMist } from './world/boundary.js';
+import { buildFestival } from './world/festival.js';
+import { setupTouchControls } from './game/touch-controls.js';
 import { buildTerrain } from './world/terrain.js';
 import { buildPropsAndBuildings } from './world/props.js';
 import { Actor } from './world/actor.js';
@@ -47,8 +50,8 @@ function showToast(message) {
 async function boot() {
   const host = document.getElementById('game-canvas');
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.setClearColor(0x9bd3f0, 1);
   host.appendChild(renderer.domElement);
 
@@ -59,7 +62,7 @@ async function boot() {
   // 2.5D Pokemon-style pitched perspective camera
   const camera = new THREE.PerspectiveCamera(
     30,
-    window.innerWidth / window.innerHeight,
+    host.clientWidth / host.clientHeight,
     0.5,
     140,
   );
@@ -71,11 +74,14 @@ async function boot() {
   dirLight.position.set(-14, 28, 16);
   scene.add(dirLight);
 
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+  function resizeGame() {
+    camera.aspect = host.clientWidth / host.clientHeight;
+    camera.fov = camera.aspect < 1 ? 42 : 30;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+    renderer.setSize(host.clientWidth, host.clientHeight);
+  }
+  new ResizeObserver(resizeGame).observe(host);
+  resizeGame();
 
   // Load all tilesets, character sheets, emotes, and custom plant sprites
   const assets = await loadAllAssets(ALL_PLANT_IDS, CHARACTER_LIST);
@@ -87,6 +93,8 @@ async function boot() {
   const propsCtrl = buildPropsAndBuildings(scene, map, assets);
 
   const environment = buildEnvironment(scene, map);
+  const boundary = buildBoundaryMist(scene, map);
+  const festival = buildFestival(scene, map);
 
   // Drifting Cordillera mist clouds
   const mistGroup = new THREE.Group();
@@ -114,7 +122,8 @@ async function boot() {
   }
 
   // Spawn Player Actor
-  const player = new Actor(scene, map, assets.characters.Villager3, {
+  const characterSprite = value => value === 'female' ? 'Woman' : 'Villager3';
+  const player = new Actor(scene, map, assets.characters[characterSprite(state.data.character)], {
     id: 'player',
     name: state.data.playerName,
     x: map.spawn.x,
@@ -158,6 +167,23 @@ async function boot() {
   const btnBag = document.getElementById('btn-bag');
   const btnJournal = document.getElementById('btn-journal');
   const btnMute = document.getElementById('btn-mute');
+  const opening = document.getElementById('opening-overlay');
+  const touchPanel = document.getElementById('touch-controls');
+  let openingTimer;
+  let openingActive = false;
+
+  function renderCharacterChoices() {
+    for (const choice of ['male', 'female']) {
+      const canvas = document.getElementById(`preview-${choice}`);
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, 32, 32);
+      ctx.drawImage(assets.characters[characterSprite(choice)].sheet, 0, 0, 16, 16, 0, 0, 32, 32);
+      document.querySelector(`input[name="character"][value="${choice}"]`).checked = state.data.character === choice;
+    }
+  }
+  renderCharacterChoices();
+  btnStartGame.disabled = false;
 
   nameInput.value = state.data.playerName || 'Isko';
 
@@ -176,6 +202,11 @@ async function boot() {
 
     // Update contextual Examine button
     const target = getInteractTarget();
+    document.getElementById('touch-hint').textContent = target
+      ? `A · ${target.label.replace(/^[^a-zA-Z]+/, '')}`
+      : Math.min(player.tileX - map.bounds.minX, map.bounds.maxX - player.tileX, player.tileY - map.bounds.minY, map.bounds.maxY - player.tileY) < 2
+        ? 'Campus boundary · stay inside the festival grounds.'
+        : 'Use the D-pad to explore. Hold B to run.';
     if (target && !dialogUI.isOpen && !encounterUI.isOpen && !journalUI.isOpen) {
       btnInteract.classList.remove('hidden');
       btnInteract.innerHTML = `${target.label} <kbd>E</kbd>`;
@@ -234,6 +265,7 @@ async function boot() {
   }
 
   function triggerInteraction() {
+    if (openingActive) return;
     if (dialogUI.isOpen) {
       dialogUI.advance();
       return;
@@ -299,12 +331,31 @@ async function boot() {
   };
 
   // Title Screen & HUD Button Listeners
-  function startGame() {
-    state.setPlayerName(nameInput.value);
-    player.name = state.data.playerName;
-    titleScreen.classList.add('hidden');
+  function finishOpening() {
+    clearTimeout(openingTimer);
+    openingActive = false;
+    opening.classList.add('hidden');
+    document.body.classList.add('is-playing');
+    touchPanel.inert = false;
     hudTop.classList.remove('hidden');
     hudBottom.classList.remove('hidden');
+    document.getElementById('touch-a').focus({ preventScroll: true });
+  }
+  document.getElementById('skip-opening').addEventListener('click', finishOpening);
+
+  function startGame() {
+    if (openingActive || titleScreen.classList.contains('hidden')) return;
+    state.setCharacter(document.querySelector('input[name="character"]:checked').value);
+    state.setPlayerName(nameInput.value);
+    player.name = state.data.playerName;
+    player.sheet = assets.characters[characterSprite(state.data.character)].sheet;
+    player.maxWalkFrames = Math.min(4, Math.floor(player.sheet.height / 16));
+    player.drawFrame();
+    titleScreen.classList.add('hidden');
+    openingActive = true;
+    opening.classList.remove('hidden');
+    document.getElementById('skip-opening').focus();
+    openingTimer = setTimeout(finishOpening, environment.reducedMotion ? 0 : 3200);
     audio.playBgm('overworld');
     refreshHudAndEmotes();
   }
@@ -317,6 +368,7 @@ async function boot() {
   btnResetSave.addEventListener('click', () => {
     state.reset();
     nameInput.value = state.data.playerName;
+    renderCharacterChoices();
     showToast('Save data reset to fresh semester!');
     refreshHudAndEmotes();
   });
@@ -334,6 +386,26 @@ async function boot() {
   // Keyboard Controls
   const heldDirs = [];
   let shiftHeld = false;
+  let touchDirection = null;
+  let touchRunning = false;
+  function closeOverlay() {
+    if (openingActive) { finishOpening(); return true; }
+    if (journalUI.isOpen) { journalUI.close(); return true; }
+    if (encounterUI.isOpen) { encounterUI.close(); return true; }
+    if (dialogUI.isOpen) { dialogUI.close(); return true; }
+    return false;
+  }
+  const touch = setupTouchControls({
+    setDirection: direction => { touchDirection = direction; },
+    setRunning: running => { touchRunning = running; },
+    action: triggerInteraction,
+    back: closeOverlay,
+    journal: () => { if (!encounterUI.isOpen && !dialogUI.isOpen) journalUI.toggle('plants'); },
+    missions: () => { if (!encounterUI.isOpen && !dialogUI.isOpen) journalUI.toggle('quests'); },
+  });
+  function clearInput() { heldDirs.length = 0; shiftHeld = false; touch.clear(); }
+  window.addEventListener('blur', clearInput);
+  document.addEventListener('visibilitychange', clearInput);
 
   const keyToDir = {
     ArrowUp: 'up',
@@ -347,6 +419,10 @@ async function boot() {
   };
 
   window.addEventListener('keydown', (e) => {
+    if (openingActive) {
+      if (['Escape', 'Enter', 'Space'].includes(e.code)) { e.preventDefault(); finishOpening(); }
+      return;
+    }
     if (e.key === 'Shift') shiftHeld = true;
 
     // Ignore movement shortcuts while typing name on title screen
@@ -372,6 +448,7 @@ async function boot() {
     }
 
     const dir = keyToDir[e.code];
+    if (dir) e.preventDefault();
     if (dir && !heldDirs.includes(dir)) {
       heldDirs.unshift(dir);
     }
@@ -417,13 +494,16 @@ async function boot() {
     const elapsed = clock.elapsedTime;
 
     const uiBlocked =
+      openingActive ||
       !titleScreen.classList.contains('hidden') ||
       dialogUI.isOpen ||
       encounterUI.isOpen ||
       journalUI.isOpen;
 
-    if (!uiBlocked && heldDirs.length > 0 && !player.moving) {
-      player.tryStep(heldDirs[0], shiftHeld);
+    if (uiBlocked) clearInput();
+    const moveDirection = touchDirection || heldDirs[0];
+    if (!uiBlocked && moveDirection && !player.moving) {
+      player.tryStep(moveDirection, shiftHeld || touchRunning);
       refreshHudAndEmotes();
     }
 
@@ -439,6 +519,8 @@ async function boot() {
     }
 
     environment.update(elapsed);
+    boundary.update(elapsed, player);
+    festival.update(elapsed);
     updateCamera(dt);
     renderer.render(scene, camera);
   }

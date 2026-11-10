@@ -39,6 +39,7 @@ await page.waitForTimeout(400);
 // 1. Start Fieldwork -> Oblation Ground between the two East Driveway stairs (x=67, y=32)
 await page.fill('#player-name-input', 'Isko');
 await page.click('#btn-start-game');
+await page.locator('#opening-overlay').waitFor({ state: 'hidden' });
 await page.waitForTimeout(450);
 await page.screenshot({ path: 'shots/grid-01-oblation-driveway.png' });
 

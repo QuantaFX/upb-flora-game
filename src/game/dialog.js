@@ -53,6 +53,9 @@ export function createDialogUI(audio) {
       idx < pages.length - 1
         ? 'Press <kbd>E</kbd> / <kbd>Space</kbd> or Click for Next ▾'
         : 'Press <kbd>E</kbd> / <kbd>Space</kbd> or Click to Finish ✓';
+    if (window.matchMedia('(pointer: coarse), (max-width: 700px)').matches) {
+      nextHintEl.textContent = idx < pages.length - 1 ? 'Tap here or press A to continue ▾' : 'Tap here or press A to finish ✓';
+    }
   }
 
   function open(dialogPages, defaultFaceUrl = null, onClose = null) {

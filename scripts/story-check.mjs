@@ -6,6 +6,10 @@ import { getNpcDialogPages } from '../src/data/story.js';
 const saved=new Map();
 globalThis.localStorage={getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)};
 const state=new GameState();
+state.setCharacter('female');
+assert.equal(new GameState().data.character, 'female');
+state.setCharacter('unknown');
+assert.equal(state.data.character, 'male');
 const talk=npc=>getNpcDialogPages(npc,state,{toast(){}}).forEach(p=>p.onFinish?.());
 assert.equal(PLANTS.length,7);
 for(const q of QUEST_DEFS){

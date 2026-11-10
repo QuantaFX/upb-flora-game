@@ -18,6 +18,12 @@
 
 export const MAP_W = 80;
 export const MAP_H = 60;
+export const CAMPUS_BOUNDS = { minX: 3, maxX: 78, minY: 2, maxY: 56 };
+
+export function insideCampus(x, y) {
+  return x >= CAMPUS_BOUNDS.minX && x <= CAMPUS_BOUNDS.maxX
+    && y >= CAMPUS_BOUNDS.minY && y <= CAMPUS_BOUNDS.maxY;
+}
 
 // Player starts on the Lower East Driveway Landing (Elev 1), looking straight north at Prof. Barcelo
 // and the UP Oblation Statue right in the middle between the two East Driveway staircases!
@@ -304,7 +310,7 @@ export const NPCS = [
   {
     id: 'prof_barcelo',
     name: 'Prof. Racquel Barcelo',
-    role: 'Department of Biology · Project Saleng Lead',
+    role: 'Department of Biology · Native Plants Week Lead',
     sprite: 'Princess',
     x: 67,
     y: 30,
@@ -768,6 +774,7 @@ export function createCampusMap() {
 
   return {
     w: MAP_W,
+    bounds: CAMPUS_BOUNDS,
     h: MAP_H,
     spawn: PLAYER_SPAWN,
     tiles,
@@ -781,6 +788,7 @@ export function createCampusMap() {
       return tiles[y][x];
     },
     canStep(fromX, fromY, toX, toY) {
+      if (!insideCampus(toX, toY)) return false;
       const a = this.tileAt(fromX, fromY);
       const b = this.tileAt(toX, toY);
       if (!a || !b || b.solid) return false;

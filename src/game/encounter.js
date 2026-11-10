@@ -30,7 +30,7 @@ export function createEncounterUI(state, assets, audio, toast) {
     const ctx = playerCanvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, 64, 64);
-    const sheet = assets.characters.Villager3?.sheet;
+    const sheet = assets.characters[state.data.character === 'female' ? 'Woman' : 'Villager3']?.sheet;
     if (sheet) {
       // Column 1 is facing UP (back sprite)
       ctx.drawImage(sheet, 16, 0, 16, 16, 4, 4, 56, 56);

@@ -79,6 +79,7 @@ export const QUEST_DEFS = [
 export function createInitialState() {
   return {
     playerName: 'Isko',
+    character: 'male',
     started: false,
     // Quest status: 'locked' | 'available' | 'active' | 'completed'
     quests: Object.fromEntries(QUEST_DEFS.map((q,i) => [q.id, i === 0 ? 'available' : 'locked'])),
@@ -154,6 +155,11 @@ export class GameState {
     this.notify();
   }
 
+  setCharacter(character) {
+    this.data.character = character === 'female' ? 'female' : 'male';
+    this.notify();
+  }
+
   isIdentified(plantId) {
     return this.data.identifiedPlants.includes(plantId);
   }
@@ -209,7 +215,7 @@ export class GameState {
   }
 
   getActiveHeadline() {
-    if (this.data.flags.finale_complete) return `Project Saleng complete! (${this.data.identifiedPlants.length}/${PLANTS.length} documented)`;
+    if (this.data.flags.finale_complete) return `Ex-Flora-Tive complete! (${this.data.identifiedPlants.length}/${PLANTS.length} documented)`;
     const active = QUEST_DEFS.find(q => this.getQuestStatus(q.id) === 'active');
     if (active) return this.hasCollected(active.plantId) ? `${active.code}: Return to ${active.giver}` : `${active.code}: ${active.locationHint}`;
     const available = QUEST_DEFS.find(q => this.getQuestStatus(q.id) === 'available');
