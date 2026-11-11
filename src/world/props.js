@@ -210,9 +210,8 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(fpGroup);
   }
 
-  // 3. Decorative Trees, Bushes, Small Plants, Sunflowers, and Benches
+  // 3. Decorative Trees, Bushes, Small Plants, and Sunflowers
   const sunflowerTex = assets.plants.kamantigi.worldTex;
-  const benchTex = sliceTileTexture(element, 11, 1, 3, 1);
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
 
   // Lush pixel-art bushes, shrubs, and small ground-cover plants from TilesetNature
@@ -313,14 +312,6 @@ export function buildPropsAndBuildings(scene, map, assets) {
       ctx.fillText('Campus walks',80,78);ctx.fillText('Photo fieldwork',80,96);
       const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.15,0.92),new THREE.MeshBasicMaterial({map:canvasToTexture(c),side:THREE.DoubleSide}));
       panel.position.set(0,1.1,0.08);board.add(panel);group.add(board);
-    } else if (p.kind === 'bench') {
-      const mesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.4, 0.8),
-        new THREE.MeshBasicMaterial({ map: benchTex, transparent: true, alphaTest: 0.4 }),
-      );
-      mesh.position.set(p.x + 0.5, p.elev + 0.4, p.y + 0.5);
-      mesh.rotation.x = -0.32;
-      group.add(mesh);
     }
   }
 

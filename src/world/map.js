@@ -725,13 +725,13 @@ export function createCampusMap() {
   // Reference specimens elsewhere occupy the existing terrace gardens.
   for (const p of PLANT_NODES) setTile(p.x, p.y, { type: 'grass' });
 
-  // 9. Decorative Cordillera Pines, Sunflowers, and Benches
+  // 9. Decorative Cordillera Pines, Sunflowers, and Noticeboards
   const props = [];
   const addProp = (kind, x, y) => {
     const t = tiles[y]?.[x];
-    if (t && !t.solid && (['bench', 'bin', 'noticeboard'].includes(kind) || ['grass', 'tall_grass'].includes(t.type))
+    if (t && !t.solid && (kind === 'noticeboard' || ['grass', 'tall_grass'].includes(t.type))
       && ![...PLANT_NODES, ...NPCS, ...SIGNS].some(p => Math.abs(p.x-x) <= 1 && Math.abs(p.y-y) <= 1)) {
-      if (kind === 'pine' || kind === 'bench') {
+      if (kind === 'pine') {
         t.solid = true;
       }
       props.push({ kind, x, y, elev: t.elev });
@@ -751,19 +751,6 @@ export function createCampusMap() {
     [11, 21], [57, 37], [65, 15], [22, 13], [42, 47], [58, 47],
   ];
   for (const [x, y] of sunflowerCoords) addProp('sunflower_deco', x, y);
-
-  const benchCoords = [
-    [66, 29], [69, 29], // Oblation Plaza benches (between the two East Driveway stairs)
-    [67, 25], [76, 25], [76, 32], // East Driveway benches
-    [41, 30], [48, 30], [39, 31], [51, 31], // Summit IB Quad benches
-    [29, 23], [35, 22], [40, 20], [49, 20], [52, 24], [56, 28], [30, 31], // Summit Academic Quad benches
-    [42, 35], [50, 35], // Upper Court A Bleacher Overlook benches
-    [39, 43], [44, 43], [51, 43], [57, 43], [65, 43], [71, 43], // South Promenade benches
-    [20, 49], [30, 49], [18, 47], [32, 48], [7, 46], [12, 46], [7, 52], [36, 45], // Library, CAC & CSS Courtyard benches
-    [9, 25], [19, 21], // CSS North Landing & Alumni Center Courtyard benches
-    [40, 9], [44, 8], [50, 8], // North Campus benches
-  ];
-  for (const [x, y] of benchCoords) addProp('bench', x, y);
 
   for (const [x, y] of [[42, 31], [24, 50], [70, 29]]) addProp('noticeboard', x, y);
 
