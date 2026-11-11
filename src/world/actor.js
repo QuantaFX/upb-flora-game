@@ -48,8 +48,10 @@ export class Actor {
     this.dir = opts.dir || 'down';
     this.elev = this.map.tileAt(this.tileX, this.tileY)?.elev ?? 0;
 
-    // Determine whether this is a 2-frame horizontal Animal sheet (32x16) or a 4-column human sheet (64x64)
-    this.isAnimalSheet = this.sheet.width <= 32 && this.sheet.height === 16;
+    // Determine whether this is a 2-frame horizontal Animal sheet or a 4-column human sheet (64x64)
+    this.isAnimalSheet = Boolean(charAsset.isAnimal || this.sheet.height < 32);
+    this.frameW = this.isAnimalSheet ? Math.floor(this.sheet.width / 2) : 16;
+    this.frameH = this.isAnimalSheet ? this.sheet.height : 16;
     this.maxWalkFrames = this.isAnimalSheet ? 2 : Math.min(4, Math.floor(this.sheet.height / 16));
     this.frame = 0;
     this.animTimer = 0;
@@ -57,10 +59,10 @@ export class Actor {
 
     const scale = opts.scale || 1;
 
-    // Canvas for the current 16x16 frame
+    // Canvas for the current frame (exact frameW x frameH so wider animal sheets like 44x17, 42x17, 36x16, 34x15 are never cropped)
     this.canvas = document.createElement('canvas');
-    this.canvas.width = 16;
-    this.canvas.height = 16;
+    this.canvas.width = this.frameW;
+    this.canvas.height = this.frameH;
     this.ctx = this.canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
     this.texture = canvasToTexture(this.canvas);
@@ -81,7 +83,12 @@ export class Actor {
     this.group.add(this.shadow);
 
     // Upright billboard plane tilted slightly back to match camera pitch
-    const spriteGeo = new THREE.PlaneGeometry(1.15 * scale, 1.35 * scale);
+    const widthRatio = this.frameW / 16;
+    const heightRatio = this.frameH / 16;
+    const spriteGeo = new THREE.PlaneGeometry(
+      1.15 * scale * widthRatio,
+      (this.isAnimalSheet ? 1.15 : 1.35) * scale * heightRatio,
+    );
     const spriteMat = new THREE.MeshBasicMaterial({
       map: this.texture,
       transparent: true,
@@ -89,13 +96,13 @@ export class Actor {
       side: THREE.DoubleSide,
     });
     this.mesh = new THREE.Mesh(spriteGeo, spriteMat);
-    this.mesh.position.set(0, 0.68 * scale, 0.05);
+    this.mesh.position.set(0, 0.68 * scale * heightRatio, 0.05);
     this.mesh.rotation.x = -0.32;
     this.group.add(this.mesh);
 
     // Optional emote bubble above NPC/animal head
     this.emoteMesh = null;
-    this.emoteBaseY = 1.45 * scale + 0.2;
+    this.emoteBaseY = 1.45 * scale * heightRatio + 0.2;
 
     // Movement interpolation state
     this.moving = false;
@@ -111,17 +118,27 @@ export class Actor {
   }
 
   drawFrame() {
-    this.ctx.clearRect(0, 0, 16, 16);
+    this.ctx.clearRect(0, 0, this.frameW, this.frameH);
     if (this.isAnimalSheet) {
       if (this.dir === 'left') this.facingLeft = true;
       else if (this.dir === 'right') this.facingLeft = false;
       const col = this.moving ? this.frame % 2 : 0;
       this.ctx.save();
       if (this.facingLeft) {
-        this.ctx.translate(16, 0);
+        this.ctx.translate(this.frameW, 0);
         this.ctx.scale(-1, 1);
       }
-      this.ctx.drawImage(this.sheet, col * 16, 0, 16, 16, 0, 0, 16, 16);
+      this.ctx.drawImage(
+        this.sheet,
+        col * this.frameW,
+        0,
+        this.frameW,
+        this.frameH,
+        0,
+        0,
+        this.frameW,
+        this.frameH,
+      );
       this.ctx.restore();
     } else {
       const col = DIR_COL[this.dir] ?? 0;

@@ -137,7 +137,7 @@ export async function loadAllAssets(plantIds, characterNames) {
       const sheetUrl = `${PACK_BASE}/Actor/Animal/${sheetRel}`;
       const faceUrl = `${PACK_BASE}/Actor/Animal/${faceRel}`;
       const [sheet, face] = await Promise.all([loadImage(sheetUrl), loadImage(faceUrl)]);
-      animals[key] = { sheet, face, faceUrl };
+      animals[key] = { sheet, face, faceUrl, isAnimal: true };
     }),
   );
 
