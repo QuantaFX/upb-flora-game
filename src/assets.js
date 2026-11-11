@@ -150,10 +150,22 @@ export async function loadAllAssets(plantIds, characterNames) {
     }),
   );
 
-  const leafSheet = await loadImage(`${PACK_BASE}/FX/Particle/Leaf.png`);
+  const [leafSheet, butterflyOrangeSheet, butterflyBlueSheet] = await Promise.all([
+    loadImage(`${PACK_BASE}/FX/Particle/Leaf.png`),
+    loadImage(`${PACK_BASE}/Actor/Monster/Butterfly/SpriteSheet.png`),
+    loadImage(`${PACK_BASE}/Actor/Monster/ButterflyBlue/SpriteSheet.png`),
+  ]);
   const leafFrames = Array.from({ length: 6 }, (_, i) =>
     canvasToTexture(sliceCanvas(leafSheet, i * 12, 0, 12, 7)),
   );
+  const butterflyFrames = {
+    orange: Array.from({ length: 4 }, (_, row) =>
+      canvasToTexture(sliceCanvas(butterflyOrangeSheet, 0, row * 16, 16, 16)),
+    ),
+    blue: Array.from({ length: 4 }, (_, row) =>
+      canvasToTexture(sliceCanvas(butterflyBlueSheet, 0, row * 16, 16, 16)),
+    ),
+  };
 
   return {
     tilesets: { floor, nature, relief, element, house },
@@ -162,5 +174,6 @@ export async function loadAllAssets(plantIds, characterNames) {
     plants,
     emotes,
     leafFrames,
+    butterflyFrames,
   };
 }

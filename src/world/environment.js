@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-// Animated 6-frame pixel-art falling leaves (FX/Particle/Leaf.png, as seen in Example 1.gif)
-// anchored in world space across the woody/tree areas of the campus, plus subtle airborne pollen.
+// Animated 6-frame pixel-art falling leaves (FX/Particle/Leaf.png, as seen in Example 1.gif),
+// 4-frame fluttering butterflies across grassy areas, and subtle airborne pollen.
 export function buildEnvironment(scene, map, assets) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const group = new THREE.Group();
@@ -104,6 +104,79 @@ export function buildEnvironment(scene, map, assets) {
     }
   }
 
+  // 3. Fluttering Butterflies across Grassy & Floral Areas
+  const butterflyMatsByPalette = [];
+  if (assets?.butterflyFrames) {
+    const { orange = [], blue = [] } = assets.butterflyFrames;
+    if (orange.length === 4 && blue.length === 4) {
+      // 4 vibrant butterfly palettes: Monarch Orange, Sky Blue, Golden Yellow, and Violet-Pink
+      const specs = [
+        { frames: orange, tint: '#ffffff' },
+        { frames: blue, tint: '#ffffff' },
+        { frames: orange, tint: '#fff275' },
+        { frames: blue, tint: '#f3b8ff' },
+      ];
+      for (const spec of specs) {
+        butterflyMatsByPalette.push(
+          spec.frames.map(
+            (tex) =>
+              new THREE.MeshBasicMaterial({
+                map: tex,
+                color: new THREE.Color(spec.tint),
+                transparent: true,
+                alphaTest: 0.3,
+                depthWrite: false,
+                side: THREE.DoubleSide,
+              }),
+          ),
+        );
+      }
+    }
+  }
+
+  // Collect grassy anchor tiles across the campus (inside bounds)
+  const grassAnchors = [];
+  for (let y = map.bounds.minY + 1; y <= map.bounds.maxY - 1; y += 2) {
+    for (let x = map.bounds.minX + 1; x <= map.bounds.maxX - 1; x += 2) {
+      const t = map.tileAt(x, y);
+      if (t && (t.type === 'grass' || t.type === 'tall_grass')) {
+        grassAnchors.push({ x: x + 0.5, z: y + 0.5, elev: t.elev });
+      }
+    }
+  }
+  // Also include sunflower & quest plant coordinates so butterflies visit campus flowers
+  for (const p of map.props) {
+    if (p.kind === 'sunflower_deco' || p.kind === 'understory') {
+      grassAnchors.push({ x: p.x + 0.5, z: p.y + 0.5, elev: p.elev });
+    }
+  }
+
+  const butterflies = [];
+  const butterflyGeo = new THREE.PlaneGeometry(0.52, 0.52);
+
+  if (butterflyMatsByPalette.length > 0 && grassAnchors.length > 0) {
+    const totalButterflies = 60;
+    for (let i = 0; i < totalButterflies; i += 1) {
+      const anchor = grassAnchors[(i * 11) % grassAnchors.length];
+      const palette = butterflyMatsByPalette[i % butterflyMatsByPalette.length];
+      const mesh = new THREE.Mesh(butterflyGeo, palette[0]);
+      mesh.rotation.x = -0.32;
+      group.add(mesh);
+      butterflies.push({
+        mesh,
+        palette,
+        baseX: anchor.x + (((i * 13) % 7) - 3) * 0.22,
+        baseZ: anchor.z + (((i * 17) % 7) - 3) * 0.22,
+        elev: anchor.elev,
+        radiusX: 0.65 + (i % 4) * 0.24,
+        radiusZ: 0.55 + (i % 3) * 0.22,
+        flightSpeed: 0.65 + (i % 5) * 0.14,
+        flapSpeed: 8.5 + (i % 4) * 1.2,
+        phase: i * 1.73,
+      });
+    }
+  }
+
   function update(time) {
     const t = reducedMotion ? 0 : time;
     for (let i = 0; i < count; i += 1) {
@@ -125,8 +198,7 @@ export function buildEnvironment(scene, map, assets) {
         const dz = Math.cos(swayAngle * 0.65) * 0.12 + fallProgress * 0.35;
         const y = l.elev + l.startY * (1 - fallProgress) + l.endY * fallProgress;
 
-        // Map pendulum sway phase to the 6 frames of FX/Particle/Leaf.png:
-        // frames 0..2 tilt right during the right swing; frames 3..5 tilt left during the left swing
+        // Map pendulum sway phase to the 6 frames of FX/Particle/Leaf.png
         const cycle = ((swayAngle / (Math.PI * 2)) % 1 + 1) % 1;
         const frameIdx = Math.min(5, Math.floor(cycle * 6));
         if (l.mesh.material !== leafMats[frameIdx]) {
@@ -134,6 +206,22 @@ export function buildEnvironment(scene, map, assets) {
         }
         l.mesh.position.set(l.baseX + dx, y, l.baseZ + dz);
       }
+    }
+
+    // Animate butterflies flying in figure-8 loops over the grassy areas
+    for (let i = 0; i < butterflies.length; i += 1) {
+      const b = butterflies[i];
+      const angle = t * b.flightSpeed + b.phase;
+      const dx = Math.sin(angle) * b.radiusX + Math.sin(angle * 2.1) * 0.22;
+      const dz = Math.cos(angle * 0.85) * b.radiusZ + Math.cos(angle * 1.7) * 0.18;
+      const bobY = Math.sin(t * 3.8 + b.phase) * 0.16;
+      const tileElev =
+        map.tileAt(Math.round(b.baseX + dx), Math.round(b.baseZ + dz))?.elev ?? b.elev;
+      const frameIdx = Math.floor(t * b.flapSpeed + b.phase * 4) % 4;
+      if (b.mesh.material !== b.palette[frameIdx]) {
+        b.mesh.material = b.palette[frameIdx];
+      }
+      b.mesh.position.set(b.baseX + dx, tileElev + 0.68 + bobY, b.baseZ + dz);
     }
   }
 
