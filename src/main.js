@@ -96,7 +96,7 @@ async function boot() {
   buildTerrain(scene, map, assets);
   const propsCtrl = buildPropsAndBuildings(scene, map, assets);
 
-  const environment = buildEnvironment(scene, map);
+  const environment = buildEnvironment(scene, map, assets);
   const boundary = buildBoundaryMist(scene, map);
   const festival = buildFestival(scene, map);
 
@@ -575,7 +575,7 @@ async function boot() {
       if (m.position.x > map.w + 6) m.position.x = -6;
     }
 
-    environment.update(elapsed);
+    environment.update(elapsed, player);
     boundary.update(elapsed, player);
     festival.update(elapsed);
     updateCamera(dt);

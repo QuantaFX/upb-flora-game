@@ -150,11 +150,17 @@ export async function loadAllAssets(plantIds, characterNames) {
     }),
   );
 
+  const leafSheet = await loadImage(`${PACK_BASE}/FX/Particle/Leaf.png`);
+  const leafFrames = Array.from({ length: 6 }, (_, i) =>
+    canvasToTexture(sliceCanvas(leafSheet, i * 12, 0, 12, 7)),
+  );
+
   return {
     tilesets: { floor, nature, relief, element, house },
     characters,
     animals,
     plants,
     emotes,
+    leafFrames,
   };
 }
