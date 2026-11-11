@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // Animated 6-frame pixel-art falling leaves (FX/Particle/Leaf.png, as seen in Example 1.gif)
-// across all woody/tree areas of the campus, plus subtle airborne pollen.
+// anchored in world space across the woody/tree areas of the campus, plus subtle airborne pollen.
 export function buildEnvironment(scene, map, assets) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const group = new THREE.Group();
@@ -36,7 +36,7 @@ export function buildEnvironment(scene, map, assets) {
   points.frustumCulled = false;
   group.add(points);
 
-  // 2. Falling Pixel-Art Leaves (Example 1.gif style using 6-frame FX/Particle/Leaf.png)
+  // 2. World-Space Falling Pixel-Art Leaves (Example 1.gif style using 6-frame FX/Particle/Leaf.png)
   const leafFrames = assets?.leafFrames || [];
   const leafMats = leafFrames.map(
     (tex) =>
@@ -49,7 +49,7 @@ export function buildEnvironment(scene, map, assets) {
       }),
   );
 
-  // Collect woody anchor tiles (trees, understory bushes, and tall-grass woodland patches)
+  // Collect world-space woody anchor positions (trees, understory bushes, and tall-grass woodland patches)
   const woodyAnchors = [];
   for (const p of map.props) {
     if (p.kind === 'pine' || p.kind === 'understory' || p.kind === 'wood') {
@@ -74,34 +74,18 @@ export function buildEnvironment(scene, map, assets) {
     }
   }
 
-  // Fast lookup for how "woody" a given tile coordinate is (for the local canopy leaf shower)
-  const isWoodyTile = (tx, tz) => {
-    const t = map.tileAt(Math.round(tx), Math.round(tz));
-    if (!t) return false;
-    if (t.type === 'tall_grass' || t.type === 'grass') return true;
-    // Also check within 3 tiles of any tree/woodland tile
-    for (let dy = -3; dy <= 3; dy += 1) {
-      for (let dx = -3; dx <= 3; dx += 1) {
-        const nt = map.tileAt(Math.round(tx) + dx, Math.round(tz) + dy);
-        if (nt && (nt.type === 'tall_grass' || nt.type === 'grass')) return true;
-      }
-    }
-    return false;
-  };
-
   const leafGeo = new THREE.PlaneGeometry(0.46, 0.27);
   const canopyLeaves = [];
-  const localLeaves = [];
 
   if (leafMats.length === 6 && woodyAnchors.length > 0) {
-    // Spawn falling leaves across all woody areas on campus
-    const totalCanopyLeaves = 180;
+    // Spawn falling leaves strictly in world coordinates across all woody areas on campus
+    const totalCanopyLeaves = 240;
     for (let i = 0; i < totalCanopyLeaves; i += 1) {
       const anchor = woodyAnchors[(i * 7) % woodyAnchors.length];
       const mesh = new THREE.Mesh(leafGeo, leafMats[i % 6]);
       mesh.rotation.x = -0.32;
-      const offsetX = (((i * 19) % 11) - 5) * 0.16;
-      const offsetZ = (((i * 23) % 11) - 5) * 0.16;
+      const offsetX = (((i * 19) % 13) - 6) * 0.18;
+      const offsetZ = (((i * 23) % 13) - 6) * 0.18;
       const startY = anchor.isTree ? 2.15 + (i % 3) * 0.25 : 1.55 + (i % 3) * 0.2;
       const endY = 0.12;
       group.add(mesh);
@@ -118,26 +102,9 @@ export function buildEnvironment(scene, map, assets) {
         phase: i * 1.37,
       });
     }
-
-    // Extra local woodland leaf shower around the player when walking in/near woody areas
-    const localCount = 26;
-    for (let i = 0; i < localCount; i += 1) {
-      const mesh = new THREE.Mesh(leafGeo, leafMats[i % 6]);
-      mesh.rotation.x = -0.32;
-      group.add(mesh);
-      localLeaves.push({
-        mesh,
-        relX: (((i * 31) % 17) - 8) * 0.65,
-        relZ: (((i * 17) % 15) - 7) * 0.55,
-        fallSpeed: 0.24 + (i % 4) * 0.04,
-        swaySpeed: 2.5 + (i % 3) * 0.35,
-        swayAmp: 0.38 + (i % 3) * 0.07,
-        phase: i * 1.91,
-      });
-    }
   }
 
-  function update(time, player) {
+  function update(time) {
     const t = reducedMotion ? 0 : time;
     for (let i = 0; i < count; i += 1) {
       const s = seeds[i];
@@ -149,7 +116,7 @@ export function buildEnvironment(scene, map, assets) {
     geo.attributes.position.needsUpdate = true;
 
     if (leafMats.length === 6) {
-      // Animate canopy leaves in all woody areas (Example 1.gif pendulum flutter + 6-frame cycle)
+      // Animate canopy leaves strictly at their world-space tree/woodland coordinates
       for (let i = 0; i < canopyLeaves.length; i += 1) {
         const l = canopyLeaves[i];
         const fallProgress = (t * l.fallSpeed + l.phase) % 1;
@@ -166,35 +133,6 @@ export function buildEnvironment(scene, map, assets) {
           l.mesh.material = leafMats[frameIdx];
         }
         l.mesh.position.set(l.baseX + dx, y, l.baseZ + dz);
-      }
-
-      // Animate player-following woodland leaf shower when in or near woody areas
-      const px = player ? player.group.position.x : map.spawn.x;
-      const pz = player ? player.group.position.z : map.spawn.y;
-      const inWoods = isWoodyTile(px, pz);
-
-      for (let i = 0; i < localLeaves.length; i += 1) {
-        const l = localLeaves[i];
-        const lx = px + l.relX;
-        const lz = pz + l.relZ;
-        const tile = map.tileAt(Math.floor(lx), Math.floor(lz));
-        const tileIsGreen =
-          tile && (tile.type === 'grass' || tile.type === 'tall_grass');
-        l.mesh.visible = Boolean(inWoods && tileIsGreen);
-        if (!l.mesh.visible) continue;
-
-        const fallProgress = (t * l.fallSpeed + l.phase) % 1;
-        const swayAngle = t * l.swaySpeed + l.phase * 1.7;
-        const dx = Math.sin(swayAngle) * l.swayAmp;
-        const dz = Math.cos(swayAngle * 0.5) * 0.14 + fallProgress * 0.3;
-        const y = tile.elev + 2.35 * (1 - fallProgress) + 0.15 * fallProgress;
-
-        const cycle = ((swayAngle / (Math.PI * 2)) % 1 + 1) % 1;
-        const frameIdx = Math.min(5, Math.floor(cycle * 6));
-        if (l.mesh.material !== leafMats[frameIdx]) {
-          l.mesh.material = leafMats[frameIdx];
-        }
-        l.mesh.position.set(lx + dx, y, lz + dz);
       }
     }
   }
