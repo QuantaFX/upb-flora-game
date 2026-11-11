@@ -386,7 +386,79 @@ async function boot() {
     }
   };
 
-  // Title Screen & HUD Button Listeners
+  // Title Screen, Opening Story/Tutorial Sequence & HUD Button Listeners
+  const openingSlides = Array.from(document.querySelectorAll('[data-opening-slide]'));
+  const openingDots = Array.from(document.querySelectorAll('[data-slide-dot]'));
+  const openingStepBadge = document.getElementById('opening-step-badge');
+  const openingPrevBtn = document.getElementById('opening-prev');
+  const openingNextBtn = document.getElementById('opening-next');
+  const openingPlayerCanvas = document.getElementById('opening-canvas-player');
+  const openingMentorCanvas = document.getElementById('opening-canvas-mentor');
+  const openingPlayerLabel = document.getElementById('opening-player-label');
+  const stepTitles = [
+    '1 / 3 · Background Story',
+    '2 / 3 · Field Controls',
+    '3 / 3 · Botanical Encounters',
+  ];
+  let openingSlideIdx = 0;
+
+  function drawOpeningSprites(elapsed = 0) {
+    const frame = Math.floor(elapsed * 4) % 4;
+    if (openingPlayerCanvas) {
+      const ctx = openingPlayerCanvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, 48, 48);
+      const sheet = assets.characters[characterSprite(state.data.character)]?.sheet;
+      if (sheet) {
+        const row = frame % Math.min(4, Math.floor(sheet.height / 16));
+        ctx.drawImage(sheet, 48, row * 16, 16, 16, 4, 4, 40, 40);
+      }
+    }
+    if (openingMentorCanvas) {
+      const ctx = openingMentorCanvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, 48, 48);
+      const sheet = assets.characters.Princess?.sheet;
+      if (sheet) {
+        ctx.drawImage(sheet, 0, 0, 16, 16, 4, 4, 40, 40);
+      }
+    }
+  }
+
+  function scheduleOpeningAutoAdvance(delayMs = 2400) {
+    clearTimeout(openingTimer);
+    if (!openingActive) return;
+    if (environment.reducedMotion) {
+      finishOpening();
+      return;
+    }
+    openingTimer = setTimeout(() => {
+      if (!openingActive) return;
+      if (openingSlideIdx < openingSlides.length - 1) {
+        setOpeningSlide(openingSlideIdx + 1, false);
+      } else {
+        finishOpening();
+      }
+    }, delayMs);
+  }
+
+  function setOpeningSlide(idx, manual = false) {
+    openingSlideIdx = Math.max(0, Math.min(openingSlides.length - 1, idx));
+    openingSlides.forEach((el, i) => el.classList.toggle('hidden', i !== openingSlideIdx));
+    openingDots.forEach((dot, i) => dot.classList.toggle('is-active', i === openingSlideIdx));
+    if (openingStepBadge) {
+      openingStepBadge.textContent = stepTitles[openingSlideIdx] || '';
+    }
+    if (openingPrevBtn) {
+      openingPrevBtn.disabled = openingSlideIdx === 0;
+    }
+    if (openingNextBtn) {
+      openingNextBtn.textContent =
+        openingSlideIdx === openingSlides.length - 1 ? 'Start Fieldwork 🌿' : 'Next ▶';
+    }
+    scheduleOpeningAutoAdvance(manual ? 9000 : 2400);
+  }
+
   function finishOpening() {
     clearTimeout(openingTimer);
     openingActive = false;
@@ -395,9 +467,26 @@ async function boot() {
     touchPanel.inert = false;
     hudTop.classList.remove('hidden');
     hudBottom.classList.remove('hidden');
-    document.getElementById('touch-a').focus({ preventScroll: true });
   }
   document.getElementById('skip-opening').addEventListener('click', finishOpening);
+  openingPrevBtn?.addEventListener('click', () => {
+    audio.playSfx('blip');
+    setOpeningSlide(openingSlideIdx - 1, true);
+  });
+  openingNextBtn?.addEventListener('click', () => {
+    audio.playSfx('blip');
+    if (openingSlideIdx < openingSlides.length - 1) {
+      setOpeningSlide(openingSlideIdx + 1, true);
+    } else {
+      finishOpening();
+    }
+  });
+  openingDots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      audio.playSfx('blip');
+      setOpeningSlide(i, true);
+    });
+  });
 
   function startGame() {
     if (openingActive || titleScreen.classList.contains('hidden')) return;
@@ -407,11 +496,15 @@ async function boot() {
     player.sheet = assets.characters[characterSprite(state.data.character)].sheet;
     player.maxWalkFrames = Math.min(4, Math.floor(player.sheet.height / 16));
     player.drawFrame();
+    if (openingPlayerLabel) {
+      openingPlayerLabel.textContent = state.data.playerName || 'Researcher';
+    }
+    drawOpeningSprites(0);
     titleScreen.classList.add('hidden');
     openingActive = true;
     opening.classList.remove('hidden');
+    setOpeningSlide(0, false);
     document.getElementById('skip-opening').focus();
-    openingTimer = setTimeout(finishOpening, environment.reducedMotion ? 0 : 3200);
     audio.playBgm('overworld');
     refreshHudAndEmotes();
   }
@@ -476,7 +569,17 @@ async function boot() {
 
   window.addEventListener('keydown', (e) => {
     if (openingActive) {
-      if (['Escape', 'Enter', 'Space'].includes(e.code)) { e.preventDefault(); finishOpening(); }
+      if (e.code === 'Escape') {
+        e.preventDefault();
+        finishOpening();
+      } else if (e.code === 'ArrowRight' || e.code === 'Enter' || e.code === 'Space') {
+        e.preventDefault();
+        if (openingSlideIdx < openingSlides.length - 1) setOpeningSlide(openingSlideIdx + 1, true);
+        else finishOpening();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        setOpeningSlide(openingSlideIdx - 1, true);
+      }
       return;
     }
     if (e.key === 'Shift') shiftHeld = true;
@@ -548,6 +651,10 @@ async function boot() {
     requestAnimationFrame(animate);
     const dt = Math.min(clock.getDelta(), 0.05);
     const elapsed = clock.elapsedTime;
+
+    if (openingActive) {
+      drawOpeningSprites(elapsed);
+    }
 
     const uiBlocked =
       openingActive ||

@@ -230,6 +230,9 @@ export function createEncounterUI(state, assets, audio, toast) {
 
     plantSpriteEl.src = assets.plants[plantId].portraitUrl;
     drawPlayerBackSprite();
+    document.body.classList.add('in-encounter');
+    const touchCtrl = document.getElementById('touch-controls');
+    if (touchCtrl) touchCtrl.inert = true;
     overlay.classList.remove('hidden');
     audio?.playSfx('encounter');
 
@@ -245,6 +248,11 @@ export function createEncounterUI(state, assets, audio, toast) {
   function close() {
     if (!isOpen) return;
     isOpen = false;
+    document.body.classList.remove('in-encounter');
+    const touchCtrl = document.getElementById('touch-controls');
+    if (touchCtrl && document.body.classList.contains('is-playing')) {
+      touchCtrl.inert = false;
+    }
     overlay.classList.add('hidden');
     if (onEndCallback) {
       const fn = onEndCallback;
