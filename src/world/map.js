@@ -79,7 +79,7 @@ export const BUILDINGS = [
     id: 'b_canteen',
     name: 'BALAY PANGANAN',
     sub: 'UPB Cafeteria (#13)',
-    elev: 2,
+    elev: 3,
     x: 25,
     y: 13,
     w: 6,
@@ -510,6 +510,11 @@ export function createCampusMap() {
       return 1;
     }
 
+    // Balay Panganan / Cafeteria plateau (x=24..34, y=12..17) is placed 1 level higher at Elevation 3!
+    if (x >= 24 && x <= 34 && y >= 12 && y <= 17) {
+      return 3;
+    }
+
     // Level 3: Summit Crown Quad (IM, Balay Salun-at, KA, CS, IB, Museo Kordilyera)
     if (x >= 25 && x <= 59 && y >= 17 && y <= 32) {
       return 3;
@@ -725,13 +730,13 @@ export function createCampusMap() {
   // Reference specimens elsewhere occupy the existing terrace gardens.
   for (const p of PLANT_NODES) setTile(p.x, p.y, { type: 'grass' });
 
-  // 9. Decorative Cordillera Pines, Sunflowers, and Noticeboards
+  // 9. Decorative Cordillera Pines, Sunflowers, Fallen Wood, Rocks, and Noticeboards
   const props = [];
   const addProp = (kind, x, y) => {
     const t = tiles[y]?.[x];
     if (t && !t.solid && (kind === 'noticeboard' || ['grass', 'tall_grass'].includes(t.type))
       && ![...PLANT_NODES, ...NPCS, ...SIGNS].some(p => Math.abs(p.x-x) <= 1 && Math.abs(p.y-y) <= 1)) {
-      if (kind === 'pine') {
+      if (['pine', 'rock', 'wood'].includes(kind)) {
         t.solid = true;
       }
       props.push({ kind, x, y, elev: t.elev });
@@ -746,6 +751,25 @@ export function createCampusMap() {
   ];
   for (const [x, y] of pineCoords) addProp('pine', x, y);
 
+  const woodCoords = [
+    [10, 15], [7, 21], [14, 19], // Woods behind CSS (#3)
+    [54, 40], [64, 38], [66, 41], // UPB Woods (#15 / #17)
+    [18, 39], [20, 39], // Slope between Juan Luna and Library
+    [64, 15], [69, 13], [32, 8], // North & Biodiversity slopes
+    [41, 47], [55, 48], [66, 48], // South Promenade woodland edge
+  ];
+  for (const [x, y] of woodCoords) addProp('wood', x, y);
+
+  const rockCoords = [
+    [11, 13], [8, 17], [15, 22], // Woods behind CSS (#3)
+    [57, 39], [65, 40], [68, 37], // UPB Woods (#15 / #17)
+    [22, 39], [17, 41], // Slope near CSS & Library
+    [64, 13], [70, 15], [35, 8], // North & Biodiversity rock outcrops
+    [46, 33], [53, 33], // Green terrace strip above Court A bleachers
+    [48, 47], [62, 47], [72, 47], // South Promenade rock outcrops
+  ];
+  for (const [x, y] of rockCoords) addProp('rock', x, y);
+
   const sunflowerCoords = [
     [40, 21], [49, 21], [31, 29], [53, 39], [64, 29], [16, 43],
     [11, 21], [57, 37], [65, 15], [22, 13], [42, 47], [58, 47],
@@ -754,11 +778,11 @@ export function createCampusMap() {
 
   for (const [x, y] of [[42, 31], [24, 50], [70, 29]]) addProp('noticeboard', x, y);
 
-  // Dense deterministic woodland & bush planting on even grid coordinates, leaving odd rows/cols open for walking.
+  // Dense deterministic woodland, bush, fallen wood, and rock placement on even grid coordinates, leaving odd rows/cols open for walking.
   for (let y = 4; y < MAP_H - 3; y += 2) {
     for (let x = 4; x < MAP_W - 3; x += 2) {
       const hash = (x * 37 + y * 71) % 19;
-      if (hash > 13) continue;
+      if (hash > 14) continue;
       const t = tiles[y][x];
       const clear = [-1, 0, 1].every((dy) =>
         [-1, 0, 1].every((dx) => {
@@ -766,7 +790,11 @@ export function createCampusMap() {
           return n && !n.solid && ['grass', 'tall_grass'].includes(n.type) && n.elev === t.elev;
         }),
       );
-      if (clear) addProp(hash < 4 ? 'pine' : 'understory', x, y);
+      if (clear) {
+        const kind =
+          hash < 4 ? 'pine' : hash < 10 ? 'understory' : hash < 12 ? 'wood' : 'rock';
+        addProp(kind, x, y);
+      }
     }
   }
 

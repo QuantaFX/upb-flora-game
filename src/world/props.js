@@ -214,10 +214,49 @@ export function buildPropsAndBuildings(scene, map, assets) {
   const sunflowerTex = assets.plants.kamantigi.worldTex;
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
 
-  // Lush pixel-art bushes, shrubs, and small ground-cover plants from TilesetNature
+  // Lush pixel-art bushes, shrubs, fallen wood, rocks, and small ground-cover plants from TilesetNature
   const bushRoundTex = sliceTileTexture(nature, 0, 0, 2, 2);
   const bushPineTex = sliceTileTexture(nature, 2, 0, 2, 2);
   const treeRoundTex = sliceTileTexture(nature, 16, 0, 2, 2);
+  const woodPropTexs = [
+    sliceTileTexture(nature, 0, 8, 2, 2), // dark tree stump
+    sliceTileTexture(nature, 2, 8, 2, 2), // warm tree stump
+    sliceTileTexture(nature, 4, 8, 1, 1), // small stump
+    sliceTileTexture(nature, 5, 8, 1, 1), // horizontal fallen log
+    sliceTileTexture(nature, 12, 13, 1, 1), // mossy cut log round
+    sliceTileTexture(nature, 13, 13, 1, 1), // mossy cut log round 2
+  ];
+  const woodPropMats = woodPropTexs.map(
+    (tex) => new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.35 }),
+  );
+  const rockPropTexs = [
+    sliceTileTexture(nature, 0, 12, 2, 2), // large round boulder
+    sliceTileTexture(nature, 15, 10, 2, 2), // brown Cordillera rock crag
+    sliceTileTexture(nature, 15, 14, 2, 2), // grey Cordillera limestone crag
+    sliceTileTexture(nature, 6, 12, 1, 1), // sharp stone
+    sliceTileTexture(nature, 7, 12, 1, 1), // smooth grey rock
+    sliceTileTexture(nature, 8, 12, 1, 1), // round grey rock
+    sliceTileTexture(nature, 4, 13, 1, 1), // warm brown stone
+    sliceTileTexture(nature, 5, 13, 1, 1), // textured brown rock
+  ];
+  const rockPropMats = rockPropTexs.map(
+    (tex) => new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.35 }),
+  );
+  const smallGroundWoodRockTexs = [
+    sliceTileTexture(nature, 5, 9, 1, 1), // small dry branch
+    sliceTileTexture(nature, 12, 11, 1, 1), // forked brown fallen branch
+    sliceTileTexture(nature, 13, 11, 1, 1), // mossy fallen branch
+    sliceTileTexture(nature, 12, 12, 1, 1), // curved brown branch
+    sliceTileTexture(nature, 13, 12, 1, 1), // curved mossy branch
+    sliceTileTexture(nature, 5, 8, 1, 1), // fallen horizontal log
+    sliceTileTexture(nature, 6, 12, 1, 1), // small sharp stone
+    sliceTileTexture(nature, 7, 12, 1, 1), // small smooth stone
+    sliceTileTexture(nature, 17, 17, 1, 1), // grey pebbles
+    sliceTileTexture(nature, 18, 17, 1, 1), // scattered pebbles
+  ];
+  const smallGroundWoodRockMats = smallGroundWoodRockTexs.map(
+    (tex) => new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.35 }),
+  );
   const smallPlantTexs = [
     sliceTileTexture(nature, 0, 10, 1, 1),
     sliceTileTexture(nature, 1, 10, 1, 1),
@@ -286,6 +325,26 @@ export function buildPropsAndBuildings(scene, map, assets) {
         mesh.rotation.x = -0.32;
         group.add(mesh);
       }
+    } else if (p.kind === 'wood') {
+      const idx = (p.x * 7 + p.y * 11) % woodPropMats.length;
+      const isBig = idx < 2;
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(isBig ? 1.15 : 0.85, isBig ? 1.05 : 0.8),
+        woodPropMats[idx],
+      );
+      mesh.position.set(p.x + 0.5, p.elev + (isBig ? 0.45 : 0.36), p.y + 0.5);
+      mesh.rotation.x = -0.32;
+      group.add(mesh);
+    } else if (p.kind === 'rock') {
+      const idx = (p.x * 13 + p.y * 5) % rockPropMats.length;
+      const isBig = idx < 3;
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(isBig ? 1.2 : 0.85, isBig ? 1.1 : 0.8),
+        rockPropMats[idx],
+      );
+      mesh.position.set(p.x + 0.5, p.elev + (isBig ? 0.48 : 0.36), p.y + 0.5);
+      mesh.rotation.x = -0.32;
+      group.add(mesh);
     } else if (p.kind === 'sunflower_deco') {
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.95, 1.05),
@@ -336,6 +395,15 @@ export function buildPropsAndBuildings(scene, map, assets) {
         const oz = (((x * 23 + y * 11) % 5) - 2) * 0.08;
         const m = new THREE.Mesh(h < 2 ? bushSmallGeo : smallGeo, mat);
         m.position.set(x + 0.5 + ox, t.elev + (h < 2 ? 0.4 : 0.32), y + 0.5 + oz);
+        m.rotation.x = -0.32;
+        group.add(m);
+      } else if (h >= 7 && h <= 9) {
+        const mat =
+          smallGroundWoodRockMats[(x * 29 + y * 17) % smallGroundWoodRockMats.length];
+        const ox = (((x * 11 + y * 19) % 5) - 2) * 0.07;
+        const oz = (((x * 17 + y * 13) % 5) - 2) * 0.07;
+        const m = new THREE.Mesh(smallGeo, mat);
+        m.position.set(x + 0.5 + ox, t.elev + 0.3, y + 0.5 + oz);
         m.rotation.x = -0.32;
         group.add(m);
       }
