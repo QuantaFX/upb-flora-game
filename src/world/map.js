@@ -28,6 +28,8 @@ export function insideCampus(x, y) {
 // Player starts on the Lower East Driveway Landing (Elev 1), looking straight north at Prof. Barcelo
 // and the UP Oblation Statue right in the middle between the two East Driveway staircases!
 export const PLAYER_SPAWN = { x: 67, y: 32, dir: 'up' };
+// Garden terrace between Iskolar ng Bayan and the court's north bleachers.
+export const INANG_LAYA = { x: 43, y: 33 };
 
 export const BUILDINGS = [
   // --- NORTH LOWLAND ROW (Elevation 0 — Sunshine Park / Harrison Rd Edge) ---
@@ -163,8 +165,8 @@ export const BUILDINGS = [
   },
   {
     id: 'b_ib_west',
-    name: 'IB LOBBY & INANG LAYA',
-    sub: 'Southwest Wing (#11 & #18)',
+    name: 'IB LOBBY',
+    sub: 'Southwest Wing (#11)',
     elev: 3,
     x: 33,
     y: 26,
@@ -401,61 +403,125 @@ export const NPCS = [
 
 export const PLANT_NODES = [
   {
-    "id": "node_benguet_pine",
-    "plantId": "benguet_pine",
-    "x": 31,
-    "y": 28,
-    "scale": 2.35,
-    "questHint": "Pine tree to the left of Inang Laya"
+    id: 'node_benguet_pine',
+    plantId: 'benguet_pine',
+    x: 40,
+    y: 33,
+    scale: 2.35,
+    questHint: 'Pine Tree on the left side of Inang Laya',
   },
   {
-    "id": "node_tri_vein_fern",
-    "plantId": "tri_vein_fern",
-    "x": 33,
-    "y": 31,
-    "scale": 1.2,
-    "questHint": "Tri-vein fern in front of Inang Laya"
+    id: 'node_tri_vein_fern',
+    plantId: 'tri_vein_fern',
+    x: 43,
+    y: 34,
+    scale: 1.2,
+    questHint: 'Tri-vein Fern in front of Inang Laya',
   },
   {
-    "id": "node_gipas",
-    "plantId": "gipas",
-    "x": 44,
-    "y": 13,
-    "scale": 1.5,
-    "questHint": "Gipas beside the north stairs between KA and HKP"
+    id: 'node_gipas',
+    plantId: 'gipas',
+    x: 44,
+    y: 13,
+    scale: 1.5,
+    questHint: 'Gipas along the Abortion Stairs between KA and HKP',
   },
   {
-    "id": "node_kamantigi",
-    "plantId": "kamantigi",
-    "x": 49,
-    "y": 12,
-    "scale": 1.4,
-    "questHint": "Kamantigi beside the north stairs"
+    id: 'node_kamantigi',
+    plantId: 'kamantigi',
+    x: 49,
+    y: 12,
+    scale: 1.4,
+    questHint: 'Kamantigi along the Abortion Stairs',
   },
   {
-    "id": "node_fishtail_fern",
-    "plantId": "fishtail_fern",
-    "x": 50,
-    "y": 14,
-    "scale": 1.3,
-    "questHint": "Fishtail fern between KA and HKP"
+    id: 'node_fishtail_fern',
+    plantId: 'fishtail_fern',
+    x: 50,
+    y: 14,
+    scale: 1.3,
+    questHint: 'Fishtail Fern between KA and HKP',
   },
   {
-    "id": "node_moclame",
-    "plantId": "moclame",
-    "x": 54,
-    "y": 14,
-    "scale": 2.1,
-    "questHint": "Moclame between KA and HKP"
+    id: 'node_ti_plant',
+    plantId: 'ti_plant',
+    x: 66,
+    y: 24,
+    scale: 1.55,
+    questHint: 'Ti Plant along the upper terrace walkway near the Oblation',
   },
   {
-    "id": "node_agoho",
-    "plantId": "agoho",
-    "x": 58,
-    "y": 22,
-    "scale": 2.6,
-    "questHint": "Agoho beside the College of Science AVR"
-  }
+    id: 'node_agoho',
+    plantId: 'agoho',
+    x: 58,
+    y: 22,
+    scale: 2.6,
+    questHint: 'Agoho near the College of Science AVR along the gate pathway',
+  },
+  {
+    id: 'node_dwarf_lilyturf',
+    plantId: 'dwarf_lilyturf',
+    x: 65,
+    y: 28,
+    scale: 1.2,
+    questHint: 'Dwarf Lilyturf bordering the Oblation Grounds',
+  },
+  {
+    id: 'node_red_lip',
+    plantId: 'red_lip',
+    x: 69,
+    y: 24,
+    scale: 1.5,
+    questHint: 'Red Lip hedge at the Oblation Plaza driveway',
+  },
+  {
+    id: 'node_gold_dust_croton',
+    plantId: 'gold_dust_croton',
+    x: 65,
+    y: 30,
+    scale: 1.45,
+    questHint: 'Gold Dust Croton at the Oblation Grounds',
+  },
+  {
+    id: 'node_philippine_azalea',
+    plantId: 'philippine_azalea',
+    x: 16,
+    y: 50,
+    scale: 1.5,
+    questHint: 'Philippine Azalea near Teatro Amianan and in front of CAC',
+  },
+  {
+    id: 'node_fishbone_fern',
+    plantId: 'fishbone_fern',
+    x: 38,
+    y: 49,
+    scale: 1.35,
+    questHint: 'Fishbone Fern beside Teatro Amianan',
+  },
+  {
+    id: 'node_agubangbang',
+    plantId: 'agubangbang',
+    x: 37,
+    y: 8,
+    scale: 1.55,
+    questHint: 'Agubangbang near the Human Kinetics Program (HKP)',
+  },
+  {
+    id: 'node_mayana',
+    plantId: 'mayana',
+    x: 54,
+    y: 15,
+    scale: 1.35,
+    questHint: 'Mayana at the back of the KA Building',
+  },
+  {
+    id: 'node_ground_orchid',
+    plantId: 'ground_orchid',
+    x: 35,
+    y: 20,
+    scale: 1.35,
+    questHint: 'Philippine Ground Orchid beside Balay Salun-at (HSO)',
+  },
 ];
 
 export const SIGNS = [
@@ -475,7 +541,7 @@ export const SIGNS = [
     x: 41,
     y: 29,
     title: 'Iskolar ng Bayan Quad & Inang Laya (#18)',
-    text: 'Summit Plateau (Elevation 3): Surrounded by IB Building (#11), Kolehiyo ng Agham (#12), College of Science, Institute of Management (#10), Balay Salun-at (UHS), and Museo Kordilyera (#9).',
+    text: 'Inang Laya stands in the garden terrace south of Iskolar ng Bayan, above the court bleachers. Use the stairs on either side of the court. The pine is to her left; the fern is in front.',
   },
   {
     x: 18,
@@ -723,9 +789,9 @@ export function createCampusMap() {
     }
   }
 
-  // Beds beside Inang Laya leave its door and the museum-side corridor clear.
-  fillRect(31, 26, 32, 30, { type: 'grass' });
-  fillRect(33, 30, 34, 31, { type: 'grass' });
+  // Inang Laya and its specimens occupy the garden, leaving the y=35 path clear.
+  fillRect(40, 33, 44, 34, { type: 'grass', elev: 2, solid: false });
+  setTile(INANG_LAYA.x, INANG_LAYA.y, { solid: true });
   fillRect(58, 20, 58, 23, { type: 'grass' });
   // Reference specimens elsewhere occupy the existing terrace gardens.
   for (const p of PLANT_NODES) setTile(p.x, p.y, { type: 'grass' });
@@ -735,7 +801,7 @@ export function createCampusMap() {
   const addProp = (kind, x, y) => {
     const t = tiles[y]?.[x];
     if (t && !t.solid && (kind === 'noticeboard' || ['grass', 'tall_grass'].includes(t.type))
-      && ![...PLANT_NODES, ...NPCS, ...SIGNS].some(p => Math.abs(p.x-x) <= 1 && Math.abs(p.y-y) <= 1)) {
+      && ![INANG_LAYA, ...PLANT_NODES, ...NPCS, ...SIGNS].some(p => Math.abs(p.x-x) <= 1 && Math.abs(p.y-y) <= 1)) {
       if (['pine', 'rock', 'wood'].includes(kind)) {
         t.solid = true;
       }

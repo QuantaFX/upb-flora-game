@@ -45,7 +45,7 @@ export function buildFestival(scene, map) {
   banner(44, 29, 8, 'Observe • Identify • Celebrate');
   banner(26, 48, 7, 'Every plant has a story');
   bunting(39, 9, 11, 4.8);
-  bunting(39, 35, 13, 6.2);
+  bunting(39, 35, 13, 8.2);
   // Confetti stays around the festival plazas. Flat pieces follow the actual
   // paving height; a few drifting pieces give the celebrations some movement.
   const confetti = [];

@@ -19,7 +19,7 @@ const VISITORS = [
     x: 29,
     y: 48,
     lines: [
-      'Seven plants, seven stories. I still have three to find!',
+      'Fifteen campus plants, fifteen stories. I still have a few left to find!',
       'A photo lasts longer than a picked flower.',
     ],
   },

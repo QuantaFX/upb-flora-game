@@ -50,7 +50,7 @@ try {
  assert.equal(await page.evaluate(()=>window.__game.journalUI.isOpen),false);
  await page.evaluate(()=>window.__game.encounterUI.open('kamantigi'));
  await page.locator('[data-cmd="identify"]').tap();
- await page.locator('#enc-sub-menu button').filter({hasText:'Impatiens balsamina'}).tap();
+ await page.locator('#enc-sub-menu button').filter({hasText:'Impatiens platypetala'}).tap();
  await page.locator('#btn-enc-collect').tap();
  assert.ok(await page.evaluate(()=>window.__game.state.hasCollected('kamantigi')));
  await page.screenshot({path:'shots/mobile-06-encounter.png'});
@@ -69,7 +69,7 @@ try {
  await page.screenshot({path:'shots/mobile-10-library-clear.png'});
  // Mission characters and specimens are solid, but wandering visitors are not.
  assert.equal(await page.evaluate(()=>window.__game.map.canStep(67,31,67,30)),false);
- assert.equal(await page.evaluate(()=>window.__game.map.tileAt(31,28).solid),true);
+ assert.equal(await page.evaluate(()=>window.__game.map.tileAt(40,33).solid),true);
  const beforeVisitors=await page.evaluate(()=>[...window.__game.visitors.entries.values()].map(e=>[e.actor.tileX,e.actor.tileY]));
  await page.waitForTimeout(3200);
  const afterVisitors=await page.evaluate(()=>[...window.__game.visitors.entries.values()].map(e=>[e.actor.tileX,e.actor.tileY]));

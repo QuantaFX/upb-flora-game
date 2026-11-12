@@ -1,7 +1,7 @@
 // Digital Herbarium (Floradex), Campus Missions tracker, and Herbal Satchel UI.
 
 import { PLANTS, PLANT_BY_ID } from '../data/plants.js';
-import { QUEST_DEFS } from './state.js';
+import { QUEST_DEFS, NPC_LOCATIONS } from './state.js';
 
 export function createJournalUI(state, assets, audio) {
   const overlay = document.getElementById('journal-overlay');
@@ -134,7 +134,7 @@ export function createJournalUI(state, assets, audio) {
       card.innerHTML = `
         <div>
           <div style="font-weight:700;font-size:14px;color:var(--maroon)">[${q.code}] ${q.title}</div>
-          <div style="font-size:11px;color:var(--ink-muted);margin:2px 0 5px">Giver: ${q.giver} · Location: ${q.locationHint}</div>
+          <div style="font-size:11px;color:var(--ink-muted);margin:2px 0 5px">Find ${q.giver}: ${NPC_LOCATIONS[q.npcId]}<br>Specimen location: ${q.locationHint}</div>
           <div style="font-size:12.5px;line-height:1.4">${q.summary}</div>
         </div>
         <span class="quest-status-pill ${st === 'completed' ? 'is-done' : st === 'active' ? 'is-active' : ''}">${statusLabel}</span>

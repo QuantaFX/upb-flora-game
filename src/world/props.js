@@ -3,7 +3,7 @@
 
 import * as THREE from 'three';
 import { canvasToTexture, sliceTileTexture } from '../assets.js';
-import { BUILDINGS, PLANT_NODES, SIGNS } from './map.js';
+import { BUILDINGS, PLANT_NODES, SIGNS, INANG_LAYA } from './map.js';
 
 function createBuildingFacadeTexture(b) {
   const c = document.createElement('canvas');
@@ -193,6 +193,38 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(obGroup);
   }
 
+  // Stylized open-armed Inang Laya, separate from the IB building and Oblation.
+  {
+    const statue = new THREE.Group();
+    statue.name = 'Inang Laya';
+    statue.position.set(INANG_LAYA.x + 0.5, map.tileAt(INANG_LAYA.x, INANG_LAYA.y).elev, INANG_LAYA.y + 0.5);
+    const bronze = new THREE.MeshLambertMaterial({ color: '#607b70' });
+    const stone = new THREE.MeshLambertMaterial({ color: '#c6bda5' });
+    const part = (geometry, material, x, y, z = 0) => {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(x, y, z);
+      statue.add(mesh);
+      return mesh;
+    };
+    part(new THREE.BoxGeometry(0.95, 0.3, 0.85), stone, 0, 0.15);
+    part(new THREE.CylinderGeometry(0.18, 0.36, 1.05, 8), bronze, 0, 0.85);
+    part(new THREE.CylinderGeometry(0.24, 0.18, 0.55, 8), bronze, 0, 1.56);
+    part(new THREE.SphereGeometry(0.2, 8, 6), bronze, 0, 2.02);
+    for (const side of [-1, 1]) {
+      const arm = part(new THREE.CylinderGeometry(0.065, 0.09, 0.72, 6), bronze, side * 0.47, 1.88);
+      arm.rotation.z = -side * Math.PI / 3;
+      part(new THREE.SphereGeometry(0.085, 6, 4), bronze, side * 0.8, 2.08);
+    }
+    const plaque = document.createElement('canvas');
+    plaque.width = 256; plaque.height = 64;
+    const ink = plaque.getContext('2d');
+    ink.fillStyle = '#3c4337'; ink.fillRect(0, 0, 256, 64);
+    ink.fillStyle = '#f7edce'; ink.font = 'bold 28px serif'; ink.textAlign = 'center';
+    ink.fillText('INANG LAYA', 128, 42);
+    part(new THREE.PlaneGeometry(0.9, 0.25), new THREE.MeshBasicMaterial({ map: canvasToTexture(plaque) }), 0, 0.18, 0.435);
+    group.add(statue);
+  }
+
   // 2b. Four Pillars Monument near CAC Dap-ay (#6, West CAC Promenade at x=8, y=50.5)
   {
     const fpElev = map.tileAt(8, 50)?.elev ?? 0;
@@ -285,11 +317,9 @@ export function buildPropsAndBuildings(scene, map, assets) {
       const tex =
         treeVariant === 0
           ? assets.plants.agoho?.worldTex || assets.plants.benguet_pine.worldTex
-          : treeVariant === 1
-            ? assets.plants.moclame?.worldTex || assets.plants.benguet_pine.worldTex
-            : treeVariant === 2
-              ? treeRoundTex
-              : assets.plants.benguet_pine.worldTex;
+          : treeVariant === 1 || treeVariant === 2
+            ? treeRoundTex
+            : assets.plants.benguet_pine.worldTex;
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -302,9 +332,19 @@ export function buildPropsAndBuildings(scene, map, assets) {
       group.add(mesh);
       treeEntries.push({ x: p.x, y: p.y, mat });
     } else if (p.kind === 'understory') {
-      const variant = (p.x * 3 + p.y * 5) % 6;
-      if (variant < 4) {
-        const id = ['tri_vein_fern', 'gipas', 'kamantigi', 'fishtail_fern'][variant];
+      const understoryIds = [
+        'tri_vein_fern',
+        'gipas',
+        'kamantigi',
+        'fishtail_fern',
+        'fishbone_fern',
+        'mayana',
+        'dwarf_lilyturf',
+        'ground_orchid',
+      ];
+      const variant = (p.x * 3 + p.y * 5) % (understoryIds.length + 2);
+      if (variant < understoryIds.length) {
+        const id = understoryIds[variant];
         const mesh = new THREE.Mesh(
           new THREE.PlaneGeometry(0.95, 0.95),
           new THREE.MeshBasicMaterial({

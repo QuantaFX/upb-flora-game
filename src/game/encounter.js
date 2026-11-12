@@ -238,7 +238,7 @@ export function createEncounterUI(state, assets, audio, toast) {
 
     const introPrefix = opts.isWild
       ? '🌱 Rustling tall grass! You encountered a wild campus specimen!'
-      : `🔍 Examining <strong>${opts.hint || 'campus specimen'}</strong>...`;
+      : `🔍 Examining <strong>${state.isIdentified(plantId) ? currentPlant.name : 'unidentified campus specimen'}</strong>...`;
 
     showMainMenu(
       `${introPrefix} Observe its leaves, flowers, and aroma, then identify the species!`,

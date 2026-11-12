@@ -96,13 +96,32 @@ export class Actor {
       side: THREE.DoubleSide,
     });
     this.mesh = new THREE.Mesh(spriteGeo, spriteMat);
-    this.mesh.position.set(0, 0.68 * scale * heightRatio, 0.05);
+    this.mesh.position.set(0, 0.68 * scale * heightRatio + (this.isAnimalSheet ? 0 : 0.22 * scale), 0.05);
     this.mesh.rotation.x = -0.32;
     this.group.add(this.mesh);
 
+    // The supplied human sprites end at the trouser line. Give them a grounded
+    // lower-body silhouette without changing or stretching the original artwork.
+    this.feet = [];
+    if (!this.isAnimalSheet) {
+      const trousers = new THREE.MeshBasicMaterial({ color: '#34483e' });
+      const shoes = new THREE.MeshBasicMaterial({ color: '#202923' });
+      for (const side of [-1, 1]) {
+        const leg = new THREE.Group();
+        leg.position.set(side * 0.16 * scale, 0, 0.12);
+        const trouser = new THREE.Mesh(new THREE.BoxGeometry(0.19 * scale, 0.25 * scale, 0.12 * scale), trousers);
+        trouser.position.y = 0.2 * scale;
+        const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.22 * scale, 0.09 * scale, 0.23 * scale), shoes);
+        shoe.position.y = 0.055 * scale;
+        leg.add(trouser, shoe);
+        this.group.add(leg);
+        this.feet.push(leg);
+      }
+    }
+
     // Optional emote bubble above NPC/animal head
     this.emoteMesh = null;
-    this.emoteBaseY = 1.45 * scale * heightRatio + 0.2;
+    this.emoteBaseY = 1.45 * scale * heightRatio + (this.isAnimalSheet ? 0.2 : 0.42);
 
     // Movement interpolation state
     this.moving = false;
@@ -230,6 +249,9 @@ export class Actor {
       this.emoteMesh.position.y = this.emoteBaseY + Math.sin(timeSec * 5) * 0.07;
     }
 
+    for (let i = 0; i < this.feet.length; i++) {
+      this.feet[i].position.y = this.moving ? Math.max(0, Math.sin(timeSec * 22 + i * Math.PI)) * 0.06 : 0;
+    }
     if (!this.moving) return;
 
     this.moveElapsed += dt;

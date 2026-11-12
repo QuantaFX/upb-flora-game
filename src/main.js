@@ -51,6 +51,29 @@ function showToast(message) {
   }, 2600);
 }
 
+function celebrateCompletion() {
+  const celebration = document.createElement('div');
+  celebration.className = 'completion-celebration';
+  celebration.setAttribute('role', 'status');
+  const message = document.createElement('div');
+  message.className = 'completion-message';
+  message.textContent = 'Fieldwork complete! All 15 campus plants documented. Thank you, Student Curator!';
+  celebration.appendChild(message);
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    for (let i = 0; i < 64; i++) {
+      const piece = document.createElement('i');
+      piece.className = 'completion-confetti';
+      piece.setAttribute('aria-hidden', 'true');
+      piece.style.left = `${(i * 37) % 100}%`;
+      piece.style.background = ['#f5b935', '#7b1113', '#387449', '#fff4d6'][i % 4];
+      piece.style.animationDelay = `${(i % 8) * 0.12}s`;
+      celebration.appendChild(piece);
+    }
+  }
+  document.body.appendChild(celebration);
+  setTimeout(() => celebration.remove(), 6500);
+}
+
 async function boot() {
   const host = document.getElementById('game-canvas');
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
@@ -190,7 +213,7 @@ async function boot() {
   renderCharacterChoices();
   btnStartGame.disabled = false;
 
-  nameInput.value = state.data.playerName || 'Isko';
+  nameInput.value = state.data.started ? state.data.playerName : '';
 
   function refreshHudAndEmotes() {
     const tile = map.tileAt(player.tileX, player.tileY);
@@ -337,7 +360,7 @@ async function boot() {
       player.faceToward(target.actor.tileX, target.actor.tileY);
       target.actor.faceToward(player.tileX, player.tileY);
       const faceUrl = assets.characters[target.npc.sprite]?.faceUrl;
-      const pages = getNpcDialogPages(target.npc, state, { toast: showToast });
+      const pages = getNpcDialogPages(target.npc, state, { toast: showToast, celebrate: celebrateCompletion });
       dialogUI.open(pages, faceUrl, () => refreshHudAndEmotes());
     } else if (target.type === 'plant') {
       player.faceToward(target.node.x, target.node.y);
@@ -367,12 +390,12 @@ async function boot() {
     const t = map.tileAt(tx, ty);
     if (t?.type === 'tall_grass' && Math.random() < 0.14) {
       // Pick a wild species appropriate for this terrace elevation
-    const poolByElev = {
-      0: ['benguet_pine', 'tri_vein_fern'],
-      1: ['kamantigi', 'gipas', 'benguet_pine'],
-      2: ['gipas', 'fishtail_fern', 'moclame'],
-      3: ['benguet_pine', 'tri_vein_fern', 'agoho'],
-    };
+      const poolByElev = {
+        0: ['philippine_azalea', 'fishbone_fern', 'agubangbang', 'benguet_pine'],
+        1: ['dwarf_lilyturf', 'red_lip', 'gold_dust_croton', 'ti_plant', 'kamantigi'],
+        2: ['gipas', 'fishtail_fern', 'mayana', 'tri_vein_fern'],
+        3: ['benguet_pine', 'agoho', 'ground_orchid'],
+      };
       const pool = poolByElev[Math.round(elev)] || ALL_PLANT_IDS;
       const wildId = pool[Math.floor(Math.random() * pool.length)];
       audio.playBgm('encounter');
@@ -516,7 +539,7 @@ async function boot() {
 
   btnResetSave.addEventListener('click', () => {
     state.reset();
-    nameInput.value = state.data.playerName;
+    nameInput.value = '';
     renderCharacterChoices();
     showToast('Save data reset to fresh semester!');
     refreshHudAndEmotes();
