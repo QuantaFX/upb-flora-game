@@ -207,6 +207,9 @@ export function createJournalUI(state, assets, audio) {
   function open(defaultTab = 'plants') {
     isOpen = true;
     overlay.classList.remove('hidden');
+    document.body.classList.add('in-journal');
+    const touchCtrl = document.getElementById('touch-controls');
+    if (touchCtrl) touchCtrl.inert = true;
     audio?.playSfx('menuOpen');
     switchTab(defaultTab);
   }
@@ -214,6 +217,11 @@ export function createJournalUI(state, assets, audio) {
   function close() {
     isOpen = false;
     overlay.classList.add('hidden');
+    document.body.classList.remove('in-journal');
+    const touchCtrl = document.getElementById('touch-controls');
+    if (touchCtrl && document.body.classList.contains('is-playing') && !document.body.classList.contains('in-encounter')) {
+      touchCtrl.inert = false;
+    }
   }
 
   function toggle(defaultTab = 'plants') {

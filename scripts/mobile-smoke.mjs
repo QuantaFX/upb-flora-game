@@ -45,9 +45,11 @@ try {
  assert.equal(await page.evaluate(()=>window.__game.player.tileY),stoppedY,'Release stops movement');
  await page.tap('#touch-journal');
  assert.ok(await page.evaluate(()=>window.__game.journalUI.isOpen));
+ assert.equal(await page.locator('#touch-controls').isVisible(), false, 'Touch controls hidden in journal');
  await page.screenshot({path:'shots/mobile-05-journal.png'});
- await page.locator('#touch-b').dispatchEvent('pointerdown',{pointerId:2,pointerType:'touch'});
+ await page.tap('#btn-close-journal');
  assert.equal(await page.evaluate(()=>window.__game.journalUI.isOpen),false);
+ assert.equal(await page.locator('#touch-controls').isVisible(), true, 'Touch controls restored after journal');
  await page.evaluate(()=>window.__game.encounterUI.open('kamantigi'));
  await page.locator('[data-cmd="identify"]').tap();
  await page.locator('#enc-sub-menu button').filter({hasText:'Impatiens platypetala'}).tap();

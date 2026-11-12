@@ -1184,13 +1184,16 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   transform: scale(1.2);
 }
 
-/* Hide movement controls completely during a plant observation / encounter phase */
+/* Hide movement controls completely during a plant observation / encounter phase or in the Herbarium */
 body.in-encounter .touch-controls,
-body.in-encounter .hud-bottom {
+body.in-encounter .hud-bottom,
+body.in-journal .touch-controls,
+body.in-journal .hud-bottom {
   display: none !important;
 }
 body.in-encounter .encounter-overlay,
-body.in-encounter #game-canvas {
+body.in-encounter #game-canvas,
+body.in-journal .modal-overlay {
   bottom: 0 !important;
 }
 
@@ -1254,7 +1257,11 @@ body.in-encounter #game-canvas {
   .title-buttons { flex-direction: column; gap: 10px; }
   .title-buttons button { min-height: 42px; }
   .dialog-overlay, .encounter-overlay, .modal-overlay { bottom: var(--console-height); padding: 8px; }
-  body.in-encounter .encounter-overlay { bottom: 0 !important; padding: 12px; }
+  body.in-encounter .encounter-overlay,
+  body.in-journal .modal-overlay {
+    bottom: 0 !important;
+    padding: 12px;
+  }
   .opening-story-card { padding: 14px 12px 12px; gap: 8px; }
   .opening-header-ribbon { font-size: 10px; padding: 6px 8px; margin: -6px -4px 2px; }
   .opening-actor-box canvas, .opening-plant-preview { width: 42px; height: 42px; }
