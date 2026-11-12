@@ -490,6 +490,7 @@ async function boot() {
     touchPanel.inert = false;
     hudTop.classList.remove('hidden');
     hudBottom.classList.remove('hidden');
+    festival.removeWelcomeBanner?.();
   }
   document.getElementById('skip-opening').addEventListener('click', finishOpening);
   openingPrevBtn?.addEventListener('click', () => {

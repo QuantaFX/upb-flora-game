@@ -342,13 +342,14 @@ export function buildPropsAndBuildings(scene, map, assets) {
         'mayana',
         'gold_dust_croton',
       ];
-      const variant = (p.x * 3 + p.y * 5) % (understoryIds.length + 2);
+      const variant = (p.x * 3 + p.y * 5) % (understoryIds.length + bushMats.length);
       if (variant < understoryIds.length) {
         const id = understoryIds[variant];
+        const tex = assets.plants[id]?.worldTex || bushRoundTex;
         const mesh = new THREE.Mesh(
           new THREE.PlaneGeometry(0.95, 0.95),
           new THREE.MeshBasicMaterial({
-            map: assets.plants[id].worldTex,
+            map: tex,
             transparent: true,
             alphaTest: 0.35,
           }),
@@ -357,9 +358,10 @@ export function buildPropsAndBuildings(scene, map, assets) {
         mesh.rotation.x = -0.32;
         group.add(mesh);
       } else {
+        const bushMat = bushMats[(variant - understoryIds.length) % bushMats.length];
         const mesh = new THREE.Mesh(
           new THREE.PlaneGeometry(1.15, 1.1),
-          bushMats[variant - 4],
+          bushMat,
         );
         mesh.position.set(p.x + 0.5, p.elev + 0.52, p.y + 0.5);
         mesh.rotation.x = -0.32;

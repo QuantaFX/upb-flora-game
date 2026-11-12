@@ -10,7 +10,10 @@ export function buildFestival(scene, map) {
   const materials = colors.map(color => new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide }));
   const cordMat = new THREE.LineBasicMaterial({ color: '#dfc79b' });
   const flags = [];
-  function bunting(x, z, width, height) {
+  const welcomeBannerGroup = new THREE.Group();
+  group.add(welcomeBannerGroup);
+
+  function bunting(x, z, width, height, targetGroup = group) {
     const points = [];
     for (let i = 0; i <= width; i++) {
       const sag = Math.sin(i / width * Math.PI) * 0.45;
@@ -21,12 +24,13 @@ export function buildFestival(scene, map) {
       geo.computeVertexNormals();
       const flag = new THREE.Mesh(geo, materials[i % materials.length]);
       flag.position.set(x + i + 0.14, height - sag, z);
-      group.add(flag);
+      targetGroup.add(flag);
       flags.push(flag);
     }
-    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), cordMat));
+    targetGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), cordMat));
   }
-  function banner(x, z, width, subtitle) {
+  function banner(x, z, width, subtitle, isWelcome = false) {
+    const targetGroup = isWelcome ? welcomeBannerGroup : group;
     const c = document.createElement('canvas');
     c.width = 768; c.height = 192;
     const ctx = c.getContext('2d');
@@ -38,10 +42,10 @@ export function buildFestival(scene, map) {
     const elev = map.tileAt(Math.floor(x), Math.floor(z))?.elev || 0;
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, width / 4), new THREE.MeshBasicMaterial({ map: canvasToTexture(c), side: THREE.DoubleSide }));
     mesh.position.set(x, elev + 4.2, z);
-    group.add(mesh);
-    bunting(x - width / 2 - 2, z, width + 4, elev + 6.3);
+    targetGroup.add(mesh);
+    bunting(x - width / 2 - 2, z, width + 4, elev + 6.3, targetGroup);
   }
-  banner(68, 29, 7, 'Welcome, campus explorers!');
+  banner(68, 29, 7, 'Welcome, campus explorers!', true);
   banner(44, 29, 8, 'Observe • Identify • Celebrate');
   banner(26, 48, 7, 'Every plant has a story');
   bunting(39, 9, 11, 4.8);
@@ -65,13 +69,19 @@ export function buildFestival(scene, map) {
     }
   }
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  return { update(time) {
-    if (reducedMotion.matches) return;
-    flags.forEach((flag, i) => { flag.rotation.x = Math.sin(time * 1.3 + i * 0.6) * 0.12; });
-    for (const {piece,x,z,elev,phase} of confetti) {
-      piece.position.set(x+Math.sin(time*0.7+phase)*0.3,elev+2.7-((time*0.35+phase)%2.6),z);
-      piece.rotation.x=time+phase;
-      piece.rotation.z=time*0.6+phase;
+  return {
+    removeWelcomeBanner() {
+      welcomeBannerGroup.visible = false;
+      group.remove(welcomeBannerGroup);
+    },
+    update(time) {
+      if (reducedMotion.matches) return;
+      flags.forEach((flag, i) => { flag.rotation.x = Math.sin(time * 1.3 + i * 0.6) * 0.12; });
+      for (const {piece,x,z,elev,phase} of confetti) {
+        piece.position.set(x+Math.sin(time*0.7+phase)*0.3,elev+2.7-((time*0.35+phase)%2.6),z);
+        piece.rotation.x=time+phase;
+        piece.rotation.z=time*0.6+phase;
+      }
     }
-  } };
+  };
 }
