@@ -44,6 +44,7 @@ export function createJournalUI(state, assets, audio) {
   btnClose.addEventListener('click', () => close());
 
   function renderPlantsTab() {
+    const prevGridScroll = gridEl.scrollTop;
     gridEl.innerHTML = '';
     for (const p of PLANTS) {
       const unlocked = state.isIdentified(p.id);
@@ -58,9 +59,11 @@ export function createJournalUI(state, assets, audio) {
         audio?.playSfx('blip');
         selectedPlantId = p.id;
         renderPlantsTab();
+        detailEl.scrollTop = 0;
       });
       gridEl.appendChild(card);
     }
+    gridEl.scrollTop = prevGridScroll;
 
     const p = PLANT_BY_ID[selectedPlantId] || PLANTS[0];
     const unlocked = state.isIdentified(p.id);
@@ -71,7 +74,9 @@ export function createJournalUI(state, assets, audio) {
       const revealed = state.getRevealedClues(p.id);
       detailEl.innerHTML = `
         <div class="journal-detail-top">
-          <img class="journal-detail-img" src="${assets.plants[p.id].portraitUrl}" style="filter:brightness(0) opacity(0.55)" alt="Locked" />
+          <div class="journal-image-container">
+            <img class="journal-detail-img is-silhouette" src="${assets.plants[p.id].portraitUrl}" alt="Locked" />
+          </div>
           <div>
             <h3 style="margin:0;font-size:18px">Unidentified Campus Specimen</h3>
             <div style="font-size:12px;color:var(--ink-muted)">Find this plant on campus and use OBSERVE + IDENTIFY!</div>
@@ -91,8 +96,7 @@ export function createJournalUI(state, assets, audio) {
     detailEl.innerHTML = `
       <div class="journal-detail-top">
         <div class="journal-image-container">
-          <img class="journal-detail-img" src="${collected ? photoUrl : assets.plants[p.id].portraitUrl}" alt="${p.name}" />
-          ${collected ? '<span class="journal-photo-pill">📷 Doc Specimen</span>' : ''}
+          <img class="journal-detail-img" src="${assets.plants[p.id].portraitUrl}" alt="${p.name}" />
         </div>
         <div>
           <span class="enc-badge ${p.protected ? '' : 'enc-badge--green'}">${p.status}</span>

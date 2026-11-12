@@ -676,11 +676,13 @@ kbd {
 
 .journal-modal {
   width: min(940px, 96vw);
-  max-height: 88vh;
+  height: min(680px, 88dvh);
+  max-height: 88dvh;
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow: hidden;
 }
 
 .journal-header {
@@ -691,6 +693,7 @@ kbd {
   flex-wrap: wrap;
   border-bottom: 3px solid var(--wood-mid);
   padding-bottom: 10px;
+  flex-shrink: 0;
 }
 
 .journal-title {
@@ -717,25 +720,37 @@ kbd {
 }
 
 .journal-content {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: 1.05fr 1.25fr;
+  grid-template-rows: minmax(0, 1fr);
   gap: 14px;
   overflow: hidden;
-  min-height: 390px;
-  max-height: 66vh;
 }
 
 #journal-tab-quests,
 #journal-tab-satchel {
-  grid-template-columns: 1fr;
+  display: block;
+  min-height: 0;
+  max-height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .journal-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  align-content: start;
   gap: 8px;
+  min-height: 0;
+  max-height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   padding-right: 4px;
 }
 
@@ -781,7 +796,12 @@ kbd {
 
 .journal-detail {
   padding: 14px 16px;
+  min-height: 0;
+  max-height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -796,32 +816,27 @@ kbd {
 }
 
 .journal-detail-top img {
-  width: 96px;
-  height: 96px;
-  object-fit: cover;
-  background: #e9f4e4;
-  border: 2px solid var(--wood-mid);
-  border-radius: 4px;
-  padding: 2px;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  display: block;
+}
+
+.journal-detail-top img.is-silhouette {
+  filter: brightness(0) opacity(0.55);
 }
 
 .journal-image-container {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-}
-
-.journal-photo-pill {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  background: rgba(14, 24, 16, 0.85);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 1px 4px;
-  border-radius: 3px;
-  border: 1px solid var(--wood-mid);
+  background: #e9f4e4;
+  border: 2px solid var(--wood-mid);
+  border-radius: 4px;
+  padding: 4px;
 }
 
 .journal-photo-card {
@@ -854,8 +869,8 @@ kbd {
 
 .journal-photo-frame {
   width: 100%;
-  max-height: 240px;
-  background: #141f17;
+  padding: 8px;
+  background: #1b2e20;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -863,9 +878,12 @@ kbd {
 }
 
 .journal-real-photo {
-  width: 100%;
-  max-height: 240px;
-  object-fit: cover;
+  width: auto;
+  max-width: 100%;
+  max-height: 310px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
   display: block;
 }
 
@@ -879,12 +897,13 @@ kbd {
 }
 
 .satchel-photo-thumb {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
   border-radius: 4px;
   border: 2px solid var(--wood-mid);
-  background: #e9f4e4;
+  background: #1b2e20;
+  padding: 2px;
   flex-shrink: 0;
 }
 
@@ -1270,18 +1289,20 @@ body.in-encounter #game-canvas {
   .encounter-menu { display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; }
   .encounter-submenu { display: flex; flex-direction: column; flex-shrink: 0; }
   .encounter-menu button, .encounter-submenu button { min-height: 44px; padding: 8px; font-size: 11px; }
-  .journal-modal { width: 100%; max-height: 100%; padding: 12px; gap: 8px; overflow-y: auto; }
+  .journal-modal { width: 100%; height: auto; max-height: 100%; padding: 12px; gap: 8px; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
   .journal-title { font-size: 15px; }
   .journal-header { gap: 7px; }
   .journal-tabs { gap: 5px; }
   .journal-tabs button { font-size: 10px; padding: 5px 7px; min-height: 40px; }
-  .journal-content { display: flex; flex-direction: column; min-height: 0; max-height: none; overflow: visible; flex-shrink: 0; }
-  .journal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; }
+  .journal-content { display: flex; flex-direction: column; flex: 0 0 auto; min-height: 0; max-height: none; overflow: visible; }
+  #journal-tab-quests, #journal-tab-satchel { max-height: none; overflow: visible; }
+  .journal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: 210px; overflow-y: auto; flex-shrink: 0; border: 2px solid var(--wood-mid); border-radius: 5px; padding: 6px; background: #f3e8d3; }
   .journal-card { padding: 5px; min-width: 0; }
   .journal-card img { width: 44px; height: 44px; }
   .journal-card-sub { overflow-wrap: anywhere; }
-  .journal-detail { overflow: visible; font-size: 12px; }
+  .journal-detail { max-height: none; overflow: visible; flex-shrink: 0; font-size: 12px; }
   .journal-detail-top img { width: 64px; height: 64px; }
+  .journal-real-photo { max-height: 240px; }
   .quest-item-card { padding: 8px; flex-wrap: wrap; }
   .journal-modal kbd { display: none; }
 }

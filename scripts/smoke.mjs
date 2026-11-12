@@ -92,6 +92,54 @@ for (const id of plantIds) {
   await page.evaluate(() => window.__game.encounterUI.close());
 }
 
+// Verify Herbarium images and scrolling across all 15 species
+await page.evaluate(() => window.__game.journalUI.open('plants'));
+await page.waitForTimeout(250);
+for (let i = 0; i < 15; i += 1) {
+  await page.locator('#journal-grid .journal-card').nth(i).click();
+  await page.waitForFunction(() => {
+    const img = document.querySelector('#journal-detail .journal-real-photo');
+    return Boolean(img && img.complete && img.naturalWidth > 0);
+  });
+}
+// Select first plant (Pine Tree) and take top screenshot
+await page.locator('#journal-grid .journal-card').first().click();
+await page.evaluate(() => {
+  document.querySelector('#journal-grid').scrollTop = 0;
+  document.querySelector('#journal-detail').scrollTop = 0;
+});
+await page.waitForTimeout(150);
+await page.screenshot({ path: 'shots/grid-10-herbarium-top.png' });
+
+// Verify scrolling in both #journal-grid and #journal-detail and scroll preservation on card click
+const scrollCheck = await page.evaluate(() => {
+  const grid = document.querySelector('#journal-grid');
+  const detail = document.querySelector('#journal-detail');
+  grid.scrollTop = 220;
+  detail.scrollTop = 180;
+  return {
+    gridScrollHeight: grid.scrollHeight,
+    gridClientHeight: grid.clientHeight,
+    gridScrollTop: grid.scrollTop,
+    detailScrollHeight: detail.scrollHeight,
+    detailClientHeight: detail.clientHeight,
+    detailScrollTop: detail.scrollTop,
+  };
+});
+assert.ok(scrollCheck.gridScrollTop > 0, 'Herbarium grid must scroll');
+assert.ok(scrollCheck.detailScrollTop > 0, 'Herbarium detail pane must scroll');
+
+// Click the 15th card while grid is scrolled down and verify grid scrollTop does not reset to 0
+await page.locator('#journal-grid .journal-card').nth(14).click();
+const preservedGridScroll = await page.evaluate(() => document.querySelector('#journal-grid').scrollTop);
+assert.ok(preservedGridScroll > 0, 'Clicking a card must preserve Herbarium grid scroll position');
+await page.evaluate(() => {
+  document.querySelector('#journal-detail').scrollTop = 160;
+});
+await page.waitForTimeout(150);
+await page.screenshot({ path: 'shots/grid-11-herbarium-scrolled.png' });
+await page.evaluate(() => window.__game.journalUI.close());
+
 // Verify southern fog covers the bottom edge and test petting a campus animal
 await page.evaluate(() => {
   const g = window.__game;
