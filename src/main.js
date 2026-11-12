@@ -184,6 +184,7 @@ async function boot() {
   const nameInput = document.getElementById('player-name-input');
   const btnStartGame = document.getElementById('btn-start-game');
   const btnResetSave = document.getElementById('btn-reset-save');
+  const btnTitleAbout = document.getElementById('btn-title-about');
   const hudTop = document.getElementById('hud-top');
   const hudBottom = document.getElementById('hud-bottom');
   const hudLocation = document.getElementById('hud-location');
@@ -391,10 +392,10 @@ async function boot() {
     if (t?.type === 'tall_grass' && Math.random() < 0.14) {
       // Pick a wild species appropriate for this terrace elevation
       const poolByElev = {
-        0: ['philippine_azalea', 'fishbone_fern', 'agubangbang', 'benguet_pine'],
-        1: ['dwarf_lilyturf', 'red_lip', 'gold_dust_croton', 'ti_plant', 'kamantigi'],
-        2: ['gipas', 'fishtail_fern', 'mayana', 'tri_vein_fern'],
-        3: ['benguet_pine', 'agoho', 'ground_orchid'],
+        0: ['philippine_azalea', 'agubangbang', 'benguet_pine'],
+        1: ['red_lip', 'gold_dust_croton', 'ti_plant'],
+        2: ['gipas', 'fishtail_fern', 'mayana'],
+        3: ['benguet_pine', 'agoho'],
       };
       const pool = poolByElev[Math.round(elev)] || ALL_PLANT_IDS;
       const wildId = pool[Math.floor(Math.random() * pool.length)];
@@ -544,6 +545,11 @@ async function boot() {
     renderCharacterChoices();
     showToast('Save data reset to fresh semester!');
     refreshHudAndEmotes();
+  });
+
+  btnTitleAbout?.addEventListener('click', () => {
+    audio?.playSfx('blip');
+    journalUI.open('about');
   });
 
   btnInteract.addEventListener('click', () => triggerInteraction());

@@ -76,11 +76,11 @@
     <!-- Title Screen Overlay -->
     <section id="title-screen" class="title-screen">
       <div class="title-card pixel-panel">
-        <div class="festival-ribbon">UP Baguio celebrates Native Plants Week</div>
+        <div class="festival-ribbon">UP Baguio · Native Plants Week 2026 Interactive Plant Map Contest</div>
         <h1 class="title-main">Ex-Flora-Tive</h1>
-        <p class="title-subtitle">Explore. Flora. Native.</p>
+        <p class="title-subtitle">Theme: “Rooted in Heritage, Growing the Future: Native Plants for Food, Culture, and Sustainability”</p>
         <div class="title-story-blurb">
-          Step through the mountain mist. Join the campus celebration and discover the stories of 10 native &amp; campus plants.
+          Interactive digital flora map &amp; field guide for UP Baguio. Discover, locate, and document 10 verified native &amp; cultural campus plants with photographic vouchers, GPS mapping, and botanical data.
         </div>
         <fieldset class="character-picker">
           <legend>Choose your field researcher</legend>
@@ -93,11 +93,16 @@
         </div>
         <div class="title-buttons">
           <button id="btn-start-game" class="pixel-btn pixel-btn--primary pixel-btn--lg" type="button" disabled>
-            Begin exploring
+            Begin exploring 🌿
           </button>
-          <button id="btn-reset-save" class="pixel-btn pixel-btn--sm" type="button">
-            Reset Save Data
-          </button>
+          <div style="display:flex;gap:8px;width:100%;justify-content:center;flex-wrap:wrap">
+            <button id="btn-title-about" class="pixel-btn pixel-btn--sm" type="button">
+              ℹ️ Contest Info &amp; Sources
+            </button>
+            <button id="btn-reset-save" class="pixel-btn pixel-btn--sm" type="button">
+              Reset Save Data
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -300,11 +305,22 @@
             <button class="pixel-btn journal-tab is-active" data-tab="plants" type="button">🌿 Flora Codex</button>
             <button class="pixel-btn journal-tab" data-tab="quests" type="button">📋 Campus Missions</button>
             <button class="pixel-btn journal-tab" data-tab="satchel" type="button">🎒 Herbal Satchel</button>
+            <button class="pixel-btn journal-tab" data-tab="about" type="button">ℹ️ Contest &amp; Sources</button>
             <button id="btn-close-journal" class="pixel-btn pixel-btn--accent" type="button">✕ Close <kbd>Esc</kbd></button>
           </div>
         </div>
         <div class="journal-content" id="journal-tab-plants">
-          <div id="journal-grid" class="journal-grid"></div>
+          <div class="journal-plants-sidebar">
+            <div class="journal-filter-bar">
+              <input type="text" id="journal-search-input" class="journal-search-input" placeholder="🔍 Search species, family, name..." autocomplete="off" spellcheck="false" />
+              <div class="journal-filter-pills" id="journal-filter-pills">
+                <button class="filter-pill is-active" data-filter="all" type="button">All (10)</button>
+                <button class="filter-pill" data-filter="native" type="button">Native / Endemic (7)</button>
+                <button class="filter-pill" data-filter="introduced" type="button">Cultivated (3)</button>
+              </div>
+            </div>
+            <div id="journal-grid" class="journal-grid"></div>
+          </div>
           <div id="journal-detail" class="journal-detail pixel-panel-inner"></div>
         </div>
         <div class="journal-content hidden" id="journal-tab-quests">
@@ -312,6 +328,9 @@
         </div>
         <div class="journal-content hidden" id="journal-tab-satchel">
           <div id="journal-satchel-list" class="journal-quests-list"></div>
+        </div>
+        <div class="journal-content hidden" id="journal-tab-about">
+          <div id="journal-about-content" class="journal-about-content pixel-panel-inner"></div>
         </div>
       </div>
     </section>

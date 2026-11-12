@@ -730,7 +730,8 @@ kbd {
 }
 
 #journal-tab-quests,
-#journal-tab-satchel {
+#journal-tab-satchel,
+#journal-tab-about {
   display: block;
   min-height: 0;
   max-height: 100%;
@@ -738,6 +739,68 @@ kbd {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
+}
+
+.journal-plants-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  gap: 8px;
+}
+
+.journal-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.journal-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  border: 2px solid var(--wood-mid);
+  border-radius: 4px;
+  background: #fffcf7;
+  color: var(--ink-base);
+  outline: none;
+}
+
+.journal-search-input:focus {
+  border-color: var(--pine-mid);
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+}
+
+.journal-filter-pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  background: #f0e6d2;
+  border: 1.5px solid var(--wood-mid);
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-base);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-pill.is-active {
+  background: var(--pine-mid);
+  color: #fff;
+  border-color: var(--pine-dark);
+}
+
+.filter-pill:hover:not(.is-active) {
+  background: #e3d5bb;
 }
 
 .journal-grid {
@@ -755,16 +818,17 @@ kbd {
 }
 
 .journal-card {
+  position: relative;
   background: #fff8eb;
   border: 3px solid var(--wood-mid);
   border-radius: 5px;
-  padding: 8px;
+  padding: 8px 6px;
   text-align: center;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .journal-card.is-selected {
@@ -773,9 +837,17 @@ kbd {
   box-shadow: 0 0 0 2px var(--pine-bright);
 }
 
+.journal-card-status-pip {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 11px;
+  line-height: 1;
+}
+
 .journal-card img {
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   image-rendering: pixelated;
 }
@@ -785,13 +857,175 @@ kbd {
 }
 
 .journal-card-name {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .journal-card-sub {
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+.journal-card-family {
+  font-size: 9px;
+  color: var(--pine-mid);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.journal-family-badge {
+  background: #e1efe6;
+  color: var(--pine-dark);
+  border: 1px solid var(--pine-mid);
+  border-radius: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.enc-badge--endemic {
+  background: #f2e6fc;
+  color: #4a126d;
+  border: 1px solid #9c4dcc;
+}
+
+.enc-badge--protected {
+  background: #ffe3e3;
+  color: #8b0000;
+  border: 1px solid #d32f2f;
+}
+
+.enc-badge--amber {
+  background: #fff0d4;
+  color: #8a5300;
+  border: 1px solid #c77700;
+}
+
+.journal-gps-badge {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--pine-dark);
+  background: #eef7eb;
+  border: 1px dashed var(--pine-mid);
+  border-radius: 4px;
+  padding: 3px 6px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.journal-theme-box {
+  margin: 12px 0;
+  background: linear-gradient(135deg, #f4faee 0%, #ebf5e4 100%);
+  border: 2px solid var(--pine-mid);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.journal-theme-header {
+  background: var(--pine-mid);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 5px 10px;
+  letter-spacing: 0.05em;
+}
+
+.journal-theme-body {
+  padding: 8px 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--pine-dark);
+}
+
+.journal-botanical-traits {
+  background: #faf6ee;
+  border: 1px solid var(--wood-mid);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+
+.journal-refs-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.journal-ref-link {
+  display: block;
+  font-size: 11.5px;
+  color: var(--maroon);
+  text-decoration: none;
+  padding: 6px 9px;
+  background: #fff8eb;
+  border: 1px solid var(--wood-mid);
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.journal-ref-link:hover {
+  background: #faeed7;
+  text-decoration: underline;
+}
+
+/* Contest About Tab */
+.journal-about-content {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  background: #fffaf0;
+  border-radius: 6px;
+}
+
+.about-hero-card {
+  background: #fff8eb;
+  border: 2px solid var(--wood-mid);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.about-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+
+.about-info-cell {
+  background: #fdfaf3;
+  border: 1px solid var(--wood-mid);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.about-references-list {
+  padding-left: 20px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-base);
+  margin: 6px 0 0;
+}
+
+.about-references-list li {
+  margin-bottom: 8px;
+}
+
+.about-references-list a {
+  color: var(--maroon);
+  text-decoration: underline;
 }
 
 .journal-detail {
@@ -1302,7 +1536,9 @@ body.in-journal .modal-overlay {
   .journal-tabs { gap: 5px; }
   .journal-tabs button { font-size: 10px; padding: 5px 7px; min-height: 40px; }
   .journal-content { display: flex; flex-direction: column; flex: 0 0 auto; min-height: 0; max-height: none; overflow: visible; }
-  #journal-tab-quests, #journal-tab-satchel { max-height: none; overflow: visible; }
+  #journal-tab-quests, #journal-tab-satchel, #journal-tab-about { max-height: none; overflow: visible; }
+  .journal-plants-sidebar { max-height: none; overflow: visible; }
+  .about-info-grid { grid-template-columns: 1fr; }
   .journal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: 210px; overflow-y: auto; flex-shrink: 0; border: 2px solid var(--wood-mid); border-radius: 5px; padding: 6px; background: #f3e8d3; }
   .journal-card { padding: 5px; min-width: 0; }
   .journal-card img { width: 44px; height: 44px; }
