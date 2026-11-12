@@ -65,6 +65,10 @@ export function plantPortraitUrl(plantId) {
   return `/game/plants/${plantId}.${plantId === "benguet_pine" ? "png" : "svg"}`;
 }
 
+export function plantPhotoUrl(plantId) {
+  return `/game/photos/${plantId}.jpg`;
+}
+
 export function plantWorldUrl(plantId) {
   return plantId === "benguet_pine" ? `/game/plants/${plantId}_world.png` : `/game/plants/${plantId}.svg`;
 }
@@ -112,6 +116,7 @@ export async function loadAllAssets(plantIds, characterNames) {
         world,
         portraitUrl: plantPortraitUrl(id),
         worldUrl: plantWorldUrl(id),
+        photoUrl: plantPhotoUrl(id),
         worldTex: canvasToTexture(sliceCanvas(world, 0, 0, world.width, world.height)),
       };
     }),

@@ -798,11 +798,94 @@ kbd {
 .journal-detail-top img {
   width: 96px;
   height: 96px;
-  object-fit: contain;
+  object-fit: cover;
   background: #e9f4e4;
   border: 2px solid var(--wood-mid);
   border-radius: 4px;
-  padding: 4px;
+  padding: 2px;
+}
+
+.journal-image-container {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.journal-photo-pill {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(14, 24, 16, 0.85);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid var(--wood-mid);
+}
+
+.journal-photo-card {
+  margin: 12px 0 14px;
+  background: #fffcf7;
+  border: 2px solid var(--wood-mid);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.journal-photo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--cream-dark);
+  border-bottom: 1px solid var(--wood-mid);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pine-dark);
+  letter-spacing: 0.04em;
+}
+
+.journal-photo-sub {
+  font-size: 10px;
+  color: var(--ink-muted);
+  font-weight: normal;
+}
+
+.journal-photo-frame {
+  width: 100%;
+  max-height: 240px;
+  background: #141f17;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.journal-real-photo {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.journal-photo-caption {
+  padding: 8px 10px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ink);
+  background: #fff8eb;
+  border-top: 1px solid var(--wood-mid);
+}
+
+.satchel-photo-thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 2px solid var(--wood-mid);
+  background: #e9f4e4;
+  flex-shrink: 0;
 }
 
 .journal-section-title {

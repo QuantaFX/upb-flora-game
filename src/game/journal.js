@@ -65,12 +65,13 @@ export function createJournalUI(state, assets, audio) {
     const p = PLANT_BY_ID[selectedPlantId] || PLANTS[0];
     const unlocked = state.isIdentified(p.id);
     const collected = state.hasCollected(p.id);
+    const photoUrl = assets.plants[p.id]?.photoUrl || `/game/photos/${p.id}.jpg`;
 
     if (!unlocked) {
       const revealed = state.getRevealedClues(p.id);
       detailEl.innerHTML = `
         <div class="journal-detail-top">
-          <img src="${assets.plants[p.id].portraitUrl}" style="filter:brightness(0) opacity(0.55)" alt="Locked" />
+          <img class="journal-detail-img" src="${assets.plants[p.id].portraitUrl}" style="filter:brightness(0) opacity(0.55)" alt="Locked" />
           <div>
             <h3 style="margin:0;font-size:18px">Unidentified Campus Specimen</h3>
             <div style="font-size:12px;color:var(--ink-muted)">Find this plant on campus and use OBSERVE + IDENTIFY!</div>
@@ -89,15 +90,32 @@ export function createJournalUI(state, assets, audio) {
 
     detailEl.innerHTML = `
       <div class="journal-detail-top">
-        <img src="${assets.plants[p.id].portraitUrl}" alt="${p.name}" />
+        <div class="journal-image-container">
+          <img class="journal-detail-img" src="${collected ? photoUrl : assets.plants[p.id].portraitUrl}" alt="${p.name}" />
+          ${collected ? '<span class="journal-photo-pill">📷 Doc Specimen</span>' : ''}
+        </div>
         <div>
           <span class="enc-badge ${p.protected ? '' : 'enc-badge--green'}">${p.status}</span>
           <h3 style="margin:4px 0 2px;font-size:19px;color:var(--pine-dark)">${p.name}</h3>
           <div style="font-style:italic;font-weight:700;color:var(--maroon)">${p.scientificName}</div>
           <div style="font-size:12px;color:var(--ink-muted)">Local Name: ${p.localName}</div>
           <div style="font-size:11px;margin-top:4px;font-weight:700;color:var(--pine-mid)">
-            ${collected ? `✓ Voucher Recorded: ${p.harvestItem.name}` : '○ Not yet collected into Satchel'}
+            ${collected ? `✓ Voucher Recorded: ${p.harvestItem.name}` : '○ Not yet photographed into Satchel'}
           </div>
+        </div>
+      </div>
+
+      <div class="journal-photo-card">
+        <div class="journal-photo-header">
+          <span>📸 ACTUAL FIELD SPECIMEN (UP BAGUIO HERBARIUM)</span>
+          <span class="journal-photo-sub">Documented Campus Flora</span>
+        </div>
+        <div class="journal-photo-frame">
+          <img src="${photoUrl}" alt="${p.name} Field Photo" class="journal-real-photo" />
+        </div>
+        <div class="journal-photo-caption">
+          <strong>Taxonomic Identification:</strong> <em>${p.scientificName}</em> (${p.localName})<br>
+          <strong>Campus Location:</strong> ${p.campusZone}
         </div>
       </div>
 
@@ -156,18 +174,20 @@ export function createJournalUI(state, assets, audio) {
     }
 
     for (const p of items) {
+      const photoUrl = assets.plants[p.id]?.photoUrl || `/game/photos/${p.id}.jpg`;
       const card = document.createElement('div');
       card.className = 'quest-item-card';
       card.innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px">
-          <img src="${assets.plants[p.id].portraitUrl}" alt="${p.name}" style="width:48px;height:48px;object-fit:contain" />
-          <div>
+        <div style="display:flex;align-items:center;gap:14px;width:100%">
+          <img src="${photoUrl}" alt="${p.name}" class="satchel-photo-thumb" />
+          <div style="flex:1">
             <div style="font-weight:700;font-size:14px">${p.harvestItem.name}</div>
-            <div style="font-size:11px;color:var(--maroon)">${p.name} (<em>${p.scientificName}</em>)</div>
-            <div style="font-size:12px;color:var(--ink-muted)">${p.harvestItem.description}</div>
+            <div style="font-size:11px;color:var(--maroon)">${p.name} (<em>${p.scientificName}</em>) · ${p.localName}</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">${p.harvestItem.description}</div>
+            <div style="font-size:11px;color:var(--pine-mid);font-weight:700;margin-top:4px">📍 UPB Location: ${p.campusZone}</div>
           </div>
+          <span class="quest-status-pill is-done">📸 Photo Voucher</span>
         </div>
-        <span class="quest-status-pill is-done">${p.harvestItem.mode === 'photo' ? '📸 Photo Voucher' : '🌿 Leaf Sample'}</span>
       `;
       satchelListEl.appendChild(card);
     }
