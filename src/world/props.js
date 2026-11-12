@@ -243,7 +243,7 @@ export function buildPropsAndBuildings(scene, map, assets) {
   }
 
   // 3. Decorative Trees, Bushes, Small Plants, and Sunflowers
-  const sunflowerTex = assets.plants.kamantigi.worldTex;
+  const sunflowerTex = assets.plants.gold_dust_croton?.worldTex || assets.plants.mayana.worldTex;
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
 
   // Lush pixel-art bushes, shrubs, fallen wood, rocks, and small ground-cover plants from TilesetNature
@@ -333,14 +333,14 @@ export function buildPropsAndBuildings(scene, map, assets) {
       treeEntries.push({ x: p.x, y: p.y, mat });
     } else if (p.kind === 'understory') {
       const understoryIds = [
-        'tri_vein_fern',
         'gipas',
-        'kamantigi',
         'fishtail_fern',
-        'fishbone_fern',
+        'ti_plant',
+        'red_lip',
+        'philippine_azalea',
+        'agubangbang',
         'mayana',
-        'dwarf_lilyturf',
-        'ground_orchid',
+        'gold_dust_croton',
       ];
       const variant = (p.x * 3 + p.y * 5) % (understoryIds.length + 2);
       if (variant < understoryIds.length) {

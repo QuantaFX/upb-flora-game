@@ -42,13 +42,13 @@ export function getNpcDialogPages(npc, state, callbacks) {
     return [
       page(
         state.data.flags.finale_complete
-          ? 'Your fifteen-species UP Baguio Digital Herbarium is complete. Keep exploring the campus gardens!'
-          : 'You documented all fifteen campus plants, their morphological clues, and their Cordillera & campus habitats! Your field photographs will help the next class recognize them. Well done, Student Curator!',
+          ? 'Your ten-species UP Baguio Digital Herbarium is complete. Keep exploring the campus gardens!'
+          : 'You documented all ten campus plants, their morphological clues, and their Cordillera & campus habitats! Your field photographs will help the next class recognize them. Well done, Student Curator!',
         () => {
           const firstReview = !state.data.flags.finale_complete;
           state.setFlag('finale_complete');
           if (firstReview) callbacks.celebrate?.();
-          callbacks.toast('Ex-Flora-Tive complete: all 15 campus plants documented!');
+          callbacks.toast('Ex-Flora-Tive complete: all 10 campus plants documented!');
         },
       ),
     ];
@@ -57,7 +57,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
   if (!q) {
     const lines = {
       junjun:
-        'Nanay is helping the class find Kamantigi (Impatiens platypetala). Look for the flat pink blossoms along the Abortion Stairs, and keep the steps clear!',
+        'Nanay is helping the class find Mayana (Coleus scutellarioides) behind KA. Look for the painted crimson leaves, and remember to eat your lunch!',
     };
     return [page(lines[npc.id] || 'Enjoy your campus fieldwork!')];
   }
@@ -75,7 +75,7 @@ export function getNpcDialogPages(npc, state, callbacks) {
     return [
       page(
         q.id === 'field_benguet_pine'
-          ? `Welcome, ${state.data.playerName}! I am Prof. Racquel Barcelo. Welcome to Native Plants Week! We will identify 15 campus plants and build a complete photographic herbarium.`
+          ? `Welcome, ${state.data.playerName}! I am Prof. Racquel Barcelo. Welcome to Native Plants Week! We will identify 10 campus plants and build a complete photographic herbarium.`
           : `Our next field study is ${p.name} (${p.scientificName}). Location: ${q.locationHint}.`,
       ),
       page(

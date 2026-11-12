@@ -57,7 +57,7 @@ function celebrateCompletion() {
   celebration.setAttribute('role', 'status');
   const message = document.createElement('div');
   message.className = 'completion-message';
-  message.textContent = 'Fieldwork complete! All 15 campus plants documented. Thank you, Student Curator!';
+  message.textContent = 'Fieldwork complete! All 10 campus plants documented. Thank you, Student Curator!';
   celebration.appendChild(message);
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     for (let i = 0; i < 64; i++) {

@@ -88,14 +88,14 @@ for (const id of plantIds) {
   await page.locator('#enc-sub-menu button').filter({ hasText: scientificName }).click();
   await page.locator('#btn-enc-collect').click();
   assert.ok(await page.evaluate(id => window.__game.state.hasCollected(id), id));
-  if (id === 'kamantigi') await page.screenshot({ path: 'shots/grid-07-plant-encounter.png' });
+  if (id === 'philippine_azalea') await page.screenshot({ path: 'shots/grid-07-plant-encounter.png' });
   await page.evaluate(() => window.__game.encounterUI.close());
 }
 
-// Verify Herbarium images and scrolling across all 15 species
+// Verify Herbarium images and scrolling across all 10 species
 await page.evaluate(() => window.__game.journalUI.open('plants'));
 await page.waitForTimeout(250);
-for (let i = 0; i < 15; i += 1) {
+for (let i = 0; i < 10; i += 1) {
   await page.locator('#journal-grid .journal-card').nth(i).click();
   await page.waitForFunction(() => {
     const img = document.querySelector('#journal-detail .journal-real-photo');
@@ -129,8 +129,8 @@ const scrollCheck = await page.evaluate(() => {
 assert.ok(scrollCheck.gridScrollTop > 0, 'Herbarium grid must scroll');
 assert.ok(scrollCheck.detailScrollTop > 0, 'Herbarium detail pane must scroll');
 
-// Click the 15th card while grid is scrolled down and verify grid scrollTop does not reset to 0
-await page.locator('#journal-grid .journal-card').nth(14).click();
+// Click the 10th card while grid is scrolled down and verify grid scrollTop does not reset to 0
+await page.locator('#journal-grid .journal-card').nth(9).click();
 const preservedGridScroll = await page.evaluate(() => document.querySelector('#journal-grid').scrollTop);
 assert.ok(preservedGridScroll > 0, 'Clicking a card must preserve Herbarium grid scroll position');
 await page.evaluate(() => {

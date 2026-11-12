@@ -11,7 +11,7 @@ assert.equal(new GameState().data.character, 'female');
 state.setCharacter('unknown');
 assert.equal(state.data.character, 'male');
 const talk=npc=>getNpcDialogPages(npc,state,{toast(){}}).forEach(p=>p.onFinish?.());
-assert.equal(PLANTS.length,15);
+assert.equal(PLANTS.length,10);
 for(const q of QUEST_DEFS){
  const npc=NPCS.find(n=>n.id===q.npcId);
  assert.ok(npc);
@@ -28,4 +28,4 @@ talk(NPCS.find(n=>n.id==='prof_barcelo'));
 assert.equal(state.data.flags.finale_complete,true);
 const restored=new GameState();
 assert.deepEqual(restored.data,state.data);
-console.log('Fifteen quests, photo gating, finale, and save/load passed.');
+console.log('Ten quests, photo gating, finale, and save/load passed.');

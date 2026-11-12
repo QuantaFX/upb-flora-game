@@ -50,11 +50,11 @@ try {
  await page.tap('#btn-close-journal');
  assert.equal(await page.evaluate(()=>window.__game.journalUI.isOpen),false);
  assert.equal(await page.locator('#touch-controls').isVisible(), true, 'Touch controls restored after journal');
- await page.evaluate(()=>window.__game.encounterUI.open('kamantigi'));
+ await page.evaluate(()=>window.__game.encounterUI.open('philippine_azalea'));
  await page.locator('[data-cmd="identify"]').tap();
- await page.locator('#enc-sub-menu button').filter({hasText:'Impatiens platypetala'}).tap();
+ await page.locator('#enc-sub-menu button').filter({hasText:'Rhododendron subsessile'}).tap();
  await page.locator('#btn-enc-collect').tap();
- assert.ok(await page.evaluate(()=>window.__game.state.hasCollected('kamantigi')));
+ assert.ok(await page.evaluate(()=>window.__game.state.hasCollected('philippine_azalea')));
  await page.screenshot({path:'shots/mobile-06-encounter.png'});
  await page.locator('[data-cmd="leave"]').tap();
  // Fog must visibly cover the edge while movement is blocked.
