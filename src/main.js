@@ -198,7 +198,6 @@ async function boot() {
   const btnMute = document.getElementById('btn-mute');
   const opening = document.getElementById('opening-overlay');
   const touchPanel = document.getElementById('touch-controls');
-  let openingTimer;
   let openingActive = false;
 
   function renderCharacterChoices() {
@@ -385,29 +384,9 @@ async function boot() {
     }
   }
 
-  // Tall grass step trigger (Pokemon wild flora encounter)
-  player.onStepComplete = (tx, ty, elev) => {
+  // Step completion handler (refresh HUD & contextual prompts; encounters only occur at actual plant locations)
+  player.onStepComplete = () => {
     refreshHudAndEmotes();
-    const t = map.tileAt(tx, ty);
-    if (t?.type === 'tall_grass' && Math.random() < 0.14) {
-      // Pick a wild species appropriate for this terrace elevation
-      const poolByElev = {
-        0: ['philippine_azalea', 'fishbone_fern', 'agubangbang', 'benguet_pine'],
-        1: ['ground_orchid', 'kamantigi', 'benguet_pine'],
-        2: ['gipas', 'fishtail_fern', 'mayana', 'kamantigi'],
-        3: ['benguet_pine', 'agoho', 'ground_orchid'],
-      };
-      const pool = poolByElev[Math.round(elev)] || ALL_PLANT_IDS;
-      const wildId = pool[Math.floor(Math.random() * pool.length)];
-      audio.playBgm('encounter');
-      encounterUI.open(wildId, {
-        isWild: true,
-        onEnd: () => {
-          audio.playBgm('overworld');
-          refreshHudAndEmotes();
-        },
-      });
-    }
   };
 
   // Title Screen, Opening Story/Tutorial Sequence & HUD Button Listeners
@@ -449,24 +428,7 @@ async function boot() {
     }
   }
 
-  function scheduleOpeningAutoAdvance(delayMs = 2400) {
-    clearTimeout(openingTimer);
-    if (!openingActive) return;
-    if (environment.reducedMotion) {
-      finishOpening();
-      return;
-    }
-    openingTimer = setTimeout(() => {
-      if (!openingActive) return;
-      if (openingSlideIdx < openingSlides.length - 1) {
-        setOpeningSlide(openingSlideIdx + 1, false);
-      } else {
-        finishOpening();
-      }
-    }, delayMs);
-  }
-
-  function setOpeningSlide(idx, manual = false) {
+  function setOpeningSlide(idx) {
     openingSlideIdx = Math.max(0, Math.min(openingSlides.length - 1, idx));
     openingSlides.forEach((el, i) => el.classList.toggle('hidden', i !== openingSlideIdx));
     openingDots.forEach((dot, i) => dot.classList.toggle('is-active', i === openingSlideIdx));
@@ -480,11 +442,9 @@ async function boot() {
       openingNextBtn.textContent =
         openingSlideIdx === openingSlides.length - 1 ? 'Start Fieldwork 🌿' : 'Next ▶';
     }
-    scheduleOpeningAutoAdvance(manual ? 9000 : 2400);
   }
 
   function finishOpening() {
-    clearTimeout(openingTimer);
     openingActive = false;
     opening.classList.add('hidden');
     document.body.classList.add('is-playing');
@@ -528,8 +488,8 @@ async function boot() {
     titleScreen.classList.add('hidden');
     openingActive = true;
     opening.classList.remove('hidden');
-    setOpeningSlide(0, false);
-    document.getElementById('skip-opening').focus();
+    setOpeningSlide(0);
+    openingNextBtn?.focus();
     audio.playBgm('overworld');
     refreshHudAndEmotes();
   }
