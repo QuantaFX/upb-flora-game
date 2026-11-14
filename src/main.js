@@ -392,10 +392,10 @@ async function boot() {
     if (t?.type === 'tall_grass' && Math.random() < 0.14) {
       // Pick a wild species appropriate for this terrace elevation
       const poolByElev = {
-        0: ['philippine_azalea', 'agubangbang', 'benguet_pine'],
-        1: ['red_lip', 'gold_dust_croton', 'ti_plant'],
-        2: ['gipas', 'fishtail_fern', 'mayana'],
-        3: ['benguet_pine', 'agoho'],
+        0: ['philippine_azalea', 'fishbone_fern', 'agubangbang', 'benguet_pine'],
+        1: ['ground_orchid', 'kamantigi', 'benguet_pine'],
+        2: ['gipas', 'fishtail_fern', 'mayana', 'kamantigi'],
+        3: ['benguet_pine', 'agoho', 'ground_orchid'],
       };
       const pool = poolByElev[Math.round(elev)] || ALL_PLANT_IDS;
       const wildId = pool[Math.floor(Math.random() * pool.length)];

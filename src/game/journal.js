@@ -26,7 +26,7 @@ export function createJournalUI(state, assets, audio) {
   let isOpen = false;
   let activeTab = 'plants';
   let selectedPlantId = PLANTS[0]?.id || 'benguet_pine';
-  let activeFilter = 'all'; // 'all' | 'native' | 'introduced'
+  let activeFilter = 'all'; // 'all' | 'endemic' | 'indigenous'
   let searchQuery = '';
 
   function switchTab(tabName) {
@@ -73,13 +73,11 @@ export function createJournalUI(state, assets, audio) {
 
   function getFilteredPlants() {
     return PLANTS.filter((p) => {
-      // Filter by native vs introduced
-      if (activeFilter === 'native') {
-        const isNat = p.nativeStatus.includes('Native') || p.nativeStatus.includes('Endemic');
-        if (!isNat) return false;
-      } else if (activeFilter === 'introduced') {
-        const isIntro = p.nativeStatus.includes('Introduced') || p.nativeStatus.includes('Cultivated');
-        if (!isIntro) return false;
+      // Filter by Philippine Endemic vs Indigenous Native
+      if (activeFilter === 'endemic') {
+        if (!p.nativeStatus.includes('Endemic')) return false;
+      } else if (activeFilter === 'indigenous') {
+        if (p.nativeStatus.includes('Endemic')) return false;
       }
 
       // Filter by search query
@@ -251,13 +249,15 @@ export function createJournalUI(state, assets, audio) {
         <strong>⚠️ Medical &amp; Conservation Reminder:</strong> ${p.caution}
       </div>
 
-      <div class="journal-section-title">Authoritative Botanical References</div>
+      <div class="journal-section-title">Authoritative Botanical References &amp; Native Status</div>
       <div class="journal-refs-box">
-        <a href="${p.references.powo}" target="_blank" rel="noopener noreferrer" class="journal-ref-link">
-          🌍 <strong>Plants of the World Online (Kew POWO):</strong> <em>${p.scientificName}</em> ↗
-        </a>
         <a href="${p.references.cosFlora}" target="_blank" rel="noopener noreferrer" class="journal-ref-link">
           🇵🇭 <strong>Co's Digital Flora of the Philippines:</strong> Family ${p.family} ↗
+          ${p.references.cosStatus ? `<div style="font-size:11px;color:var(--ink-base);margin-top:3px;line-height:1.35">${p.references.cosStatus}</div>` : ''}
+        </a>
+        <a href="${p.references.powo}" target="_blank" rel="noopener noreferrer" class="journal-ref-link">
+          🌍 <strong>Plants of the World Online (Kew POWO):</strong> <em>${p.scientificName}</em> ↗
+          ${p.references.powoStatus ? `<div style="font-size:11px;color:var(--ink-base);margin-top:3px;line-height:1.35">${p.references.powoStatus}</div>` : ''}
         </a>
       </div>
     `;
@@ -361,12 +361,11 @@ export function createJournalUI(state, assets, audio) {
           Users navigate iconic campus landmarks—the Oblation Grounds, Inang Laya, College of Science (KA/HKP), and Teatro Amianan—to locate, examine, and photograph authenticated plant specimens.
         </p>
         <p style="margin:0 0 8px">
-          Per Contest Guidelines (Rule V.2 and V.3), this map documents exactly <strong>10 plant species</strong> found across the UP Baguio grounds, rigorously distinguishing between:
+          Per Contest Guidelines (Rule V.2 and V.3), all <strong>10 documented campus plant species</strong> have been strictly verified as indigenous/native or endemic to the Philippines using <strong>Co's Digital Flora of the Philippines</strong> and <strong>Plants of the World Online (Kew POWO)</strong> (excluding non-native cultivated ornamentals):
         </p>
         <ul style="margin:0 0 8px;padding-left:20px">
           <li><strong>Philippine Endemics (2):</strong> <em>Rhododendron subsessile</em> (Philippine Azalea) and <em>Medinilla pendula</em> (Agubangbang).</li>
-          <li><strong>Native Flora (5):</strong> <em>Pinus kesiya</em> (Pine Tree), <em>Casuarina equisetifolia</em> (Agoho), <em>Microsorum punctatum</em> (Fishtail Fern), <em>Sarcandra glabra</em> (Gipas), and <em>Coleus scutellarioides</em> (Mayana).</li>
-          <li><strong>Cultivated &amp; Naturalized Cultural Plants (3):</strong> <em>Cordyline fruticosa</em> (Ti Plant / Dangla), <em>Codiaeum variegatum</em> (Gold Dust Croton), and <em>Syzygium myrtifolium</em> (Red Lip).</li>
+          <li><strong>Indigenous Philippine Native Flora (8):</strong> <em>Pinus kesiya</em> (Pine Tree / Saleng), <em>Sarcandra glabra</em> (Gipas), <em>Microsorum punctatum</em> (Fishtail Fern), <em>Casuarina equisetifolia</em> (Agoho), <em>Impatiens platypetala</em> (Kamantigi), <em>Coleus scutellarioides</em> (Mayana), <em>Nephrolepis cordifolia</em> (Fishbone Fern / Bayabang), and <em>Spathoglottis plicata</em> (Philippine Ground Orchid).</li>
         </ul>
         <p style="margin:0">
           Every specimen entry incorporates authenticated field photographs from the UP Baguio Herbarium, precise campus GPS coordinates, family classifications, vegetative and reproductive keys, Cordillera ethnobotanical traditions, and thematic connections to food, culture, and sustainability.

@@ -1,7 +1,7 @@
 // Game State, Quest Progression, Herbarium Journal Unlocking, Satchel Inventory, and Save/Load.
 
 import { PLANTS } from '../data/plants.js';
-const STORAGE_KEY = 'upb_flora_quest_save_v4'; // Bumped for 10-species core curriculum.
+const STORAGE_KEY = 'upb_flora_quest_save_v5'; // Bumped for 100% Native 10-species curriculum (Co's Digital Flora & POWO verified).
 
 export const QUEST_DEFS = [
   {
@@ -75,34 +75,34 @@ export const QUEST_DEFS = [
     summary: 'Identify and photograph Agoho (Casuarina equisetifolia) near the College of Science AVR along the gate pathway. Return to Bea in front of KA.',
   },
   {
-    id: 'field_ti_plant',
+    id: 'field_kamantigi',
     code: 'M8',
-    title: 'Sacred Cordillera Dangla',
+    title: 'Blossoms Along the Steps',
     giver: 'Dr. Alangdeo',
     npcId: 'curator',
-    plantId: 'ti_plant',
-    locationHint: 'Campus terrace walkway between the Oblation and CS',
-    summary: 'Identify and photograph Ti Plant (Cordyline fruticosa) along the upper campus terrace walkway. Return to Dr. Alangdeo beside Museo Kordilyera.',
+    plantId: 'kamantigi',
+    locationHint: 'Along Abortion Stairs',
+    summary: 'Identify and photograph Kamantigi (Impatiens platypetala) along the Abortion Stairs. Return to Dr. Alangdeo beside Museo Kordilyera.',
   },
   {
-    id: 'field_gold_dust_croton',
+    id: 'field_fishbone_fern',
     code: 'M9',
-    title: 'Flecked with Mountain Sunlight',
+    title: 'Bayabang by the Theater',
     giver: 'Manong Ben',
     npcId: 'manong_ben',
-    plantId: 'gold_dust_croton',
-    locationHint: 'Oblation Grounds',
-    summary: 'Identify and photograph Gold Dust Croton (Codiaeum variegatum) at the Oblation Grounds. Return to Manong Ben at the guardhouse.',
+    plantId: 'fishbone_fern',
+    locationHint: 'Teatro Amianan',
+    summary: 'Identify and photograph Fishbone Fern (Nephrolepis cordifolia) beside Teatro Amianan. Return to Manong Ben at the guardhouse.',
   },
   {
-    id: 'field_red_lip',
+    id: 'field_ground_orchid',
     code: 'M10',
-    title: 'Crimson Tips at the Plaza',
+    title: 'Orchids Beside the Clinic',
     giver: 'Prof. Racquel Barcelo',
     npcId: 'prof_barcelo',
-    plantId: 'red_lip',
-    locationHint: 'Oblation Plaza & driveway hedges',
-    summary: 'Identify and photograph Red Lip (Syzygium myrtifolium) at the Oblation Plaza hedge. Return to Prof. Racquel Barcelo beside the Oblation.',
+    plantId: 'ground_orchid',
+    locationHint: 'Beside HSO / Balay Salun-at (UHS)',
+    summary: 'Identify and photograph Philippine Ground Orchid (Spathoglottis plicata) beside Balay Salun-at (HSO). Return to Prof. Racquel Barcelo beside the Oblation.',
   },
 ];
 
