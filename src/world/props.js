@@ -242,14 +242,23 @@ export function buildPropsAndBuildings(scene, map, assets) {
     group.add(fpGroup);
   }
 
-  // 3. Decorative Trees, Bushes, Small Plants, and Sunflowers
-  const sunflowerTex = assets.plants.kamantigi?.worldTex || assets.plants.mayana.worldTex;
+  // 3. Decorative Trees, Bushes, and Small Ground-Cover Plants (generic tileset sprites only)
   const signTex = sliceTileTexture(element, 0, 2, 1, 1);
 
-  // Lush pixel-art bushes, shrubs, fallen wood, rocks, and small ground-cover plants from TilesetNature
+  // Lush pixel-art trees, bushes, shrubs, fallen wood, rocks, and small ground-cover plants from TilesetNature
   const bushRoundTex = sliceTileTexture(nature, 0, 0, 2, 2);
   const bushPineTex = sliceTileTexture(nature, 2, 0, 2, 2);
+  const treeCanopyTex = sliceTileTexture(nature, 6, 0, 2, 2);
   const treeRoundTex = sliceTileTexture(nature, 16, 0, 2, 2);
+  const treeOliveTex = sliceTileTexture(nature, 18, 0, 2, 2);
+  const treeTallTex = sliceTileTexture(nature, 6, 8, 2, 2);
+  const genericTreeTexs = [
+    bushPineTex,
+    treeRoundTex,
+    treeOliveTex,
+    treeCanopyTex,
+    treeTallTex,
+  ];
   const woodPropTexs = [
     sliceTileTexture(nature, 0, 8, 2, 2), // dark tree stump
     sliceTileTexture(nature, 2, 8, 2, 2), // warm tree stump
@@ -313,13 +322,7 @@ export function buildPropsAndBuildings(scene, map, assets) {
 
   for (const p of map.props) {
     if (p.kind === 'pine') {
-      const treeVariant = (p.x * 7 + p.y * 13) % 5;
-      const tex =
-        treeVariant === 0
-          ? assets.plants.agoho?.worldTex || assets.plants.benguet_pine.worldTex
-          : treeVariant === 1 || treeVariant === 2
-            ? treeRoundTex
-            : assets.plants.benguet_pine.worldTex;
+      const tex = genericTreeTexs[(p.x * 7 + p.y * 13) % genericTreeTexs.length];
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -332,38 +335,23 @@ export function buildPropsAndBuildings(scene, map, assets) {
       group.add(mesh);
       treeEntries.push({ x: p.x, y: p.y, mat });
     } else if (p.kind === 'understory') {
-      const understoryIds = [
-        'gipas',
-        'kamantigi',
-        'fishtail_fern',
-        'fishbone_fern',
-        'philippine_azalea',
-        'agubangbang',
-        'mayana',
-        'ground_orchid',
-      ];
-      const variant = (p.x * 3 + p.y * 5) % (understoryIds.length + bushMats.length);
-      if (variant < understoryIds.length) {
-        const id = understoryIds[variant];
-        const tex = assets.plants[id]?.worldTex || bushRoundTex;
-        const mesh = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.95, 0.95),
-          new THREE.MeshBasicMaterial({
-            map: tex,
-            transparent: true,
-            alphaTest: 0.35,
-          }),
-        );
-        mesh.position.set(p.x + 0.5, p.elev + 0.45, p.y + 0.5);
-        mesh.rotation.x = -0.32;
-        group.add(mesh);
-      } else {
-        const bushMat = bushMats[(variant - understoryIds.length) % bushMats.length];
+      const variant = (p.x * 3 + p.y * 5) % (bushMats.length + smallPlantMats.length);
+      if (variant < bushMats.length) {
+        const bushMat = bushMats[variant];
         const mesh = new THREE.Mesh(
           new THREE.PlaneGeometry(1.15, 1.1),
           bushMat,
         );
         mesh.position.set(p.x + 0.5, p.elev + 0.52, p.y + 0.5);
+        mesh.rotation.x = -0.32;
+        group.add(mesh);
+      } else {
+        const shrubMat = smallPlantMats[(variant - bushMats.length) % smallPlantMats.length];
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.95, 0.95),
+          shrubMat,
+        );
+        mesh.position.set(p.x + 0.5, p.elev + 0.45, p.y + 0.5);
         mesh.rotation.x = -0.32;
         group.add(mesh);
       }
@@ -388,9 +376,10 @@ export function buildPropsAndBuildings(scene, map, assets) {
       mesh.rotation.x = -0.32;
       group.add(mesh);
     } else if (p.kind === 'sunflower_deco') {
+      const bushMat = bushMats[(p.x + p.y) % bushMats.length];
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.95, 1.05),
-        new THREE.MeshBasicMaterial({ map: sunflowerTex, transparent: true, alphaTest: 0.4 }),
+        bushMat,
       );
       mesh.position.set(p.x + 0.5, p.elev + 0.5, p.y + 0.5);
       mesh.rotation.x = -0.32;
