@@ -461,8 +461,8 @@ export const PLANT_NODES = [
   {
     id: 'node_kamantigi',
     plantId: 'kamantigi',
-    x: 49,
-    y: 12,
+    x: 48,
+    y: 13,
     scale: 1.4,
     questHint: 'Kamantigi along the Abortion Stairs',
   },
