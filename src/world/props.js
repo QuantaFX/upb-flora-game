@@ -157,38 +157,60 @@ export function buildPropsAndBuildings(scene, map, assets) {
     });
   }
 
-  // 2. Iconic UP Oblation Monument right in the middle between the two East Driveway stairs (x=67..68, y=28)
+  // 2. Iconic 3D UP Oblation Monument right in the middle between the two East Driveway stairs (x=67..68, y=28)
   {
     const obElev = map.tileAt(68, 28)?.elev ?? 1;
     const obGroup = new THREE.Group();
+    obGroup.name = 'The Oblation';
     obGroup.position.set(68, obElev, 28.5);
 
     const pedMat = new THREE.MeshLambertMaterial({ color: '#d8d2c5' });
-    const ped1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.45, 1.5), pedMat);
-    ped1.position.y = 0.225;
-    obGroup.add(ped1);
+    const statueMat = new THREE.MeshLambertMaterial({ color: '#ece7dc' });
+    const part = (geometry, material, x, y, z = 0) => {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(x, y, z);
+      obGroup.add(mesh);
+      return mesh;
+    };
 
-    const ped2 = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.95, 0.95), pedMat);
-    ped2.position.y = 0.85;
-    obGroup.add(ped2);
+    // Stepped stone pedestal
+    part(new THREE.BoxGeometry(1.8, 0.45, 1.5), pedMat, 0, 0.225, 0);
+    part(new THREE.BoxGeometry(1.15, 0.95, 0.95), pedMat, 0, 0.85, 0);
 
-    const sc = document.createElement('canvas');
-    sc.width = 32;
-    sc.height = 48;
-    const sg = sc.getContext('2d');
-    sg.fillStyle = '#f7f5f0';
-    sg.fillRect(13, 6, 6, 6); // head
-    sg.fillRect(2, 13, 28, 4); // arms outstretched
-    sg.fillRect(12, 13, 8, 16); // torso
-    sg.fillRect(13, 29, 6, 15); // legs
-    const statueTex = canvasToTexture(sc);
-    const statueMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.45, 2.05),
-      new THREE.MeshBasicMaterial({ map: statueTex, transparent: true, alphaTest: 0.3 }),
+    // 3D Oblation figure standing atop the pedestal (base y = 1.325)
+    for (const side of [-1, 1]) {
+      part(new THREE.CylinderGeometry(0.085, 0.075, 0.72, 8), statueMat, side * 0.11, 1.68, 0);
+    }
+    part(new THREE.CylinderGeometry(0.18, 0.15, 0.22, 8), statueMat, 0, 2.08, 0);
+    part(new THREE.CylinderGeometry(0.25, 0.17, 0.56, 8), statueMat, 0, 2.42, 0);
+    const head = part(new THREE.SphereGeometry(0.18, 8, 6), statueMat, 0, 2.86, -0.02);
+    head.rotation.x = -0.25;
+
+    // Outstretched arms in the iconic Oblation pose
+    for (const side of [-1, 1]) {
+      const arm = part(new THREE.CylinderGeometry(0.065, 0.08, 0.78, 6), statueMat, side * 0.54, 2.58, 0);
+      arm.rotation.z = -side * (Math.PI / 2.15);
+      part(new THREE.SphereGeometry(0.085, 6, 4), statueMat, side * 0.93, 2.63, 0);
+    }
+
+    // Pedestal plaque
+    const plaque = document.createElement('canvas');
+    plaque.width = 256;
+    plaque.height = 64;
+    const ink = plaque.getContext('2d');
+    ink.fillStyle = '#7b1113';
+    ink.fillRect(0, 0, 256, 64);
+    ink.fillStyle = '#f5b935';
+    ink.font = 'bold 26px serif';
+    ink.textAlign = 'center';
+    ink.fillText('THE OBLATION', 128, 42);
+    part(
+      new THREE.PlaneGeometry(0.95, 0.25),
+      new THREE.MeshBasicMaterial({ map: canvasToTexture(plaque) }),
+      0,
+      0.88,
+      0.485,
     );
-    statueMesh.position.set(0, 2.25, 0.05);
-    statueMesh.rotation.x = -0.32;
-    obGroup.add(statueMesh);
 
     group.add(obGroup);
   }
