@@ -337,6 +337,26 @@ export function createJournalUI(state, assets, audio) {
         </div>
       </div>
 
+      <div class="journal-section-title">About the Creators</div>
+      <div class="about-creators-grid">
+        <div class="about-creator-card">
+          <div class="about-creator-name">Archie Junio</div>
+          <div class="about-creator-program">3rd Year BS Computer Science</div>
+        </div>
+        <div class="about-creator-card">
+          <div class="about-creator-name">Kim Alog</div>
+          <div class="about-creator-program">3rd Year BS Computer Science</div>
+        </div>
+        <div class="about-creator-card">
+          <div class="about-creator-name">Kristina Martinez</div>
+          <div class="about-creator-program">1st Year BS Management Economics</div>
+        </div>
+        <div class="about-creator-card">
+          <div class="about-creator-name">Lian Paringit</div>
+          <div class="about-creator-program">1st Year BS Management Economics</div>
+        </div>
+      </div>
+
       <div class="journal-section-title">Submission Information &amp; Team Details (Section VI)</div>
       <div class="about-info-grid">
         <div class="about-info-cell">

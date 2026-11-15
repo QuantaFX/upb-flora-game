@@ -996,6 +996,34 @@ kbd {
   margin-bottom: 14px;
 }
 
+.about-creators-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.about-creator-card {
+  background: #fff8eb;
+  border: 1.5px solid var(--wood-mid);
+  border-left: 4px solid var(--maroon);
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+
+.about-creator-name {
+  font-weight: 800;
+  font-size: 13.5px;
+  color: var(--pine-dark);
+}
+
+.about-creator-program {
+  font-size: 11.5px;
+  color: var(--maroon);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
 .about-info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1538,7 +1566,7 @@ body.in-journal .modal-overlay {
   .journal-content { display: flex; flex-direction: column; flex: 0 0 auto; min-height: 0; max-height: none; overflow: visible; }
   #journal-tab-quests, #journal-tab-satchel, #journal-tab-about { max-height: none; overflow: visible; }
   .journal-plants-sidebar { max-height: none; overflow: visible; }
-  .about-info-grid { grid-template-columns: 1fr; }
+  .about-creators-grid, .about-info-grid { grid-template-columns: 1fr; }
   .journal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: 210px; overflow-y: auto; flex-shrink: 0; border: 2px solid var(--wood-mid); border-radius: 5px; padding: 6px; background: #f3e8d3; }
   .journal-card { padding: 5px; min-width: 0; }
   .journal-card img { width: 44px; height: 44px; }
